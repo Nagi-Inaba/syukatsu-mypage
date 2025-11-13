@@ -1,16 +1,16 @@
 // ==UserScript==
-// @name         syukatsu Entry Autofill Panel
-// @namespace    https://github.com/Nagi-Inaba/syukatsu-autofill
-// @version      0.2.0
-// @description  浮かぶ操作パネルに入力→保存→ワンクリック自動入力（個人情報は保存先のブラウザにのみ保持）
-// @author       you
-// @match        https://job.axol.jp/bx/s/*/entry/input*
-// @match        https://job.axol.jp/bx/s/*/navi/input*
-// @grant        GM_getValue
-// @grant        GM_setValue
-// @grant        GM_addStyle
-// @run-at       document-idle
-// @install      https://github.com/Nagi-Inaba/syukatsu-mypage/raw/refs/heads/main/syukatsu-autofill.user.js
+// @name syukatsu Entry Autofill Panel
+// @namespace https://github.com/Nagi-Inaba/syukatsu-autofill
+// @version 0.2.0
+// @description 浮かぶ操作パネルに入力→保存→ワンクリック自動入力（個人情報は保存先のブラウザにのみ保持）
+// @author you
+// @match https://job.axol.jp/bx/s/*/entry/input*
+// @match https://job.axol.jp/bx/s/*/navi/input*
+// @grant GM_getValue
+// @grant GM_setValue
+// @grant GM_addStyle
+// @run-at document-idle
+// @install https://github.com/Nagi-Inaba/syukatsu-mypage/raw/refs/heads/main/syukatsu-autofill.user.js
 // ==/UserScript==
 
 (function () {
@@ -18,7 +18,7 @@
 
   // ===== 設定 =====
   const STORAGE_KEY = 'syukatsu_autofill_profile';
-  const AUTO_SUBMIT = false;   // 入力後に送信を自動実行するなら true
+  const AUTO_SUBMIT = false; // 入力後に送信を自動実行するなら true
   const DEBUG = false;
 
   // ===== 汎用ユーティリティ =====
