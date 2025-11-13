@@ -138,6 +138,8 @@
     fillFieldByName('kanji_na', profile.kanji_na);
     fillFieldByName('kana_sei', profile.kana_sei);
     fillFieldByName('kana_na', profile.kana_na);
+    fillFieldByName('roma_sei', profile.roma_sei);
+    fillFieldByName('roma_na', profile.roma_na);
 
     if (profile.sex) fillFieldByName('sex', profile.sex);
 
@@ -257,7 +259,7 @@
     <h3 style="margin:0 0 6px">syukatsu Autofill</h3>
     <div class="muted">このパネルに入力して保存 → Fill で自動入力（個人情報はブラウザに保存）</div>
 
-    <h4>氏名 / カナ / 性別</h4>
+    <h4>氏名 / カナ / ローマ字 / 性別</h4>
     <div class="row">
       <input id="p-kanji-sei" type="text" placeholder="漢字姓">
       <input id="p-kanji-na" type="text" placeholder="漢字名">
@@ -265,6 +267,10 @@
     <div class="row">
       <input id="p-kana-sei" type="text" placeholder="カナ姓（全角）">
       <input id="p-kana-na" type="text" placeholder="カナ名（全角）">
+    </div>
+    <div class="row">
+      <input id="p-roma-sei" type="text" placeholder="ローマ字姓 (例: YAMADA)">
+      <input id="p-roma-na" type="text" placeholder="ローマ字名 (例: TARO)">
     </div>
     <div class="row">
       <select id="p-sex">
@@ -346,7 +352,7 @@
   // ===== UI <-> プロフィール =====
   function defaultProfile() {
     return {
-      kanji_sei: "", kanji_na: "", kana_sei: "", kana_na: "", sex: "",
+      kanji_sei: "", kanji_na: "", kana_sei: "", kana_na: "", roma_sei: "", roma_na: "", sex: "",
       birth: { Y: "", m: "", d: "" },
       address: {
         current: { postal: "", pref: "", city: "", street: "", building: "" },
@@ -369,6 +375,8 @@
       kanji_na: document.querySelector('#p-kanji-na').value,
       kana_sei: document.querySelector('#p-kana-sei').value,
       kana_na: document.querySelector('#p-kana-na').value,
+      roma_sei: document.querySelector('#p-roma-sei').value,
+      roma_na: document.querySelector('#p-roma-na').value,
       sex: document.querySelector('#p-sex').value,
       birth: { Y: document.querySelector('#p-birth-y').value, m: document.querySelector('#p-birth-m').value, d: document.querySelector('#p-birth-d').value },
       address: {
@@ -401,6 +409,8 @@
     document.querySelector('#p-kanji-na').value = prof.kanji_na;
     document.querySelector('#p-kana-sei').value = prof.kana_sei;
     document.querySelector('#p-kana-na').value = prof.kana_na;
+    document.querySelector('#p-roma-sei').value = prof.roma_sei;
+    document.querySelector('#p-roma-na').value = prof.roma_na;
     document.querySelector('#p-sex').value = prof.sex;
     document.querySelector('#p-birth-y').value = prof.birth.Y;
     document.querySelector('#p-birth-m').value = prof.birth.m;
