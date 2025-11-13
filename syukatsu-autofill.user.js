@@ -130,6 +130,27 @@
     return ok1 || ok2;
   }
 
+  function setVacationAddressVisibility(visible) {
+    const nodes = document.querySelectorAll('.jusho_k');
+    nodes.forEach((node) => {
+      if (!node.dataset.originalDisplay && node.style.display && node.style.display !== 'none') {
+        node.dataset.originalDisplay = node.style.display;
+      }
+      if (visible) {
+        if (node.dataset.originalDisplay) {
+          node.style.display = node.dataset.originalDisplay;
+        } else {
+          node.style.removeProperty('display');
+          if (getComputedStyle(node).display === 'none') {
+            node.style.display = 'block';
+          }
+        }
+      } else {
+        node.style.display = 'none';
+      }
+    });
+  }
+
   function fillProfilesyukatsu(profile) {
     if (!issyukatsuEntryPage()) return;
 
@@ -166,8 +187,18 @@
     const vac = profile.address?.vacation || {};
     if (vac.sameAsCurrent) {
       const same = document.querySelector('input[name="jushosame"]');
-      if (same) { same.checked = true; triggerInput(same); }
+      if (same) {
+        same.checked = true;
+        triggerInput(same);
+      }
+      setVacationAddressVisibility(false);
     } else {
+      const same = document.querySelector('input[name="jushosame"]');
+      if (same) {
+        same.checked = false;
+        triggerInput(same);
+      }
+      setVacationAddressVisibility(true);
       if (vac.postal) fillSplitPostal('yubink', vac.postal);
       const selKenk = document.querySelector('#kenk');
       if (selKenk) selectByTextOrValue(selKenk, vac.pref);
