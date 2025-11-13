@@ -1,0 +1,61 @@
+{
+  "kanji_sei": "",
+  "kanji_na": "",
+  "kana_sei": "",
+  "kana_na": "",
+  "sex": "",
+  "birth": {
+    "Y": "",
+    "m": "",
+    "d": ""
+  },
+  "address": {
+    "current": {
+      "postal": "",
+      "pref": "",
+      "city": "",
+      "street": "",
+      "building": ""
+    },
+    "vacation": {
+      "sameAsCurrent": false,
+      "postal": "",
+      "pref": "",
+      "city": "",
+      "street": "",
+      "building": "",
+      "tel": ""
+    }
+  },
+  "tel": {
+    "home": "",
+    "mobile": ""
+  },
+  "email": {
+    "primary": "",
+    "primaryConfirm": true,
+    "secondary": "",
+    "secondaryConfirm": false
+  },
+  "school": {
+    "kubun": "",
+    "kokushi": "",
+    "initial": "",
+    "dcd": "",
+    "dname": "",
+    "bcd": "",
+    "bname": "",
+    "paxcd": "",
+    "kname": "",
+    "from": {
+      "Y": "",
+      "m": ""
+    },
+    "to": {
+      "Y": "",
+      "m": ""
+    },
+    "zemi": "",
+    "club": ""
+  }
+}
