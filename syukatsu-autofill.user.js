@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name syukatsu Entry Autofill Panel
 // @namespace https://github.com/Nagi-Inaba/syukatsu-autofill
-// @version 0.2.0
+// @version 0.3.0
 // @description 浮かぶ操作パネルに入力→保存→ワンクリック自動入力（個人情報は保存先のブラウザにのみ保持）
 // @author you
 // @match https://job.axol.jp/bx/s/*/entry/input*
