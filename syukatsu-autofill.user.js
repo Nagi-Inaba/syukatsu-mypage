@@ -135,9 +135,9 @@
 
     // --- 基本情報 ---
     fillFieldByName('kanji_sei', profile.kanji_sei);
-    fillFieldByName('kanji_na',  profile.kanji_na);
-    fillFieldByName('kana_sei',  profile.kana_sei);
-    fillFieldByName('kana_na',   profile.kana_na);
+    fillFieldByName('kanji_na', profile.kanji_na);
+    fillFieldByName('kana_sei', profile.kana_sei);
+    fillFieldByName('kana_na', profile.kana_na);
 
     if (profile.sex) fillFieldByName('sex', profile.sex);
 
@@ -157,7 +157,7 @@
     fillFieldByName('jushog3', cur.building);
 
     // --- 電話 ---
-    if (profile.tel?.home)   fillSplitPhone('telg',   profile.tel.home);
+    if (profile.tel?.home) fillSplitPhone('telg', profile.tel.home);
     if (profile.tel?.mobile) fillSplitPhone('keitai', profile.tel.mobile);
 
     // --- 休暇中連絡先 ---
@@ -178,27 +178,27 @@
     // --- メール ---
     if (profile.email) {
       if (profile.email.primary) {
-        fillFieldByName('email',  profile.email.primary);
+        fillFieldByName('email', profile.email.primary);
         if (profile.email.primaryConfirm) fillFieldByName('email2', profile.email.primary);
       }
       if (profile.email.secondary) {
-        fillFieldByName('kmail',  profile.email.secondary);
+        fillFieldByName('kmail', profile.email.secondary);
         if (profile.email.secondaryConfirm) fillFieldByName('kmail2', profile.email.secondary);
       }
     }
 
     // --- 学校情報 ---
     const sch = profile.school || {};
-    if (sch.kubun)  fillFieldByName('kubun',  sch.kubun);
-    if (sch.kokushi)fillFieldByName('kokushi',sch.kokushi);
-    if (sch.initial)fillFieldByName('initial',sch.initial);
+    if (sch.kubun) fillFieldByName('kubun', sch.kubun);
+    if (sch.kokushi) fillFieldByName('kokushi', sch.kokushi);
+    if (sch.initial) fillFieldByName('initial', sch.initial);
 
-    if (sch.dcd)  fillFieldByName('dcd', sch.dcd);
-    if (sch.dname)fillFieldByName('dname', sch.dname);
-    if (sch.bcd)  fillFieldByName('bcd', sch.bcd);
-    if (sch.bname)fillFieldByName('bname', sch.bname);
-    if (sch.paxcd)fillFieldByName('paxcd', sch.paxcd);
-    if (sch.kname)fillFieldByName('kname', sch.kname);
+    if (sch.dcd) fillFieldByName('dcd', sch.dcd);
+    if (sch.dname) fillFieldByName('dname', sch.dname);
+    if (sch.bcd) fillFieldByName('bcd', sch.bcd);
+    if (sch.bname) fillFieldByName('bname', sch.bname);
+    if (sch.paxcd) fillFieldByName('paxcd', sch.paxcd);
+    if (sch.kname) fillFieldByName('kname', sch.kname);
 
     if (sch.from) {
       fillFieldByName('school_from_Y', sch.from.Y);
@@ -259,12 +259,12 @@
 
     <h4>氏名 / カナ / 性別</h4>
     <div class="row">
-      <input id="p-kanji-sei"  type="text" placeholder="漢字姓">
-      <input id="p-kanji-na"   type="text" placeholder="漢字名">
+      <input id="p-kanji-sei" type="text" placeholder="漢字姓">
+      <input id="p-kanji-na" type="text" placeholder="漢字名">
     </div>
     <div class="row">
-      <input id="p-kana-sei"   type="text" placeholder="カナ姓（全角）">
-      <input id="p-kana-na"    type="text" placeholder="カナ名（全角）">
+      <input id="p-kana-sei" type="text" placeholder="カナ姓（全角）">
+      <input id="p-kana-na" type="text" placeholder="カナ名（全角）">
     </div>
     <div class="row">
       <select id="p-sex">
@@ -282,17 +282,17 @@
     <h4>現住所</h4>
     <div class="row">
       <input id="p-postal" type="text" placeholder="郵便番号 例: 530-0001">
-      <input id="p-pref"   type="text" placeholder="都道府県（名前 or 値）">
+      <input id="p-pref" type="text" placeholder="都道府県（名前 or 値）">
     </div>
-    <input id="p-city"    type="text" placeholder="市区郡町村">
-    <input id="p-street"  type="text" placeholder="町域・番地">
-    <input id="p-bldg"    type="text" placeholder="建物名・部屋番号">
+    <input id="p-city" type="text" placeholder="市区郡町村">
+    <input id="p-street" type="text" placeholder="町域・番地">
+    <input id="p-bldg" type="text" placeholder="建物名・部屋番号">
 
     <h4>電話/メール</h4>
-    <input id="p-tel-home"   type="text" placeholder="自宅 例: 03-1234-5678">
+    <input id="p-tel-home" type="text" placeholder="自宅 例: 03-1234-5678">
     <input id="p-tel-mobile" type="text" placeholder="携帯 例: 090-1234-5678">
-    <input id="p-email"      type="email" placeholder="メールアドレス">
-    <input id="p-email2"     type="email" placeholder="メールアドレス2（任意）">
+    <input id="p-email" type="email" placeholder="メールアドレス">
+    <input id="p-email2" type="email" placeholder="メールアドレス2（任意）">
 
     <h4>学校情報（主なもの）</h4>
     <div class="row">
@@ -307,7 +307,7 @@
         <option value="3">私立</option><option value="4">国外</option>
       </select>
     </div>
-    <input id="p-initial"    type="text" placeholder="学校名の頭文字（全角カナ1文字）">
+    <input id="p-initial" type="text" placeholder="学校名の頭文字（全角カナ1文字）">
     <div class="row">
       <input id="p-from-y" type="text" placeholder="入学年">
       <input id="p-from-m" type="text" placeholder="入学月">
@@ -326,7 +326,7 @@
     <div class="actions">
       <button id="act-export" class="btn">Export JSON</button>
       <button id="act-import" class="btn">Import JSON</button>
-      <button id="act-clear"  class="btn">Clear</button>
+      <button id="act-clear" class="btn">Clear</button>
     </div>
 
     <h4>JSON（インポート/エクスポート）</h4>
@@ -365,30 +365,30 @@
 
   function uiToProfile() {
     return {
-      kanji_sei:  document.querySelector('#p-kanji-sei').value,
-      kanji_na:   document.querySelector('#p-kanji-na').value,
-      kana_sei:   document.querySelector('#p-kana-sei').value,
-      kana_na:    document.querySelector('#p-kana-na').value,
-      sex:        document.querySelector('#p-sex').value,
+      kanji_sei: document.querySelector('#p-kanji-sei').value,
+      kanji_na: document.querySelector('#p-kanji-na').value,
+      kana_sei: document.querySelector('#p-kana-sei').value,
+      kana_na: document.querySelector('#p-kana-na').value,
+      sex: document.querySelector('#p-sex').value,
       birth: { Y: document.querySelector('#p-birth-y').value, m: document.querySelector('#p-birth-m').value, d: document.querySelector('#p-birth-d').value },
       address: {
         current: {
-          postal:   document.querySelector('#p-postal').value,
-          pref:     document.querySelector('#p-pref').value,
-          city:     document.querySelector('#p-city').value,
-          street:   document.querySelector('#p-street').value,
+          postal: document.querySelector('#p-postal').value,
+          pref: document.querySelector('#p-pref').value,
+          city: document.querySelector('#p-city').value,
+          street: document.querySelector('#p-street').value,
           building: document.querySelector('#p-bldg').value,
         },
         vacation: { sameAsCurrent: false, postal: "", pref: "", city: "", street: "", building: "", tel: "" }
       },
-      tel:   { home: document.querySelector('#p-tel-home').value, mobile: document.querySelector('#p-tel-mobile').value },
+      tel: { home: document.querySelector('#p-tel-home').value, mobile: document.querySelector('#p-tel-mobile').value },
       email: { primary: document.querySelector('#p-email').value, primaryConfirm: true, secondary: document.querySelector('#p-email2').value, secondaryConfirm: !!document.querySelector('#p-email2').value },
       school: {
         kubun: document.querySelector('#p-kubun').value,
         kokushi: document.querySelector('#p-kokushi').value,
         initial: document.querySelector('#p-initial').value,
         from: { Y: document.querySelector('#p-from-y').value, m: document.querySelector('#p-from-m').value },
-        to:   { Y: document.querySelector('#p-to-y').value,   m: document.querySelector('#p-to-m').value },
+        to: { Y: document.querySelector('#p-to-y').value, m: document.querySelector('#p-to-m').value },
         zemi: document.querySelector('#p-zemi').value,
         club: document.querySelector('#p-club').value
       }
@@ -398,32 +398,32 @@
   function profileToUI(p) {
     const prof = Object.assign(defaultProfile(), p || {});
     document.querySelector('#p-kanji-sei').value = prof.kanji_sei;
-    document.querySelector('#p-kanji-na').value  = prof.kanji_na;
-    document.querySelector('#p-kana-sei').value  = prof.kana_sei;
-    document.querySelector('#p-kana-na').value   = prof.kana_na;
-    document.querySelector('#p-sex').value       = prof.sex;
-    document.querySelector('#p-birth-y').value   = prof.birth.Y;
-    document.querySelector('#p-birth-m').value   = prof.birth.m;
-    document.querySelector('#p-birth-d').value   = prof.birth.d;
+    document.querySelector('#p-kanji-na').value = prof.kanji_na;
+    document.querySelector('#p-kana-sei').value = prof.kana_sei;
+    document.querySelector('#p-kana-na').value = prof.kana_na;
+    document.querySelector('#p-sex').value = prof.sex;
+    document.querySelector('#p-birth-y').value = prof.birth.Y;
+    document.querySelector('#p-birth-m').value = prof.birth.m;
+    document.querySelector('#p-birth-d').value = prof.birth.d;
     const cur = prof.address.current;
-    document.querySelector('#p-postal').value  = cur.postal;
-    document.querySelector('#p-pref').value    = cur.pref;
-    document.querySelector('#p-city').value    = cur.city;
-    document.querySelector('#p-street').value  = cur.street;
-    document.querySelector('#p-bldg').value    = cur.building;
-    document.querySelector('#p-tel-home').value   = prof.tel.home;
+    document.querySelector('#p-postal').value = cur.postal;
+    document.querySelector('#p-pref').value = cur.pref;
+    document.querySelector('#p-city').value = cur.city;
+    document.querySelector('#p-street').value = cur.street;
+    document.querySelector('#p-bldg').value = cur.building;
+    document.querySelector('#p-tel-home').value = prof.tel.home;
     document.querySelector('#p-tel-mobile').value = prof.tel.mobile;
-    document.querySelector('#p-email').value   = prof.email.primary;
-    document.querySelector('#p-email2').value  = prof.email.secondary;
-    document.querySelector('#p-kubun').value   = prof.school.kubun;
+    document.querySelector('#p-email').value = prof.email.primary;
+    document.querySelector('#p-email2').value = prof.email.secondary;
+    document.querySelector('#p-kubun').value = prof.school.kubun;
     document.querySelector('#p-kokushi').value = prof.school.kokushi;
     document.querySelector('#p-initial').value = prof.school.initial;
-    document.querySelector('#p-from-y').value  = prof.school.from.Y;
-    document.querySelector('#p-from-m').value  = prof.school.from.m;
-    document.querySelector('#p-to-y').value    = prof.school.to.Y;
-    document.querySelector('#p-to-m').value    = prof.school.to.m;
-    document.querySelector('#p-zemi').value    = prof.school.zemi;
-    document.querySelector('#p-club').value    = prof.school.club;
+    document.querySelector('#p-from-y').value = prof.school.from.Y;
+    document.querySelector('#p-from-m').value = prof.school.from.m;
+    document.querySelector('#p-to-y').value = prof.school.to.Y;
+    document.querySelector('#p-to-m').value = prof.school.to.m;
+    document.querySelector('#p-zemi').value = prof.school.zemi;
+    document.querySelector('#p-club').value = prof.school.club;
   }
 
   // ===== ボタン動作 =====
