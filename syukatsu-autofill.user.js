@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         Sanrio Entry Autofill Panel
-// @namespace    https://github.com/yourname/sanrio-autofill
+// @name         syukatsu Entry Autofill Panel
+// @namespace    https://github.com/Nagi-Inaba/syukatsu-autofill
 // @version      0.2.0
 // @description  浮かぶ操作パネルに入力→保存→ワンクリック自動入力（個人情報は保存先のブラウザにのみ保持）
 // @author       you
@@ -16,7 +16,7 @@
   'use strict';
 
   // ===== 設定 =====
-  const STORAGE_KEY = 'sanrio_autofill_profile';
+  const STORAGE_KEY = 'syukatsu_autofill_profile';
   const AUTO_SUBMIT = false;   // 入力後に送信を自動実行するなら true
   const DEBUG = false;
 
@@ -90,7 +90,7 @@
     return [d, '', ''];
   }
 
-  function isSanrioEntryPage() {
+  function issyukatsuEntryPage() {
     const b = document.body;
     return b && (b.id === 'entry_input' || /(\/entry\/input|\/navi\/input)/.test(location.pathname));
   }
@@ -129,8 +129,8 @@
     return ok1 || ok2;
   }
 
-  function fillProfileSanrio(profile) {
-    if (!isSanrioEntryPage()) return;
+  function fillProfilesyukatsu(profile) {
+    if (!issyukatsuEntryPage()) return;
 
     // --- 基本情報 ---
     fillFieldByName('kanji_sei', profile.kanji_sei);
@@ -253,7 +253,7 @@
   const panel = document.createElement('div');
   panel.id = 'autofill-panel';
   panel.innerHTML = `
-    <h3 style="margin:0 0 6px">Sanrio Autofill</h3>
+    <h3 style="margin:0 0 6px">syukatsu Autofill</h3>
     <div class="muted">このパネルに入力して保存 → Fill で自動入力（個人情報はブラウザに保存）</div>
 
     <h4>氏名 / カナ / 性別</h4>
@@ -437,7 +437,7 @@
         alert('保存されたプロフィールがありません。先に Save してください。');
         return;
       }
-      fillProfileSanrio(p);
+      fillProfilesyukatsu(p);
       alert('入力を試行しました。');
     }
     if (id === 'act-export') {
