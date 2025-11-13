@@ -237,8 +237,8 @@
     }
     #autofill-panel .row { display: flex; gap: 8px; }
     #autofill-panel .row > * { flex: 1; }
-    #autofill-panel .btn { padding: 8px 10px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer; background: #f6f6f6; }
-    #autofill-panel .btn.primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+    #autofill-panel .btn { padding: 8px 10px; border-radius: 8px; border: 1px solid #bbb; cursor: pointer; background: #e5e7eb; color: #111; }
+    #autofill-panel .btn.primary { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
     #autofill-panel h4 { margin: 8px 0 4px; font-size: 13px; color: #333; }
     #autofill-panel small { color: #666; }
     #autofill-panel .muted { color: #666; font-size: 12px; }
