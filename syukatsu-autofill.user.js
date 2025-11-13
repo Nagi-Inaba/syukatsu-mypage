@@ -334,10 +334,14 @@
     <div class="muted">保存先：Tampermonkey ストレージ（無ければ localStorage）</div>
   `;
   document.body.appendChild(panel);
+  panel.style.display = 'none';
 
-  toggle.addEventListener('click', () => {
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-  });
+  const togglePanelVisibility = () => {
+    const visible = window.getComputedStyle(panel).display !== 'none';
+    panel.style.display = visible ? 'none' : 'block';
+  };
+
+  toggle.addEventListener('click', togglePanelVisibility);
 
   // ===== UI <-> プロフィール =====
   function defaultProfile() {
@@ -472,10 +476,4 @@
     profileToUI(p);
   })();
 
-  // トグル
-  const toggle = document.querySelector('#autofill-toggle');
-  const panel = document.querySelector('#autofill-panel');
-  toggle.addEventListener('click', () => {
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-  });
 })();
