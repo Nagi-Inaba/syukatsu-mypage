@@ -10,6 +10,7 @@
 // @grant        GM_setValue
 // @grant        GM_addStyle
 // @run-at       document-idle
+// @install      https://github.com/Nagi-Inaba/syukatsu-mypage/raw/refs/heads/main/syukatsu-autofill.user.js
 // ==/UserScript==
 
 (function () {
