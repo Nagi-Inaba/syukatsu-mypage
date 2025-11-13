@@ -39,10 +39,10 @@ Sanrio の登録フォームに自動入力します。本リポジトリには 
 
 ## フォルダ構成
 ```
-sanrio-autofill/
+ayukatsu-autofill/
 ├─ README.md
 ├─ userscript/
-│  └─ sanrio-autofill.user.js
+│  └─ syukatsu-autofill.user.js
 └─ profiles/
    └─ sample_profile.json
 ```
