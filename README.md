@@ -1,4 +1,4 @@
-# Sanrio Entry Autofill (Tampermonkey)
+# syukatsu Entry Autofill (Tampermonkey)
 
 ブラウザ上に **操作パネル** を表示し、パネルに入力して保存したプロフィールを **ワンクリック** で
 Sanrio の登録フォームに自動入力します。本リポジトリには **個人情報は一切含まれていません**。
@@ -39,7 +39,7 @@ Sanrio の登録フォームに自動入力します。本リポジトリには 
 
 ## フォルダ構成
 ```
-ayukatsu-autofill/
+syukatsu-autofill/
 ├─ README.md
 ├─ userscript/
 │  └─ syukatsu-autofill.user.js
