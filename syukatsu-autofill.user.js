@@ -151,6 +151,55 @@
     });
   }
 
+  function setupVacationSameCheckbox() {
+    if (!issyukatsuEntryPage()) return;
+    const vacationNodes = document.querySelectorAll('.jusho_k');
+    if (!vacationNodes.length) return;
+
+    let checkbox = document.querySelector('input[name="jushosame"]');
+    if (!checkbox) {
+      const firstNode = vacationNodes[0];
+      if (!firstNode || !firstNode.parentElement) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'notice__wrap';
+      wrap.dataset.autofill = 'jushosame-toggle';
+
+      const notice = document.createElement('p');
+      notice.className = 'notice__example';
+      notice.textContent = '現在の連絡先と同じ場合はチェックしてください。';
+      wrap.appendChild(notice);
+
+      const label = document.createElement('label');
+      checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'jushosame';
+      checkbox.value = '1';
+      checkbox.checked = true;
+      label.appendChild(checkbox);
+
+      const text = document.createElement('span');
+      text.textContent = '現在の連絡先と同じ';
+      label.appendChild(text);
+      wrap.appendChild(label);
+
+      const alert = document.createElement('div');
+      alert.className = 'fb_ownAlertStrs';
+      wrap.appendChild(alert);
+
+      firstNode.parentElement.insertBefore(wrap, firstNode);
+    }
+
+    if (!checkbox) return;
+    checkbox.checked = true;
+    if (!checkbox.dataset.autofillBound) {
+      checkbox.addEventListener('change', () => {
+        setVacationAddressVisibility(!checkbox.checked);
+      });
+      checkbox.dataset.autofillBound = '1';
+    }
+    setVacationAddressVisibility(!checkbox.checked);
+  }
+
   function fillProfilesyukatsu(profile) {
     if (!issyukatsuEntryPage()) return;
 
@@ -325,6 +374,21 @@
     <input id="p-street" type="text" placeholder="町域・番地">
     <input id="p-bldg" type="text" placeholder="建物名・部屋番号">
 
+    <h4>休暇中の連絡先</h4>
+    <label style="display:flex; align-items:center; gap:6px; margin:6px 0;">
+      <input id="p-vac-same" type="checkbox" checked> <span>現住所と同じ</span>
+    </label>
+    <div id="p-vac-fields">
+      <div class="row">
+        <input id="p-vac-postal" type="text" placeholder="休暇中 郵便番号 例: 530-0001">
+        <input id="p-vac-pref" type="text" placeholder="休暇中 都道府県">
+      </div>
+      <input id="p-vac-city" type="text" placeholder="休暇中 市区郡町村">
+      <input id="p-vac-street" type="text" placeholder="休暇中 町域・番地">
+      <input id="p-vac-bldg" type="text" placeholder="休暇中 建物名・部屋番号 (任意)">
+      <input id="p-vac-tel" type="text" placeholder="休暇中 電話番号 例: 03-1234-XXXX">
+    </div>
+
     <h4>電話/メール</h4>
     <input id="p-tel-home" type="text" placeholder="自宅 例: 03-1234-5678">
     <input id="p-tel-mobile" type="text" placeholder="携帯 例: 090-1234-5678">
@@ -373,6 +437,25 @@
   document.body.appendChild(panel);
   panel.style.display = 'none';
 
+  const panelRefs = {
+    vacSame: panel.querySelector('#p-vac-same'),
+    vacFields: panel.querySelector('#p-vac-fields'),
+  };
+
+  function updateVacationPanelVisibility() {
+    if (!panelRefs.vacFields) return;
+    if (panelRefs.vacSame && panelRefs.vacSame.checked) {
+      panelRefs.vacFields.style.display = 'none';
+    } else {
+      panelRefs.vacFields.style.display = 'block';
+    }
+  }
+
+  if (panelRefs.vacSame) {
+    panelRefs.vacSame.addEventListener('change', updateVacationPanelVisibility);
+  }
+  updateVacationPanelVisibility();
+
   const togglePanelVisibility = () => {
     const visible = window.getComputedStyle(panel).display !== 'none';
     panel.style.display = visible ? 'none' : 'block';
@@ -387,7 +470,7 @@
       birth: { Y: "", m: "", d: "" },
       address: {
         current: { postal: "", pref: "", city: "", street: "", building: "" },
-        vacation: { sameAsCurrent: false, postal: "", pref: "", city: "", street: "", building: "", tel: "" }
+        vacation: { sameAsCurrent: true, postal: "", pref: "", city: "", street: "", building: "", tel: "" }
       },
       tel: { home: "", mobile: "" },
       email: { primary: "", primaryConfirm: true, secondary: "", secondaryConfirm: false },
@@ -418,7 +501,15 @@
           street: document.querySelector('#p-street').value,
           building: document.querySelector('#p-bldg').value,
         },
-        vacation: { sameAsCurrent: false, postal: "", pref: "", city: "", street: "", building: "", tel: "" }
+        vacation: {
+          sameAsCurrent: panelRefs.vacSame ? panelRefs.vacSame.checked : true,
+          postal: document.querySelector('#p-vac-postal').value,
+          pref: document.querySelector('#p-vac-pref').value,
+          city: document.querySelector('#p-vac-city').value,
+          street: document.querySelector('#p-vac-street').value,
+          building: document.querySelector('#p-vac-bldg').value,
+          tel: document.querySelector('#p-vac-tel').value,
+        }
       },
       tel: { home: document.querySelector('#p-tel-home').value, mobile: document.querySelector('#p-tel-mobile').value },
       email: { primary: document.querySelector('#p-email').value, primaryConfirm: true, secondary: document.querySelector('#p-email2').value, secondaryConfirm: !!document.querySelector('#p-email2').value },
@@ -452,6 +543,21 @@
     document.querySelector('#p-city').value = cur.city;
     document.querySelector('#p-street').value = cur.street;
     document.querySelector('#p-bldg').value = cur.building;
+    const vac = prof.address.vacation;
+    if (panelRefs.vacSame) panelRefs.vacSame.checked = vac.sameAsCurrent;
+    const vacPostal = document.querySelector('#p-vac-postal');
+    if (vacPostal) vacPostal.value = vac.postal;
+    const vacPref = document.querySelector('#p-vac-pref');
+    if (vacPref) vacPref.value = vac.pref;
+    const vacCity = document.querySelector('#p-vac-city');
+    if (vacCity) vacCity.value = vac.city;
+    const vacStreet = document.querySelector('#p-vac-street');
+    if (vacStreet) vacStreet.value = vac.street;
+    const vacBldg = document.querySelector('#p-vac-bldg');
+    if (vacBldg) vacBldg.value = vac.building;
+    const vacTel = document.querySelector('#p-vac-tel');
+    if (vacTel) vacTel.value = vac.tel;
+    updateVacationPanelVisibility();
     document.querySelector('#p-tel-home').value = prof.tel.home;
     document.querySelector('#p-tel-mobile').value = prof.tel.mobile;
     document.querySelector('#p-email').value = prof.email.primary;
@@ -516,5 +622,7 @@
     const p = await loadJSON(STORAGE_KEY, defaultProfile());
     profileToUI(p);
   })();
+
+  setupVacationSameCheckbox();
 
 })();
