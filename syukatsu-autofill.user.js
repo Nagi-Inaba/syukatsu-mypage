@@ -100,6 +100,20 @@
     const node = el(`[name="${CSS.escape(name)}"]`);
     if (!node) return false;
 
+    if (node.tagName === 'SELECT') {
+      const want = value ?? '';
+      if (want === '') {
+        node.value = '';
+        triggerInput(node);
+        return true;
+      }
+      if (!selectByTextOrValue(node, want)) {
+        node.value = want;
+        triggerInput(node);
+      }
+      return true;
+    }
+
     if (node.type === 'radio') {
       const r = el(`input[type="radio"][name="${CSS.escape(name)}"][value="${CSS.escape(String(value))}"]`);
       if (r) { r.checked = true; triggerInput(r); return true; }
@@ -128,6 +142,50 @@
     const ok1 = fillFieldByName(`${prefix}_h`, h);
     const ok2 = fillFieldByName(`${prefix}_l`, l);
     return ok1 || ok2;
+  }
+
+  function selectManualEntryOption(selectEl) {
+    if (!selectEl) return false;
+    const fallback = Array.from(selectEl.options || []).find(opt => /リストにない/.test(opt.textContent));
+    if (!fallback) return false;
+    selectEl.value = fallback.value;
+    triggerInput(selectEl);
+    return true;
+  }
+
+  function fillSchoolChoice({ selectName, textName, code, text }) {
+    const normalizedText = (text ?? '').trim();
+    const selectEl = selectName ? el(`select[name="${CSS.escape(selectName)}"]`) : null;
+    const textTargets = textName ? els(`[name="${CSS.escape(textName)}"]`) : [];
+
+    let status = 'none';
+    if (selectEl) {
+      if (code && selectByTextOrValue(selectEl, code)) {
+        status = 'match';
+      } else if (normalizedText && selectByTextOrValue(selectEl, normalizedText)) {
+        status = 'match';
+      } else if (normalizedText && selectManualEntryOption(selectEl)) {
+        status = 'fallback';
+      }
+    }
+
+    if (normalizedText && textTargets.length) {
+      if (!selectEl || status !== 'match') {
+        textTargets.forEach((field) => {
+          field.value = normalizedText;
+          triggerInput(field);
+        });
+      }
+    }
+
+    if (!normalizedText && textTargets.length) {
+      textTargets.forEach((field) => {
+        if (field.value) {
+          field.value = '';
+          triggerInput(field);
+        }
+      });
+    }
   }
 
   function setVacationAddressVisibility(visible) {
@@ -275,12 +333,9 @@
     if (sch.kokushi) fillFieldByName('kokushi', sch.kokushi);
     if (sch.initial) fillFieldByName('initial', sch.initial);
 
-    if (sch.dcd) fillFieldByName('dcd', sch.dcd);
-    if (sch.dname) fillFieldByName('dname', sch.dname);
-    if (sch.bcd) fillFieldByName('bcd', sch.bcd);
-    if (sch.bname) fillFieldByName('bname', sch.bname);
-    if (sch.paxcd) fillFieldByName('paxcd', sch.paxcd);
-    if (sch.kname) fillFieldByName('kname', sch.kname);
+    fillSchoolChoice({ selectName: 'dcd', textName: 'dname', code: sch.dcd, text: sch.dname });
+    fillSchoolChoice({ selectName: 'bcd', textName: 'bname', code: sch.bcd, text: sch.bname });
+    fillSchoolChoice({ selectName: 'paxcd', textName: 'kname', code: sch.paxcd, text: sch.kname });
 
     if (sch.from) {
       fillFieldByName('school_from_Y', sch.from.Y);
@@ -410,6 +465,18 @@
     </div>
     <input id="p-initial" type="text" placeholder="学校名の頭文字（全角カナ1文字）">
     <div class="row">
+      <input id="p-dname" type="text" placeholder="学校名（例: 大阪工業大学）">
+      <input id="p-dcd" type="text" placeholder="学校コード（任意）">
+    </div>
+    <div class="row">
+      <input id="p-bname" type="text" placeholder="学部・研究科名（例: 知的財産研究科）">
+      <input id="p-bcd" type="text" placeholder="学部コード（任意）">
+    </div>
+    <div class="row">
+      <input id="p-kname" type="text" placeholder="学科・専攻名（例: 知的財産専攻）">
+      <input id="p-paxcd" type="text" placeholder="学科コード（任意）">
+    </div>
+    <div class="row">
       <input id="p-from-y" type="text" placeholder="入学年">
       <input id="p-from-m" type="text" placeholder="入学月">
     </div>
@@ -517,6 +584,12 @@
         kubun: document.querySelector('#p-kubun').value,
         kokushi: document.querySelector('#p-kokushi').value,
         initial: document.querySelector('#p-initial').value,
+        dcd: document.querySelector('#p-dcd').value,
+        dname: document.querySelector('#p-dname').value,
+        bcd: document.querySelector('#p-bcd').value,
+        bname: document.querySelector('#p-bname').value,
+        paxcd: document.querySelector('#p-paxcd').value,
+        kname: document.querySelector('#p-kname').value,
         from: { Y: document.querySelector('#p-from-y').value, m: document.querySelector('#p-from-m').value },
         to: { Y: document.querySelector('#p-to-y').value, m: document.querySelector('#p-to-m').value },
         zemi: document.querySelector('#p-zemi').value,
@@ -565,6 +638,18 @@
     document.querySelector('#p-kubun').value = prof.school.kubun;
     document.querySelector('#p-kokushi').value = prof.school.kokushi;
     document.querySelector('#p-initial').value = prof.school.initial;
+    const schDcd = document.querySelector('#p-dcd');
+    if (schDcd) schDcd.value = prof.school.dcd;
+    const schDname = document.querySelector('#p-dname');
+    if (schDname) schDname.value = prof.school.dname;
+    const schBcd = document.querySelector('#p-bcd');
+    if (schBcd) schBcd.value = prof.school.bcd;
+    const schBname = document.querySelector('#p-bname');
+    if (schBname) schBname.value = prof.school.bname;
+    const schPaxcd = document.querySelector('#p-paxcd');
+    if (schPaxcd) schPaxcd.value = prof.school.paxcd;
+    const schKname = document.querySelector('#p-kname');
+    if (schKname) schKname.value = prof.school.kname;
     document.querySelector('#p-from-y').value = prof.school.from.Y;
     document.querySelector('#p-from-m').value = prof.school.from.m;
     document.querySelector('#p-to-y').value = prof.school.to.Y;
