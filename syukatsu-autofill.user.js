@@ -47,6 +47,17 @@
     const want = String(desired ?? '').trim();
     if (!want) return false;
 
+    const currentValue = String(selectEl.value ?? '');
+    if (currentValue !== '') {
+      if (currentValue === want) return true;
+      const selectedOption = selectEl.selectedOptions && selectEl.selectedOptions[0];
+      if (selectedOption) {
+        const norm = (s) => String(s || '').replace(/\s+/g, '');
+        if (norm(selectedOption.textContent) === norm(want)) return true;
+      }
+      return false;
+    }
+
     // value一致
     for (const opt of selectEl.options) {
       if (String(opt.value) === want) {
@@ -100,31 +111,53 @@
     const node = el(`[name="${CSS.escape(name)}"]`);
     if (!node) return false;
 
+    const desired = value == null ? '' : String(value);
+
     if (node.tagName === 'SELECT') {
-      const want = value ?? '';
-      if (want === '') {
-        node.value = '';
-        triggerInput(node);
-        return true;
+      const currentValue = String(node.value ?? '');
+      if (currentValue !== '') {
+        return currentValue === desired;
       }
-      if (!selectByTextOrValue(node, want)) {
-        node.value = want;
+      if (!desired) return false;
+      if (!selectByTextOrValue(node, desired)) {
+        node.value = desired;
         triggerInput(node);
       }
       return true;
     }
 
     if (node.type === 'radio') {
-      const r = el(`input[type="radio"][name="${CSS.escape(name)}"][value="${CSS.escape(String(value))}"]`);
-      if (r) { r.checked = true; triggerInput(r); return true; }
+      const radios = els(`input[type="radio"][name="${CSS.escape(name)}"]`);
+      if (!radios.length || !desired) return false;
+      const existing = radios.find(r => r.checked);
+      if (existing) {
+        return existing.value === desired;
+      }
+      const target = radios.find(r => String(r.value) === desired);
+      if (target) {
+        target.checked = true;
+        triggerInput(target);
+        return true;
+      }
       return false;
     }
     if (node.type === 'checkbox') {
-      node.checked = !!value;
-      triggerInput(node);
-      return true;
+      if (desired) {
+        if (!node.checked) {
+          node.checked = true;
+          triggerInput(node);
+        }
+        return true;
+      }
+      return node.checked === false;
     }
-    node.value = value ?? '';
+
+    const current = String(node.value ?? '');
+    if (current.trim() !== '') {
+      return current === desired;
+    }
+    if (!desired) return false;
+    node.value = desired;
     triggerInput(node);
     return true;
   }
@@ -145,7 +178,7 @@
   }
 
   function selectManualEntryOption(selectEl) {
-    if (!selectEl) return false;
+    if (!selectEl || String(selectEl.value ?? '') !== '') return false;
     const fallback = Array.from(selectEl.options || []).find(opt => /リストにない/.test(opt.textContent));
     if (!fallback) return false;
     selectEl.value = fallback.value;
@@ -172,19 +205,12 @@
     if (normalizedText && textTargets.length) {
       if (!selectEl || status !== 'match') {
         textTargets.forEach((field) => {
-          field.value = normalizedText;
-          triggerInput(field);
+          if (!String(field.value || '').trim()) {
+            field.value = normalizedText;
+            triggerInput(field);
+          }
         });
       }
-    }
-
-    if (!normalizedText && textTargets.length) {
-      textTargets.forEach((field) => {
-        if (field.value) {
-          field.value = '';
-          triggerInput(field);
-        }
-      });
     }
   }
 
@@ -294,7 +320,7 @@
     const vac = profile.address?.vacation || {};
     if (vac.sameAsCurrent) {
       const same = document.querySelector('input[name="jushosame"]');
-      if (same) {
+      if (same && !same.checked) {
         same.checked = true;
         triggerInput(same);
       }
@@ -302,8 +328,19 @@
     } else {
       const same = document.querySelector('input[name="jushosame"]');
       if (same) {
-        same.checked = false;
-        triggerInput(same);
+        const vacationFieldNames = [
+          'yubink_h', 'yubink_l', 'jushok1', 'jushok2', 'jushok3',
+          'telk_h', 'telk_m', 'telk_l',
+        ];
+        const needsVacationFill = vacationFieldNames.some((fieldName) => {
+          const field = el(`[name="${CSS.escape(fieldName)}"]`);
+          if (!field) return false;
+          return !String(field.value || '').trim();
+        });
+        if (same.checked && needsVacationFill) {
+          same.checked = false;
+          triggerInput(same);
+        }
       }
       setVacationAddressVisibility(true);
       if (vac.postal) fillSplitPostal('yubink', vac.postal);
