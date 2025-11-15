@@ -41,6 +41,26 @@
   };
   const log = (...a) => DEBUG && console.log('[autofill]', ...a);
 
+  function isElementInteractive(node) {
+    if (!node || !(node instanceof Element)) return false;
+    if (node.hasAttribute('aria-hidden') && node.getAttribute('aria-hidden') === 'true') return false;
+    if (node.disabled) return false;
+    const style = window.getComputedStyle(node);
+    if (!style) return false;
+    if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
+    if (node.type === 'hidden') return false;
+    const rect = node.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) return false;
+    return true;
+  }
+
+  function getInteractiveFieldByName(name) {
+    const field = el(`[name="${CSS.escape(name)}"]`);
+    if (!field) return null;
+    if (!isElementInteractive(field)) return null;
+    return field;
+  }
+
   // ===== Select操作（テキスト or 値一致） =====
   function selectByTextOrValue(selectEl, desired) {
     if (!selectEl) return false;
@@ -191,6 +211,10 @@
     const selectEl = selectName ? el(`select[name="${CSS.escape(selectName)}"]`) : null;
     const textTargets = textName ? els(`[name="${CSS.escape(textName)}"]`) : [];
 
+    if (selectEl && !isElementInteractive(selectEl)) {
+      return 'pending';
+    }
+
     let status = 'none';
     if (selectEl) {
       if (code && selectByTextOrValue(selectEl, code)) {
@@ -199,19 +223,208 @@
         status = 'match';
       } else if (normalizedText && selectManualEntryOption(selectEl)) {
         status = 'fallback';
+      } else {
+        status = 'available';
       }
+    } else {
+      status = 'missing';
     }
 
     if (normalizedText && textTargets.length) {
-      if (!selectEl || status !== 'match') {
-        textTargets.forEach((field) => {
-          if (!String(field.value || '').trim()) {
-            field.value = normalizedText;
-            triggerInput(field);
-          }
-        });
+      const filledText = textTargets.some((field) => {
+        if (!isElementInteractive(field)) return false;
+        if (String(field.value || '').trim()) return false;
+        field.value = normalizedText;
+        triggerInput(field);
+        return true;
+      });
+      if (filledText && status !== 'match' && status !== 'fallback') {
+        status = 'text';
       }
     }
+
+    return status;
+  }
+
+  function findSchoolSearchButton(initialInput) {
+    const searchTextMatcher = (node) => {
+      const label = (node.textContent || node.value || '').trim();
+      return /学校検索/.test(label);
+    };
+
+    if (initialInput) {
+      const container = initialInput.closest('form') || initialInput.closest('div, section, td, tr, table');
+      if (container) {
+        const btn = Array.from(container.querySelectorAll('button, input[type="button"], input[type="submit"], a'))
+          .find(searchTextMatcher);
+        if (btn && isElementInteractive(btn)) return btn;
+      }
+    }
+
+    const fallback = Array.from(document.querySelectorAll('button, input[type="button"], input[type="submit"], a'))
+      .find((node) => searchTextMatcher(node) && isElementInteractive(node));
+    return fallback || null;
+  }
+
+  let schoolAutomationTimer = null;
+
+  function startSchoolAutomation(schoolProfile) {
+    if (!schoolProfile) return;
+
+    if (schoolAutomationTimer) {
+      clearInterval(schoolAutomationTimer);
+      schoolAutomationTimer = null;
+    }
+
+    const state = {
+      kubun: !schoolProfile.kubun,
+      kokushi: !schoolProfile.kokushi,
+      initial: !schoolProfile.initial,
+      searched: !schoolProfile.initial && (!schoolProfile.dcd && !schoolProfile.dname),
+      school: !schoolProfile.dcd && !schoolProfile.dname,
+      faculty: !schoolProfile.bcd && !schoolProfile.bname,
+      department: !schoolProfile.paxcd && !schoolProfile.kname,
+      searchAttempts: 0,
+    };
+
+    const hasSchoolOptions = () => {
+      const selectEl = getInteractiveFieldByName('dcd');
+      if (!selectEl) return false;
+      return Array.from(selectEl.options || []).length > 0;
+    };
+
+    const ensureKubun = () => {
+      if (state.kubun && state.kokushi) return true;
+      let allHandled = true;
+      if (!state.kubun && schoolProfile.kubun) {
+        const field = getInteractiveFieldByName('kubun');
+        if (!field) {
+          allHandled = false;
+        } else if (selectByTextOrValue(field, schoolProfile.kubun)) {
+          state.kubun = true;
+        } else {
+          allHandled = false;
+        }
+      } else {
+        state.kubun = true;
+      }
+
+      if (!state.kokushi && schoolProfile.kokushi) {
+        const field = getInteractiveFieldByName('kokushi');
+        if (!field) {
+          allHandled = false;
+        } else if (selectByTextOrValue(field, schoolProfile.kokushi)) {
+          state.kokushi = true;
+        } else {
+          allHandled = false;
+        }
+      } else {
+        state.kokushi = true;
+      }
+
+      return allHandled && state.kubun && state.kokushi;
+    };
+
+    const ensureInitialAndSearch = () => {
+      if (state.initial && state.searched) return true;
+
+      if (!state.initial && schoolProfile.initial) {
+        const input = getInteractiveFieldByName('initial');
+        if (!input) {
+          return false;
+        }
+        const desired = String(schoolProfile.initial);
+        if (String(input.value || '') !== desired) {
+          input.value = desired;
+          triggerInput(input);
+        }
+        state.initial = true;
+      } else {
+        state.initial = true;
+      }
+
+      if (!state.searched) {
+        if (!schoolProfile.dcd && !schoolProfile.dname) {
+          state.searched = true;
+          return true;
+        }
+        if (hasSchoolOptions()) {
+          state.searched = true;
+          return true;
+        }
+        const input = getInteractiveFieldByName('initial');
+        const button = findSchoolSearchButton(input);
+        if (!button) {
+          return false;
+        }
+        button.click();
+        state.searchAttempts += 1;
+        state.searched = true;
+        return true;
+      }
+
+      if ((schoolProfile.dcd || schoolProfile.dname) && !hasSchoolOptions() && state.searchAttempts > 0 && state.searchAttempts < 3) {
+        const input = getInteractiveFieldByName('initial');
+        const button = findSchoolSearchButton(input);
+        if (!button) return false;
+        button.click();
+        state.searchAttempts += 1;
+        return false;
+      }
+
+      return state.initial && state.searched;
+    };
+
+    const ensureSchoolSelection = () => {
+      if (state.school) return true;
+      const result = fillSchoolChoice({ selectName: 'dcd', textName: 'dname', code: schoolProfile.dcd, text: schoolProfile.dname });
+      if (result === 'match' || result === 'fallback' || result === 'text') {
+        state.school = true;
+        return true;
+      }
+      if (result === 'pending') return false;
+      if (result === 'missing' || result === 'available') return false;
+      return false;
+    };
+
+    const ensureFaculty = () => {
+      if (state.faculty) return true;
+      const result = fillSchoolChoice({ selectName: 'bcd', textName: 'bname', code: schoolProfile.bcd, text: schoolProfile.bname });
+      if (result === 'match' || result === 'fallback' || result === 'text') {
+        state.faculty = true;
+        return true;
+      }
+      if (result === 'pending') return false;
+      return false;
+    };
+
+    const ensureDepartment = () => {
+      if (state.department) return true;
+      const result = fillSchoolChoice({ selectName: 'paxcd', textName: 'kname', code: schoolProfile.paxcd, text: schoolProfile.kname });
+      if (result === 'match' || result === 'fallback' || result === 'text') {
+        state.department = true;
+        return true;
+      }
+      if (result === 'pending') return false;
+      return false;
+    };
+
+    const run = () => {
+      let allDone = true;
+      if (!ensureKubun()) allDone = false;
+      if (!ensureInitialAndSearch()) allDone = false;
+      if (!ensureSchoolSelection()) allDone = false;
+      if (!ensureFaculty()) allDone = false;
+      if (!ensureDepartment()) allDone = false;
+
+      if (allDone) {
+        clearInterval(schoolAutomationTimer);
+        schoolAutomationTimer = null;
+      }
+    };
+
+    run();
+    schoolAutomationTimer = setInterval(run, 600);
   }
 
   function setVacationAddressVisibility(visible) {
@@ -366,13 +579,7 @@
 
     // --- 学校情報 ---
     const sch = profile.school || {};
-    if (sch.kubun) fillFieldByName('kubun', sch.kubun);
-    if (sch.kokushi) fillFieldByName('kokushi', sch.kokushi);
-    if (sch.initial) fillFieldByName('initial', sch.initial);
-
-    fillSchoolChoice({ selectName: 'dcd', textName: 'dname', code: sch.dcd, text: sch.dname });
-    fillSchoolChoice({ selectName: 'bcd', textName: 'bname', code: sch.bcd, text: sch.bname });
-    fillSchoolChoice({ selectName: 'paxcd', textName: 'kname', code: sch.paxcd, text: sch.kname });
+    startSchoolAutomation(sch);
 
     if (sch.from) {
       fillFieldByName('school_from_Y', sch.from.Y);
