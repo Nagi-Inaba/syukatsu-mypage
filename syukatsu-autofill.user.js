@@ -599,63 +599,93 @@
   }
 
   function profileToUI(p) {
-    const prof = Object.assign(defaultProfile(), p || {});
-    document.querySelector('#p-kanji-sei').value = prof.kanji_sei;
-    document.querySelector('#p-kanji-na').value = prof.kanji_na;
-    document.querySelector('#p-kana-sei').value = prof.kana_sei;
-    document.querySelector('#p-kana-na').value = prof.kana_na;
-    document.querySelector('#p-roma-sei').value = prof.roma_sei;
-    document.querySelector('#p-roma-na').value = prof.roma_na;
-    document.querySelector('#p-sex').value = prof.sex;
-    document.querySelector('#p-birth-y').value = prof.birth.Y;
-    document.querySelector('#p-birth-m').value = prof.birth.m;
-    document.querySelector('#p-birth-d').value = prof.birth.d;
+    const defaults = defaultProfile();
+    const prof = {
+      ...defaults,
+      ...(p || {}),
+      birth: { ...defaults.birth, ...((p && p.birth) || {}) },
+      address: {
+        current: {
+          ...defaults.address.current,
+          ...((p && p.address && p.address.current) || {}),
+        },
+        vacation: {
+          ...defaults.address.vacation,
+          ...((p && p.address && p.address.vacation) || {}),
+        },
+      },
+      tel: { ...defaults.tel, ...((p && p.tel) || {}) },
+      email: { ...defaults.email, ...((p && p.email) || {}) },
+      school: {
+        ...defaults.school,
+        ...((p && p.school) || {}),
+        from: {
+          ...defaults.school.from,
+          ...((p && p.school && p.school.from) || {}),
+        },
+        to: {
+          ...defaults.school.to,
+          ...((p && p.school && p.school.to) || {}),
+        },
+      },
+    };
+
+    document.querySelector('#p-kanji-sei').value = prof.kanji_sei ?? '';
+    document.querySelector('#p-kanji-na').value = prof.kanji_na ?? '';
+    document.querySelector('#p-kana-sei').value = prof.kana_sei ?? '';
+    document.querySelector('#p-kana-na').value = prof.kana_na ?? '';
+    document.querySelector('#p-roma-sei').value = prof.roma_sei ?? '';
+    document.querySelector('#p-roma-na').value = prof.roma_na ?? '';
+    document.querySelector('#p-sex').value = prof.sex ?? '';
+    document.querySelector('#p-birth-y').value = prof.birth.Y ?? '';
+    document.querySelector('#p-birth-m').value = prof.birth.m ?? '';
+    document.querySelector('#p-birth-d').value = prof.birth.d ?? '';
     const cur = prof.address.current;
-    document.querySelector('#p-postal').value = cur.postal;
-    document.querySelector('#p-pref').value = cur.pref;
-    document.querySelector('#p-city').value = cur.city;
-    document.querySelector('#p-street').value = cur.street;
-    document.querySelector('#p-bldg').value = cur.building;
+    document.querySelector('#p-postal').value = cur.postal ?? '';
+    document.querySelector('#p-pref').value = cur.pref ?? '';
+    document.querySelector('#p-city').value = cur.city ?? '';
+    document.querySelector('#p-street').value = cur.street ?? '';
+    document.querySelector('#p-bldg').value = cur.building ?? '';
     const vac = prof.address.vacation;
     if (panelRefs.vacSame) panelRefs.vacSame.checked = vac.sameAsCurrent;
     const vacPostal = document.querySelector('#p-vac-postal');
-    if (vacPostal) vacPostal.value = vac.postal;
+    if (vacPostal) vacPostal.value = vac.postal ?? '';
     const vacPref = document.querySelector('#p-vac-pref');
-    if (vacPref) vacPref.value = vac.pref;
+    if (vacPref) vacPref.value = vac.pref ?? '';
     const vacCity = document.querySelector('#p-vac-city');
-    if (vacCity) vacCity.value = vac.city;
+    if (vacCity) vacCity.value = vac.city ?? '';
     const vacStreet = document.querySelector('#p-vac-street');
-    if (vacStreet) vacStreet.value = vac.street;
+    if (vacStreet) vacStreet.value = vac.street ?? '';
     const vacBldg = document.querySelector('#p-vac-bldg');
-    if (vacBldg) vacBldg.value = vac.building;
+    if (vacBldg) vacBldg.value = vac.building ?? '';
     const vacTel = document.querySelector('#p-vac-tel');
-    if (vacTel) vacTel.value = vac.tel;
+    if (vacTel) vacTel.value = vac.tel ?? '';
     updateVacationPanelVisibility();
-    document.querySelector('#p-tel-home').value = prof.tel.home;
-    document.querySelector('#p-tel-mobile').value = prof.tel.mobile;
-    document.querySelector('#p-email').value = prof.email.primary;
-    document.querySelector('#p-email2').value = prof.email.secondary;
-    document.querySelector('#p-kubun').value = prof.school.kubun;
-    document.querySelector('#p-kokushi').value = prof.school.kokushi;
-    document.querySelector('#p-initial').value = prof.school.initial;
+    document.querySelector('#p-tel-home').value = prof.tel.home ?? '';
+    document.querySelector('#p-tel-mobile').value = prof.tel.mobile ?? '';
+    document.querySelector('#p-email').value = prof.email.primary ?? '';
+    document.querySelector('#p-email2').value = prof.email.secondary ?? '';
+    document.querySelector('#p-kubun').value = prof.school.kubun ?? '';
+    document.querySelector('#p-kokushi').value = prof.school.kokushi ?? '';
+    document.querySelector('#p-initial').value = prof.school.initial ?? '';
     const schDcd = document.querySelector('#p-dcd');
-    if (schDcd) schDcd.value = prof.school.dcd;
+    if (schDcd) schDcd.value = prof.school.dcd ?? '';
     const schDname = document.querySelector('#p-dname');
-    if (schDname) schDname.value = prof.school.dname;
+    if (schDname) schDname.value = prof.school.dname ?? '';
     const schBcd = document.querySelector('#p-bcd');
-    if (schBcd) schBcd.value = prof.school.bcd;
+    if (schBcd) schBcd.value = prof.school.bcd ?? '';
     const schBname = document.querySelector('#p-bname');
-    if (schBname) schBname.value = prof.school.bname;
+    if (schBname) schBname.value = prof.school.bname ?? '';
     const schPaxcd = document.querySelector('#p-paxcd');
-    if (schPaxcd) schPaxcd.value = prof.school.paxcd;
+    if (schPaxcd) schPaxcd.value = prof.school.paxcd ?? '';
     const schKname = document.querySelector('#p-kname');
-    if (schKname) schKname.value = prof.school.kname;
-    document.querySelector('#p-from-y').value = prof.school.from.Y;
-    document.querySelector('#p-from-m').value = prof.school.from.m;
-    document.querySelector('#p-to-y').value = prof.school.to.Y;
-    document.querySelector('#p-to-m').value = prof.school.to.m;
-    document.querySelector('#p-zemi').value = prof.school.zemi;
-    document.querySelector('#p-club').value = prof.school.club;
+    if (schKname) schKname.value = prof.school.kname ?? '';
+    document.querySelector('#p-from-y').value = prof.school.from.Y ?? '';
+    document.querySelector('#p-from-m').value = prof.school.from.m ?? '';
+    document.querySelector('#p-to-y').value = prof.school.to.Y ?? '';
+    document.querySelector('#p-to-m').value = prof.school.to.m ?? '';
+    document.querySelector('#p-zemi').value = prof.school.zemi ?? '';
+    document.querySelector('#p-club').value = prof.school.club ?? '';
   }
 
   // ===== ボタン動作 =====
