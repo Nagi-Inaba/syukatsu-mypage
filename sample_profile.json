@@ -20,7 +20,7 @@
       "building": ""
     },
     "vacation": {
-      "sameAsCurrent": false,
+      "sameAsCurrent": true,
       "postal": "",
       "pref": "",
       "city": "",
