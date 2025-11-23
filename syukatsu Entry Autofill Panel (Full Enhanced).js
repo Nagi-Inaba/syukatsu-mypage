@@ -17,6 +17,7 @@
   // ===== 設定・定数 =====
   const STORAGE_KEY = 'syukatsu_autofill_data';
   const DEBUG = true;
+  const FILL_FEEDBACK_MS = 1600;
 
   // ===== ユーティリティ =====
   const log = (...a) => DEBUG && console.log('[Autofill]', ...a);
@@ -61,7 +62,20 @@
     if (!str) return defaultData;
     try {
       const data = JSON.parse(str);
-      return { ...defaultData, ...data, profile: { ...defaultData.profile, ...data.profile } };
+      const normalizedPatterns = {};
+      Object.entries(data.patterns || {}).forEach(([name, pattern]) => {
+        if (pattern && typeof pattern === 'object' && pattern.mapping) {
+          normalizedPatterns[name] = { ...pattern, learnedFields: pattern.learnedFields || [] };
+        } else {
+          normalizedPatterns[name] = { mapping: pattern || {}, learnedFields: [] };
+        }
+      });
+      return {
+        ...defaultData,
+        ...data,
+        profile: { ...defaultData.profile, ...data.profile },
+        patterns: normalizedPatterns
+      };
     } catch (e) {
       return defaultData;
     }
@@ -87,6 +101,37 @@
 
   function getValueByPath(obj, path) {
     return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  }
+
+  function getLabelText(node) {
+    if (!node) return '';
+    const id = node.id;
+    if (id) {
+      const label = document.querySelector(`label[for="${CSS.escape(id)}"]`);
+      if (label) return label.textContent.trim();
+    }
+    if (node.closest('label')) return node.closest('label').textContent.trim();
+    const prevText = node.previousElementSibling && node.previousElementSibling.textContent;
+    if (prevText) return prevText.trim();
+    const parentLabel = node.parentElement && node.parentElement.querySelector('label');
+    if (parentLabel) return parentLabel.textContent.trim();
+    return node.placeholder || '';
+  }
+
+  function buildSelector(node) {
+    if (!node) return '';
+    if (node.id) return `#${CSS.escape(node.id)}`;
+    if (node.name) return `[name="${CSS.escape(node.name)}"]`;
+    if (node.classList.length) return `${node.tagName.toLowerCase()}.${Array.from(node.classList).map(c => CSS.escape(c)).join('.')}`;
+    const path = [];
+    let elNode = node;
+    while (elNode && elNode !== document.body) {
+      const siblings = Array.from(elNode.parentElement ? elNode.parentElement.children : []);
+      const index = siblings.indexOf(elNode) + 1;
+      path.unshift(`${elNode.tagName.toLowerCase()}:nth-child(${index})`);
+      elNode = elNode.parentElement;
+    }
+    return path.length ? path.join(' > ') : '';
   }
 
   function defaultProfile() {
@@ -117,11 +162,11 @@
   function learnPage(profile) {
     const flatProfile = flattenObject(profile);
     const mapping = {};
+    const learnedFields = [];
     const inputs = document.querySelectorAll('input, select, textarea');
 
     let learnedCount = 0;
 
-    // for...of ループに変更（警告対策）
     for (const node of inputs) {
       if (!isInteractive(node)) continue;
 
@@ -133,19 +178,24 @@
       val = String(val || '').trim();
       if (!val) continue;
 
+      const labelText = getLabelText(node);
+      const selector = buildSelector(node);
+      learnedFields.push({
+        label: labelText,
+        selector,
+        value: val,
+        name: node.name || '',
+        placeholder: node.placeholder || '',
+        tag: node.tagName.toLowerCase(),
+        type: node.type || ''
+      });
+
       for (const [key, profVal] of Object.entries(flatProfile)) {
         const isShort = String(profVal).length <= 1;
         const isSafeKey = key.includes('sex') || key.includes('kubun') || key.includes('kokushi');
         if (isShort && !isSafeKey) continue;
 
         if (String(profVal).trim() === val) {
-          let selector = '';
-          if (node.id) {
-            selector = `#${CSS.escape(node.id)}`;
-          } else if (node.name) {
-            selector = `[name="${CSS.escape(node.name)}"]`;
-          }
-
           if (selector) {
             mapping[key] = selector;
             learnedCount++;
@@ -153,11 +203,12 @@
         }
       }
     }
-    return { mapping, count: learnedCount };
+    return { mapping, learnedFields, count: learnedCount };
   }
 
   // ===== コアロジック 2: 適用 (Fill) =====
-  function fillByPattern(profile, pattern) {
+  async function fillByPattern(profile, patternEntry) {
+    const pattern = patternEntry.mapping || patternEntry;
     let count = 0;
 
     for (const [key, selector] of Object.entries(pattern)) {
@@ -166,7 +217,6 @@
 
       const nodes = document.querySelectorAll(selector);
 
-      // for...of ループに変更（警告対策）
       for (const node of nodes) {
         if (!isInteractive(node)) continue;
 
@@ -218,6 +268,11 @@
         }
       }
     }
+
+    if (patternEntry.learnedFields && patternEntry.learnedFields.length) {
+      count += await fillLearnedFields(profile, patternEntry.learnedFields);
+    }
+    count += await fillSchoolSequence(profile);
     return count;
   }
 
@@ -234,6 +289,114 @@
                  count++;
             }
         }
+    }
+    return count;
+  }
+
+  async function waitForCondition(cond, timeout = 5000, interval = 150) {
+    const start = Date.now();
+    return new Promise(resolve => {
+      const tick = () => {
+        if (cond()) return resolve(true);
+        if (Date.now() - start > timeout) return resolve(false);
+        setTimeout(tick, interval);
+      };
+      tick();
+    });
+  }
+
+  function findByLabel(labelText) {
+    if (!labelText) return null;
+    const labels = Array.from(document.querySelectorAll('label'));
+    const label = labels.find(l => l.textContent && l.textContent.trim().includes(labelText.trim()));
+    if (label) {
+      if (label.htmlFor) return document.getElementById(label.htmlFor);
+      const input = label.querySelector('input, select, textarea');
+      if (input) return input;
+    }
+    const candidates = Array.from(document.querySelectorAll('input, select, textarea'));
+    return candidates.find(c => getLabelText(c).includes(labelText.trim()));
+  }
+
+  async function fillLearnedFields(profile, learnedFields) {
+    let count = 0;
+    const flatProfile = flattenObject(profile);
+    for (const field of learnedFields) {
+      const { label, selector, value } = field;
+      const node = document.querySelector(selector) || findByLabel(label);
+      if (!node || !isInteractive(node)) continue;
+      let targetVal = value || '';
+      if (!targetVal && label) {
+        const hit = Object.entries(flatProfile).find(([k]) => label.toLowerCase().includes(k.split('.').pop().toLowerCase()));
+        if (hit) targetVal = hit[1];
+      }
+      if (!targetVal) continue;
+
+      if (node.tagName === 'SELECT') {
+        let found = false;
+        for (const opt of node.options) {
+          if (opt.value === targetVal || opt.textContent.trim() === targetVal) {
+            node.value = opt.value;
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          setNativeValue(node, node.value);
+          count++;
+        }
+      } else if (node.type === 'radio' || node.type === 'checkbox') {
+        if (node.value === targetVal) {
+          node.checked = true;
+          setNativeValue(node, node.value);
+          count++;
+        }
+      } else {
+        setNativeValue(node, targetVal);
+        count++;
+      }
+    }
+    return count;
+  }
+
+  async function fillSchoolSequence(profile) {
+    const school = profile.school || {};
+    const steps = [
+      { key: 'kubun', query: 'select[name*="kubun"], select[id*="kubun"], select[name*="shubetsu"]' },
+      { key: 'kokushi', query: 'select[name*="kokushi"], select[id*="kokushi"], select[name*="kokusai"], select[name*="public"]' },
+      { key: 'initial', query: 'input[name*="initial"], input[id*="initial"], input[name*="initials"], input[name*="kibana"]' },
+      { key: 'dname', query: 'select[name*="dname"], select[id*="dname"], select[name*="school"], select[name*="daigaku"], input[name*="school"], input[name*="daigaku"]' },
+      { key: 'bname', query: 'select[name*="bname"], select[id*="bname"], select[name*="gakubu"], input[name*="gakubu"]' },
+      { key: 'kname', query: 'select[name*="kname"], select[id*="kname"], select[name*="gakka"], input[name*="gakka"], input[name*="senkou"]' }
+    ];
+
+    let count = 0;
+
+    for (const step of steps) {
+      const val = school[step.key];
+      if (!val) continue;
+      const node = document.querySelector(step.query);
+      if (!node || !isInteractive(node)) continue;
+
+      if (node.tagName === 'SELECT') {
+        let matched = false;
+        for (const opt of node.options) {
+          if (opt.value === val || opt.textContent.trim() === val) {
+            node.value = opt.value;
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) continue;
+        setNativeValue(node, node.value);
+        count++;
+        await waitForCondition(() => node.options.length > 0, 1200);
+      } else {
+        setNativeValue(node, val);
+        count++;
+        node.dispatchEvent(new Event('keyup', { bubbles: true }));
+        await waitForCondition(() => true, 350);
+      }
     }
     return count;
   }
@@ -270,6 +433,9 @@
     .af-btn-primary:hover { background: #1d4ed8; }
     .af-btn-outline { background: #fff; border: 1px solid #cbd5e1; color: #333; }
     .af-msg { margin-top: 8px; font-size: 12px; color: #059669; text-align: center; min-height: 1.5em; }
+    .af-btn-running { background: #0f172a !important; color: #fff !important; animation: pulse 0.8s infinite; }
+    .af-btn-done { background: #16a34a !important; color: #fff !important; }
+    @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
   `);
 
   const toggleBtn = document.createElement('button');
@@ -288,6 +454,7 @@
     <div class="af-tabs">
       <div class="af-tab active" data-target="tab-fill">実行 / パターン</div>
       <div class="af-tab" data-target="tab-profile">プロフィール設定</div>
+      <div class="af-tab" data-target="tab-manage">パターン管理</div>
     </div>
     <div id="tab-fill" class="af-content active">
       <div class="af-label">適用するパターン</div>
@@ -327,6 +494,15 @@
       <button id="act-save-profile" class="af-btn af-btn-primary">プロフィール保存</button>
       <button id="act-export-json" class="af-btn af-btn-outline">JSON書き出し(Console)</button>
     </div>
+    <div id="tab-manage" class="af-content">
+      <div class="af-label">保存済みパターン一覧</div>
+      <select id="af-manage-select" class="af-input"></select>
+      <button id="act-delete-pattern" class="af-btn af-btn-outline">選択パターンを削除</button>
+      <div class="af-label">内容（JSON編集可）</div>
+      <textarea id="af-pattern-json" class="af-input" style="min-height:160px; font-family:monospace;"></textarea>
+      <button id="act-save-pattern" class="af-btn af-btn-primary">JSONを保存（上書き）</button>
+      <div class="af-msg" id="af-manage-msg"></div>
+    </div>
   `;
   document.body.appendChild(panel);
 
@@ -340,7 +516,19 @@
       els('.af-content').forEach(c => c.classList.remove('active'));
       tab.classList.add('active');
       el(`#${tab.dataset.target}`).classList.add('active');
+      if (tab.dataset.target === 'tab-manage') {
+        (async () => {
+          const data = await loadData();
+          refreshManagePanel(data, data.savedSettings?.lastPattern);
+        })();
+      }
     });
+  });
+
+  el('#af-pattern-select').addEventListener('change', async () => {
+    const data = await loadData();
+    data.savedSettings.lastPattern = el('#af-pattern-select').value;
+    await saveData(data);
   });
 
   function bindProfileToUI(p) {
@@ -393,6 +581,7 @@
     if (!name) { alert('パターン名を入力してください'); return; }
 
     const data = await loadData();
+    if (data.patterns[name] && !confirm(`${name} は既に存在します。上書きしますか？`)) return;
     const result = learnPage(data.profile);
 
     if (result.count === 0) {
@@ -400,7 +589,7 @@
       return;
     }
 
-    data.patterns[name] = result.mapping;
+    data.patterns[name] = { mapping: result.mapping, learnedFields: result.learnedFields };
     await saveData(data);
 
     updatePatternSelect(data);
@@ -408,11 +597,15 @@
     el('#af-status-msg').textContent = `✅ ${result.count}項目を学習し "${name}" に保存しました`;
     // 修正箇所: アロー関数の書き方を { } ブロックに変更
     setTimeout(() => { el('#af-status-msg').textContent = ''; }, 2000);
+    refreshManagePanel(data, name);
   });
 
   el('#act-fill').addEventListener('click', async () => {
     const data = await loadData();
     const patternKey = el('#af-pattern-select').value;
+
+    el('#act-fill').classList.add('af-btn-running');
+    el('#act-fill').textContent = '自動入力中...';
 
     let filledCount = 0;
     if (patternKey === 'default') {
@@ -420,17 +613,57 @@
     } else {
       const pattern = data.patterns[patternKey];
       if (pattern) {
-        filledCount = fillByPattern(data.profile, pattern);
+        filledCount = await fillByPattern(data.profile, pattern);
       }
     }
     el('#af-status-msg').textContent = `✨ ${filledCount} 箇所に入力しました`;
-    setTimeout(() => { el('#af-status-msg').textContent = ''; }, 2000);
+    el('#act-fill').classList.remove('af-btn-running');
+    el('#act-fill').classList.add('af-btn-done');
+    el('#act-fill').textContent = '自動入力 完了!';
+    setTimeout(() => {
+      el('#af-status-msg').textContent = '';
+      el('#act-fill').classList.remove('af-btn-done');
+      el('#act-fill').textContent = '自動入力 (Fill)';
+    }, FILL_FEEDBACK_MS);
   });
 
   el('#act-export-json').addEventListener('click', async () => {
       const data = await loadData();
       console.log(JSON.stringify(data, null, 2));
       alert('開発者ツールのConsoleに出力しました');
+  });
+
+  el('#af-manage-select')?.addEventListener('change', async () => {
+    const data = await loadData();
+    refreshManagePanel(data, el('#af-manage-select').value);
+  });
+
+  el('#act-delete-pattern')?.addEventListener('click', async () => {
+    const key = el('#af-manage-select').value;
+    if (!key) return;
+    if (!confirm(`${key} を削除しますか？`)) return;
+    const data = await loadData();
+    delete data.patterns[key];
+    await saveData(data);
+    refreshManagePanel(data);
+    el('#af-manage-msg').textContent = '🗑️ 削除しました';
+    setTimeout(() => { el('#af-manage-msg').textContent = ''; }, 2000);
+  });
+
+  el('#act-save-pattern')?.addEventListener('click', async () => {
+    const key = el('#af-manage-select').value;
+    if (!key) { el('#af-manage-msg').textContent = 'パターンを選択してください'; return; }
+    try {
+      const parsed = JSON.parse(el('#af-pattern-json').value || '{}');
+      const data = await loadData();
+      data.patterns[key] = parsed;
+      await saveData(data);
+      refreshManagePanel(data, key);
+      el('#af-manage-msg').textContent = '💾 上書き保存しました';
+      setTimeout(() => { el('#af-manage-msg').textContent = ''; }, 2000);
+    } catch (e) {
+      el('#af-manage-msg').textContent = 'JSONの形式が正しくありません';
+    }
   });
 
   function updatePatternSelect(data) {
@@ -442,12 +675,37 @@
       opt.textContent = key;
       sel.appendChild(opt);
     });
+
+    const manageSel = el('#af-manage-select');
+    if (manageSel) {
+      manageSel.innerHTML = '';
+      Object.keys(data.patterns).forEach(key => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = key;
+        manageSel.appendChild(opt);
+      });
+    }
+  }
+
+  function refreshManagePanel(data, selected) {
+    updatePatternSelect(data);
+    const manageSel = el('#af-manage-select');
+    if (!manageSel) return;
+    if (selected && data.patterns[selected]) manageSel.value = selected;
+    const currentKey = manageSel.value || Object.keys(data.patterns)[0];
+    if (currentKey && data.patterns[currentKey]) {
+      el('#af-pattern-json').value = JSON.stringify(data.patterns[currentKey], null, 2);
+    } else {
+      el('#af-pattern-json').value = '';
+    }
   }
 
   (async () => {
     const data = await loadData();
     bindProfileToUI(data.profile);
     updatePatternSelect(data);
+    refreshManagePanel(data, data.savedSettings?.lastPattern);
   })();
 
 })();
