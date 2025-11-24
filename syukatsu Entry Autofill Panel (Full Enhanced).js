@@ -213,7 +213,7 @@
   }
 
   // ===== コアロジック 2: 適用 (Fill) =====
-  async function fillByPattern(profile, patternEntry) {
+  async function fillByPattern(profile, patternEntry, patternName = 'unnamed pattern') {
     const pattern = patternEntry.mapping || patternEntry;
     let count = 0;
 
@@ -221,7 +221,18 @@
       const val = getValueByPath(profile, key);
       if (val === undefined || val === "") continue;
 
-      const nodes = document.querySelectorAll(selector);
+      let nodes;
+      try {
+        nodes = document.querySelectorAll(selector);
+      } catch (error) {
+        console.log(`[Autofill] selector not found/invalid for pattern "${patternName}" (key: ${key}): ${selector}`, error);
+        continue;
+      }
+
+      if (!nodes || nodes.length === 0) {
+        console.log(`[Autofill] selector not found/invalid for pattern "${patternName}" (key: ${key}): ${selector}`);
+        continue;
+      }
 
       for (const node of nodes) {
         if (!isInteractive(node)) continue;
@@ -276,7 +287,7 @@
     }
 
     if (patternEntry.learnedFields && patternEntry.learnedFields.length) {
-      count += await fillLearnedFields(profile, patternEntry.learnedFields);
+      count += await fillLearnedFields(profile, patternEntry.learnedFields, patternName);
     }
     count += await fillSchoolSequence(profile);
     return count;
@@ -324,12 +335,24 @@
     return candidates.find(c => getLabelText(c).includes(labelText.trim()));
   }
 
-  async function fillLearnedFields(profile, learnedFields) {
+  async function fillLearnedFields(profile, learnedFields, patternName = 'unnamed pattern') {
     let count = 0;
     const flatProfile = flattenObject(profile);
     for (const field of learnedFields) {
       const { label, selector, value } = field;
-      const node = document.querySelector(selector) || findByLabel(label);
+      let node = null;
+      if (selector) {
+        try {
+          node = document.querySelector(selector);
+        } catch (error) {
+          console.log(`[Autofill] selector not found/invalid for pattern "${patternName}" (learned field: ${label || 'unknown'}): ${selector}`, error);
+        }
+      }
+      if (!node) node = findByLabel(label);
+      if (!node) {
+        console.log(`[Autofill] selector not found/invalid for pattern "${patternName}" (learned field: ${label || 'unknown'}): ${selector || label || 'N/A'}`);
+        continue;
+      }
       if (!node || !isInteractive(node)) continue;
       let targetVal = value || '';
       if (!targetVal && label) {
@@ -619,7 +642,7 @@
     } else {
       const pattern = data.patterns[patternKey];
       if (pattern) {
-        filledCount = await fillByPattern(data.profile, pattern);
+        filledCount = await fillByPattern(data.profile, pattern, patternKey);
       }
     }
     el('#af-status-msg').textContent = `✨ ${filledCount} 箇所に入力しました`;
