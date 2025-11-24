@@ -26,15 +26,21 @@
 
   // React/Vueなどのフレームワーク対策
   function setNativeValue(element, value) {
-    const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
-    const prototype = Object.getPrototypeOf(element);
-    const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value').set;
+    if (!element) return;
 
-    if (valueSetter && valueSetter !== prototypeValueSetter) {
-      prototypeValueSetter.call(element, value);
-    } else {
+    // value プロパティを安全に取得（存在しない要素に備える）
+    const ownDesc = Object.getOwnPropertyDescriptor(element, 'value');
+    const proto = Object.getPrototypeOf(element);
+    const protoDesc = proto ? Object.getOwnPropertyDescriptor(proto, 'value') : null;
+
+    const valueSetter = ownDesc?.set || protoDesc?.set;
+    if (valueSetter) {
       valueSetter.call(element, value);
+    } else {
+      // セッターが無い特殊要素でも値を直接代入してイベントを飛ばす
+      element.value = value;
     }
+
     element.dispatchEvent(new Event('input', { bubbles: true }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
     element.dispatchEvent(new Event('blur', { bubbles: true }));
