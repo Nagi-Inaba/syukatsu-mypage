@@ -305,11 +305,48 @@
     for (const [key, val] of Object.entries(flat)) {
         const fieldName = key.split('.').pop();
         const target = document.querySelector(`[name*="${fieldName}"]`);
-        if (target && isInteractive(target) && val) {
-            if(target.type !== 'radio' && target.type !== 'checkbox') {
-                 setNativeValue(target, val);
-                 count++;
+        if (!target || !isInteractive(target)) continue;
+
+        const stringVal = typeof val === 'boolean' ? String(val) : String(val || '');
+
+        if (target.tagName === 'SELECT') {
+            if (!stringVal) continue;
+            let matched = false;
+            for (const opt of target.options) {
+                if (opt.value === stringVal || opt.textContent.trim() === stringVal) {
+                    target.value = opt.value;
+                    matched = true;
+                    break;
+                }
             }
+            if (matched) {
+                setNativeValue(target, target.value);
+                count++;
+            }
+        } else if (target.type === 'radio') {
+            const name = target.name;
+            const radios = name ? document.querySelectorAll(`input[type="radio"][name="${name}"]`) : [target];
+            for (const radio of radios) {
+                if (!isInteractive(radio)) continue;
+                if (radio.value === stringVal && !radio.checked) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change', { bubbles: true }));
+                    radio.dispatchEvent(new Event('click', { bubbles: true }));
+                    count++;
+                    break;
+                }
+            }
+        } else if (target.type === 'checkbox') {
+            const shouldCheck = typeof val === 'boolean' ? val : target.value === stringVal;
+            if (target.checked !== shouldCheck) {
+                target.checked = shouldCheck;
+                target.dispatchEvent(new Event('change', { bubbles: true }));
+                target.dispatchEvent(new Event('click', { bubbles: true }));
+                count++;
+            }
+        } else if (stringVal) {
+            setNativeValue(target, stringVal);
+            count++;
         }
     }
     return count;
