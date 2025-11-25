@@ -153,7 +153,7 @@
         vacation: { sameAsCurrent: true, postal: "", pref: "", city: "", street: "", building: "", tel: "" }
       },
       tel: { home: "", mobile: "" },
-      email: { primary: "", secondary: "" },
+      email: { primary: "", primaryConfirm: true, secondary: "", secondaryConfirm: false },
       school: {
         kubun: "", kokushi: "", initial: "",
         dname: "", dcd: "",
@@ -523,13 +523,24 @@
         </select>
       </div>
       <div class="af-label">メール / 電話</div>
-      <input id="p-email" class="af-input" placeholder="Email">
-      <div class="af-row"><input id="p-tel-mobile" class="af-input" placeholder="携帯 090-0000-0000"></div>
+      <div class="af-row"><input id="p-email" class="af-input" placeholder="Email"><input id="p-email2" class="af-input" placeholder="予備Email"></div>
+      <div class="af-row"><input id="p-tel-home" class="af-input" placeholder="自宅 03-0000-0000"><input id="p-tel-mobile" class="af-input" placeholder="携帯 090-0000-0000"></div>
       <div class="af-label">現住所</div>
       <div class="af-row"><input id="p-postal" class="af-input" placeholder="123-4567"><input id="p-pref" class="af-input" placeholder="都道府県"></div>
       <input id="p-city" class="af-input" placeholder="市区町村">
       <input id="p-street" class="af-input" placeholder="番地">
       <input id="p-bldg" class="af-input" placeholder="建物">
+      <div class="af-label">休暇中の住所・連絡先</div>
+      <label style="display:flex; align-items:center; gap:6px; margin:6px 0;">
+        <input id="p-vac-same" type="checkbox" checked> <span>現住所と同じ</span>
+      </label>
+      <div id="p-vac-fields">
+        <div class="af-row"><input id="p-vac-postal" class="af-input" placeholder="休暇中 郵便番号"><input id="p-vac-pref" class="af-input" placeholder="休暇中 都道府県"></div>
+        <input id="p-vac-city" class="af-input" placeholder="休暇中 市区町村">
+        <input id="p-vac-street" class="af-input" placeholder="休暇中 番地">
+        <input id="p-vac-bldg" class="af-input" placeholder="休暇中 建物">
+        <input id="p-vac-tel" class="af-input" placeholder="休暇中 電話">
+      </div>
       <div class="af-label">学校情報</div>
       <div class="af-row"><input id="p-dname" class="af-input" placeholder="大学名"><input id="p-bname" class="af-input" placeholder="学部名"></div>
       <div class="af-row"><input id="p-kname" class="af-input" placeholder="学科名"></div>
@@ -579,6 +590,19 @@
     await saveData(data);
   });
 
+  function updateVacationPanelVisibility() {
+    const vacSame = el('#p-vac-same');
+    const vacFields = el('#p-vac-fields');
+    if (!vacSame || !vacFields) return;
+    vacFields.style.display = vacSame.checked ? 'none' : 'block';
+  }
+
+  const vacSameCheckbox = el('#p-vac-same');
+  if (vacSameCheckbox) {
+    vacSameCheckbox.addEventListener('change', updateVacationPanelVisibility);
+    updateVacationPanelVisibility();
+  }
+
   function bindProfileToUI(p) {
     el('#p-kanji-sei').value = p.kanji_sei; el('#p-kanji-na').value = p.kanji_na;
     el('#p-kana-sei').value = p.kana_sei; el('#p-kana-na').value = p.kana_na;
@@ -586,12 +610,24 @@
     el('#p-bunkei-rikei').value = p.bunkeiRikei;
     el('#p-birth-y').value = p.birth.Y; el('#p-birth-m').value = p.birth.m; el('#p-birth-d').value = p.birth.d;
     el('#p-email').value = p.email.primary;
+    el('#p-email2').value = p.email.secondary;
+    el('#p-tel-home').value = p.tel.home;
     el('#p-tel-mobile').value = p.tel.mobile;
     el('#p-postal').value = p.address.current.postal;
     el('#p-pref').value = p.address.current.pref;
     el('#p-city').value = p.address.current.city;
     el('#p-street').value = p.address.current.street;
     el('#p-bldg').value = p.address.current.building;
+    const vacSame = el('#p-vac-same');
+    if (vacSame) vacSame.checked = p.address.vacation.sameAsCurrent;
+    const vac = p.address.vacation;
+    const vacPostal = el('#p-vac-postal'); if (vacPostal) vacPostal.value = vac.postal;
+    const vacPref = el('#p-vac-pref'); if (vacPref) vacPref.value = vac.pref;
+    const vacCity = el('#p-vac-city'); if (vacCity) vacCity.value = vac.city;
+    const vacStreet = el('#p-vac-street'); if (vacStreet) vacStreet.value = vac.street;
+    const vacBldg = el('#p-vac-bldg'); if (vacBldg) vacBldg.value = vac.building;
+    const vacTel = el('#p-vac-tel'); if (vacTel) vacTel.value = vac.tel;
+    updateVacationPanelVisibility();
     el('#p-dname').value = p.school.dname;
     el('#p-bname').value = p.school.bname;
     el('#p-kname').value = p.school.kname;
@@ -614,12 +650,24 @@
     p.bunkeiRikei = el('#p-bunkei-rikei').value;
     p.birth.Y = el('#p-birth-y').value; p.birth.m = el('#p-birth-m').value; p.birth.d = el('#p-birth-d').value;
     p.email.primary = el('#p-email').value;
+    p.email.secondary = el('#p-email2').value;
+    p.email.primaryConfirm = true;
+    p.email.secondaryConfirm = !!p.email.secondary;
+    p.tel.home = el('#p-tel-home').value;
     p.tel.mobile = el('#p-tel-mobile').value;
     p.address.current.postal = el('#p-postal').value;
     p.address.current.pref = el('#p-pref').value;
     p.address.current.city = el('#p-city').value;
     p.address.current.street = el('#p-street').value;
     p.address.current.building = el('#p-bldg').value;
+    const vacSame = el('#p-vac-same');
+    p.address.vacation.sameAsCurrent = vacSame ? vacSame.checked : true;
+    p.address.vacation.postal = el('#p-vac-postal')?.value || '';
+    p.address.vacation.pref = el('#p-vac-pref')?.value || '';
+    p.address.vacation.city = el('#p-vac-city')?.value || '';
+    p.address.vacation.street = el('#p-vac-street')?.value || '';
+    p.address.vacation.building = el('#p-vac-bldg')?.value || '';
+    p.address.vacation.tel = el('#p-vac-tel')?.value || '';
     p.school.dname = el('#p-dname').value;
     p.school.bname = el('#p-bname').value;
     p.school.kname = el('#p-kname').value;
