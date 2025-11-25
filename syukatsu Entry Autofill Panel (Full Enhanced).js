@@ -146,6 +146,7 @@
       kana_sei: "", kana_na: "",
       roma_sei: "", roma_na: "",
       sex: "",
+      bunkeiRikei: "",
       birth: { Y: "", m: "", d: "" },
       address: {
         current: { postal: "", pref: "", city: "", street: "", building: "" },
@@ -160,6 +161,10 @@
         kname: "", paxcd: "",
         from: { Y: "", m: "" }, to: { Y: "", m: "" },
         zemi: "", club: ""
+      },
+      highSchool: {
+        name: "", pref: "", initial: "", department: "", major: "",
+        from: { Y: "", m: "" }, to: { Y: "", m: "" }
       }
     };
   }
@@ -198,7 +203,7 @@
 
       for (const [key, profVal] of Object.entries(flatProfile)) {
         const isShort = String(profVal).length <= 1;
-        const isSafeKey = key.includes('sex') || key.includes('kubun') || key.includes('kokushi');
+        const isSafeKey = key.includes('sex') || key.includes('kubun') || key.includes('kokushi') || key.includes('initial');
         if (isShort && !isSafeKey) continue;
 
         if (String(profVal).trim() === val) {
@@ -509,6 +514,14 @@
         <input id="p-birth-m" class="af-input" placeholder="MM">
         <input id="p-birth-d" class="af-input" placeholder="DD">
       </div>
+      <div class="af-row" style="margin-top:4px;">
+        <label class="af-label" style="margin:0; flex:1;">文理区分</label>
+        <select id="p-bunkei-rikei" class="af-input">
+          <option value="">選択</option>
+          <option value="文系">文系</option>
+          <option value="理系">理系</option>
+        </select>
+      </div>
       <div class="af-label">メール / 電話</div>
       <input id="p-email" class="af-input" placeholder="Email">
       <div class="af-row"><input id="p-tel-mobile" class="af-input" placeholder="携帯 090-0000-0000"></div>
@@ -520,6 +533,12 @@
       <div class="af-label">学校情報</div>
       <div class="af-row"><input id="p-dname" class="af-input" placeholder="大学名"><input id="p-bname" class="af-input" placeholder="学部名"></div>
       <div class="af-row"><input id="p-kname" class="af-input" placeholder="学科名"></div>
+      <div class="af-label">高校情報</div>
+      <div class="af-row"><input id="p-hs-name" class="af-input" placeholder="高校名"><input id="p-hs-initial" class="af-input" placeholder="略称/イニシャル"></div>
+      <div class="af-row"><input id="p-hs-pref" class="af-input" placeholder="都道府県"><input id="p-hs-department" class="af-input" placeholder="学科"></div>
+      <div class="af-row"><input id="p-hs-major" class="af-input" placeholder="専攻 / コース"></div>
+      <div class="af-row"><input id="p-hs-from-y" class="af-input" placeholder="入学年 YYYY"><input id="p-hs-from-m" class="af-input" placeholder="入学月 MM"></div>
+      <div class="af-row"><input id="p-hs-to-y" class="af-input" placeholder="卒業年 YYYY"><input id="p-hs-to-m" class="af-input" placeholder="卒業月 MM"></div>
       <button id="act-save-profile" class="af-btn af-btn-primary">プロフィール保存</button>
       <button id="act-export-json" class="af-btn af-btn-outline">JSON書き出し(Console)</button>
     </div>
@@ -564,6 +583,7 @@
     el('#p-kanji-sei').value = p.kanji_sei; el('#p-kanji-na').value = p.kanji_na;
     el('#p-kana-sei').value = p.kana_sei; el('#p-kana-na').value = p.kana_na;
     el('#p-sex').value = p.sex;
+    el('#p-bunkei-rikei').value = p.bunkeiRikei;
     el('#p-birth-y').value = p.birth.Y; el('#p-birth-m').value = p.birth.m; el('#p-birth-d').value = p.birth.d;
     el('#p-email').value = p.email.primary;
     el('#p-tel-mobile').value = p.tel.mobile;
@@ -575,6 +595,15 @@
     el('#p-dname').value = p.school.dname;
     el('#p-bname').value = p.school.bname;
     el('#p-kname').value = p.school.kname;
+    el('#p-hs-name').value = p.highSchool.name;
+    el('#p-hs-initial').value = p.highSchool.initial;
+    el('#p-hs-pref').value = p.highSchool.pref;
+    el('#p-hs-department').value = p.highSchool.department;
+    el('#p-hs-major').value = p.highSchool.major;
+    el('#p-hs-from-y').value = p.highSchool.from.Y;
+    el('#p-hs-from-m').value = p.highSchool.from.m;
+    el('#p-hs-to-y').value = p.highSchool.to.Y;
+    el('#p-hs-to-m').value = p.highSchool.to.m;
   }
 
   function getProfileFromUI() {
@@ -582,6 +611,7 @@
     p.kanji_sei = el('#p-kanji-sei').value; p.kanji_na = el('#p-kanji-na').value;
     p.kana_sei = el('#p-kana-sei').value; p.kana_na = el('#p-kana-na').value;
     p.sex = el('#p-sex').value;
+    p.bunkeiRikei = el('#p-bunkei-rikei').value;
     p.birth.Y = el('#p-birth-y').value; p.birth.m = el('#p-birth-m').value; p.birth.d = el('#p-birth-d').value;
     p.email.primary = el('#p-email').value;
     p.tel.mobile = el('#p-tel-mobile').value;
@@ -593,6 +623,15 @@
     p.school.dname = el('#p-dname').value;
     p.school.bname = el('#p-bname').value;
     p.school.kname = el('#p-kname').value;
+    p.highSchool.name = el('#p-hs-name').value;
+    p.highSchool.initial = el('#p-hs-initial').value;
+    p.highSchool.pref = el('#p-hs-pref').value;
+    p.highSchool.department = el('#p-hs-department').value;
+    p.highSchool.major = el('#p-hs-major').value;
+    p.highSchool.from.Y = el('#p-hs-from-y').value;
+    p.highSchool.from.m = el('#p-hs-from-m').value;
+    p.highSchool.to.Y = el('#p-hs-to-y').value;
+    p.highSchool.to.m = el('#p-hs-to-m').value;
     return p;
   }
 
