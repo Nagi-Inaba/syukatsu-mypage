@@ -1,63 +1,119 @@
 {
-  "kanji_sei": "",
-  "kanji_na": "",
-  "kana_sei": "",
-  "kana_na": "",
-  "roma_sei": "",
-  "roma_na": "",
-  "sex": "",
-  "birth": {
-    "Y": "",
-    "m": "",
-    "d": ""
-  },
-  "address": {
-    "current": {
-      "postal": "",
-      "pref": "",
-      "city": "",
-      "street": "",
-      "building": ""
+  "profile": {
+    "kanji_sei": "",
+    "kanji_na": "",
+    "kana_sei": "",
+    "kana_na": "",
+    "roma_sei": "",
+    "roma_na": "",
+    "sex": "1",
+    "bunkeiRikei": "1",
+    "birth": {
+      "Y": "",
+      "m": "",
+      "d": ""
     },
-    "vacation": {
-      "sameAsCurrent": true,
-      "postal": "",
-      "pref": "",
-      "city": "",
-      "street": "",
-      "building": "",
-      "tel": ""
+    "address": {
+      "current": {
+        "postal": "",
+        "pref": "",
+        "city": "",
+        "street": "",
+        "building": ""
+      },
+      "vacation": {
+        "sameAsCurrent": true,
+        "postal": "",
+        "pref": "",
+        "city": "",
+        "street": "",
+        "building": "",
+        "tel": ""
+      }
+    },
+    "tel": {
+      "home": "",
+      "mobile": ""
+    },
+    "email": {
+      "primary": "",
+      "primaryConfirm": true,
+      "secondary": "",
+      "secondaryConfirm": false
+    },
+    "school": {
+      "kubun": "1",
+      "kokushi": "1",
+      "initial": "",
+      "dcd": "",
+      "dname": "",
+      "bcd": "",
+      "bname": "",
+      "paxcd": "",
+      "kname": "",
+      "from": {
+        "Y": "",
+        "m": ""
+      },
+      "to": {
+        "Y": "",
+        "m": ""
+      },
+      "zemi": "",
+      "club": ""
     }
   },
-  "tel": {
-    "home": "",
-    "mobile": ""
+  "patterns": {
+    "default": {
+      "mapping": {
+        "kanji_sei": "[name=\"kanji_sei\"], #kanji_sei",
+        "kanji_na": "[name=\"kanji_na\"], #kanji_na",
+        "kana_sei": "[name=\"kana_sei\"], #kana_sei",
+        "kana_na": "[name=\"kana_na\"], #kana_na",
+        "roma_sei": "[name=\"roma_sei\"], #roma_sei",
+        "roma_na": "[name=\"roma_na\"], #roma_na",
+        "sex": "input[name=\"sex\"]",
+        "bunkeiRikei": "select[name*=\"bunkei\"], select[id*=\"bunkei\"]",
+        "birth.Y": "[name=\"birth_Y\"], #birth_Y",
+        "birth.m": "[name=\"birth_m\"], #birth_m",
+        "birth.d": "[name=\"birth_d\"], #birth_d",
+        "address.current.pref": "#keng, select[name*=\"pref\"], select[id*=\"pref\"]",
+        "address.current.city": "[name=\"jushog1\"], #jushog1",
+        "address.current.street": "[name=\"jushog2\"], #jushog2",
+        "address.current.building": "[name=\"jushog3\"], #jushog3",
+        "address.vacation.sameAsCurrent": "input[name=\"jushosame\"]",
+        "address.vacation.pref": "#kenk, select[name*=\"kenk\"], select[id*=\"kenk\"]",
+        "address.vacation.city": "[name=\"jushok1\"], #jushok1",
+        "address.vacation.street": "[name=\"jushok2\"], #jushok2",
+        "address.vacation.building": "[name=\"jushok3\"], #jushok3",
+        "tel.home": "input[name^=\"telg\"], #telg_h",
+        "tel.mobile": "input[name^=\"keitai\"], #keitai_h",
+        "email.primary": "[name=\"email\"], #email",
+        "email.secondary": "[name=\"kmail\"], #kmail",
+        "school.kubun": "[name=\"kubun\"], #kubun",
+        "school.kokushi": "[name=\"kokushi\"], #kokushi",
+        "school.initial": "[name=\"initial\"], #initial",
+        "school.dname": "[name=\"dname\"], select[name=\"dcd\"], #dname",
+        "school.bname": "[name=\"bname\"], select[name=\"bcd\"], #bname",
+        "school.kname": "[name=\"kname\"], select[name=\"paxcd\"], #kname",
+        "school.from.Y": "[name=\"school_from_Y\"], #school_from_Y",
+        "school.from.m": "[name=\"school_from_m\"], #school_from_m",
+        "school.to.Y": "[name=\"school_to_Y\"], #school_to_Y",
+        "school.to.m": "[name=\"school_to_m\"], #school_to_m",
+        "school.zemi": "[name=\"zemi\"], #zemi",
+        "school.club": "[name=\"club\"], #club"
+      },
+      "learnedFields": [
+        { "label": "郵便番号(現住所)上3桁", "selector": "input[name=\"yubing_h\"]", "value": "" },
+        { "label": "郵便番号(現住所)下4桁", "selector": "input[name=\"yubing_l\"]", "value": "" },
+        { "label": "郵便番号(休暇中)上3桁", "selector": "input[name=\"yubink_h\"]", "value": "" },
+        { "label": "郵便番号(休暇中)下4桁", "selector": "input[name=\"yubink_l\"]", "value": "" },
+        { "label": "メール確認", "selector": "input[name=\"email2\"]", "value": "" },
+        { "label": "予備メール確認", "selector": "input[name=\"kmail2\"]", "value": "" }
+      ]
+    }
   },
-  "email": {
-    "primary": "",
-    "primaryConfirm": true,
-    "secondary": "",
-    "secondaryConfirm": false
-  },
-  "school": {
-    "kubun": "",
-    "kokushi": "",
-    "initial": "",
-    "dcd": "",
-    "dname": "",
-    "bcd": "",
-    "bname": "",
-    "paxcd": "",
-    "kname": "",
-    "from": {
-      "Y": "",
-      "m": ""
-    },
-    "to": {
-      "Y": "",
-      "m": ""
-    },
-    "zemi": "",
-    "club": ""
+  "savedSettings": {
+    "lastPattern": "default"
   }
 }

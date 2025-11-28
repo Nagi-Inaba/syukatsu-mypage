@@ -58,10 +58,61 @@
   }
 
   // ストレージ操作
+  function defaultPattern() {
+    return {
+      mapping: {
+        kanji_sei: '[name="kanji_sei"], #kanji_sei',
+        kanji_na: '[name="kanji_na"], #kanji_na',
+        kana_sei: '[name="kana_sei"], #kana_sei',
+        kana_na: '[name="kana_na"], #kana_na',
+        roma_sei: '[name="roma_sei"], #roma_sei',
+        roma_na: '[name="roma_na"], #roma_na',
+        sex: 'input[name="sex"]',
+        bunkeiRikei: 'select[name*="bunkei"], select[id*="bunkei"]',
+        'birth.Y': '[name="birth_Y"], #birth_Y',
+        'birth.m': '[name="birth_m"], #birth_m',
+        'birth.d': '[name="birth_d"], #birth_d',
+        'address.current.pref': '#keng, select[name*="pref"], select[id*="pref"]',
+        'address.current.city': '[name="jushog1"], #jushog1',
+        'address.current.street': '[name="jushog2"], #jushog2',
+        'address.current.building': '[name="jushog3"], #jushog3',
+        'address.vacation.sameAsCurrent': 'input[name="jushosame"]',
+        'address.vacation.pref': '#kenk, select[name*="kenk"], select[id*="kenk"]',
+        'address.vacation.city': '[name="jushok1"], #jushok1',
+        'address.vacation.street': '[name="jushok2"], #jushok2',
+        'address.vacation.building': '[name="jushok3"], #jushok3',
+        'tel.home': 'input[name^="telg"], #telg_h',
+        'tel.mobile': 'input[name^="keitai"], #keitai_h',
+        'email.primary': '[name="email"], #email',
+        'email.secondary': '[name="kmail"], #kmail',
+        'school.kubun': '[name="kubun"], #kubun',
+        'school.kokushi': '[name="kokushi"], #kokushi',
+        'school.initial': '[name="initial"], #initial',
+        'school.dname': '[name="dname"], select[name="dcd"], #dname',
+        'school.bname': '[name="bname"], select[name="bcd"], #bname',
+        'school.kname': '[name="kname"], select[name="paxcd"], #kname',
+        'school.from.Y': '[name="school_from_Y"], #school_from_Y',
+        'school.from.m': '[name="school_from_m"], #school_from_m',
+        'school.to.Y': '[name="school_to_Y"], #school_to_Y',
+        'school.to.m': '[name="school_to_m"], #school_to_m',
+        'school.zemi': '[name="zemi"], #zemi',
+        'school.club': '[name="club"], #club'
+      },
+      learnedFields: [
+        { label: '郵便番号(現住所)上3桁', selector: 'input[name="yubing_h"]', value: '' },
+        { label: '郵便番号(現住所)下4桁', selector: 'input[name="yubing_l"]', value: '' },
+        { label: '郵便番号(休暇中)上3桁', selector: 'input[name="yubink_h"]', value: '' },
+        { label: '郵便番号(休暇中)下4桁', selector: 'input[name="yubink_l"]', value: '' },
+        { label: 'メール確認', selector: 'input[name="email2"]', value: '' },
+        { label: '予備メール確認', selector: 'input[name="kmail2"]', value: '' }
+      ]
+    };
+  }
+
   async function loadData() {
     const defaultData = {
       profile: defaultProfile(),
-      patterns: {},
+      patterns: { default: defaultPattern() },
       savedSettings: { lastPattern: 'default' }
     };
     const str = typeof GM_getValue === 'function' ? GM_getValue(STORAGE_KEY, '') : localStorage.getItem(STORAGE_KEY);
@@ -80,7 +131,7 @@
         ...defaultData,
         ...data,
         profile: { ...defaultData.profile, ...data.profile },
-        patterns: normalizedPatterns
+        patterns: { ...defaultData.patterns, ...normalizedPatterns }
       };
     } catch (e) {
       return defaultData;
@@ -145,8 +196,8 @@
       kanji_sei: "", kanji_na: "",
       kana_sei: "", kana_na: "",
       roma_sei: "", roma_na: "",
-      sex: "",
-      bunkeiRikei: "",
+      sex: "1",
+      bunkeiRikei: "1",
       birth: { Y: "", m: "", d: "" },
       address: {
         current: { postal: "", pref: "", city: "", street: "", building: "" },
@@ -155,7 +206,7 @@
       tel: { home: "", mobile: "" },
       email: { primary: "", primaryConfirm: true, secondary: "", secondaryConfirm: false },
       school: {
-        kubun: "", kokushi: "", initial: "",
+        kubun: "1", kokushi: "1", initial: "",
         dname: "", dcd: "",
         bname: "", bcd: "",
         kname: "", paxcd: "",
@@ -264,6 +315,15 @@
             }
         }
         else if (node.type === 'radio' || node.type === 'checkbox') {
+            if (node.type === 'checkbox' && typeof val === 'boolean') {
+                if (node.checked !== val) {
+                    node.checked = val;
+                    node.dispatchEvent(new Event('change', { bubbles: true }));
+                    node.dispatchEvent(new Event('click', { bubbles: true }));
+                    count++;
+                }
+                continue;
+            }
             if (selector.includes('[name=')) {
                 const nameMatch = selector.match(/name="([^"]+)"/);
                 if(nameMatch) {
@@ -762,7 +822,12 @@
 
     let filledCount = 0;
     if (patternKey === 'default') {
-      filledCount = fillDefault(data.profile);
+      const preset = data.patterns?.default;
+      if (preset && preset.mapping) {
+        filledCount = await fillByPattern(data.profile, preset, 'default');
+      } else {
+        filledCount = fillDefault(data.profile);
+      }
     } else {
       const pattern = data.patterns[patternKey];
       if (pattern) {
