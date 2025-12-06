@@ -64,63 +64,11 @@
     return true;
   }
 
-  // ストレージ操作
-  function defaultPattern() {
-    return {
-      mapping: {
-        kanji_sei: '[name="kanji_sei"], #kanji_sei',
-        kanji_na: '[name="kanji_na"], #kanji_na',
-        kana_sei: '[name="kana_sei"], #kana_sei',
-        kana_na: '[name="kana_na"], #kana_na',
-        roma_sei: '[name="roma_sei"], #roma_sei',
-        roma_na: '[name="roma_na"], #roma_na',
-        sex: 'input[name="sex"]',
-        bunkeiRikei: 'select[name*="bunkei"], select[id*="bunkei"]',
-        'birth.Y': '[name="birth_Y"], #birth_Y',
-        'birth.m': '[name="birth_m"], #birth_m',
-        'birth.d': '[name="birth_d"], #birth_d',
-        'address.current.pref': '#keng, select[name*="pref"], select[id*="pref"]',
-        'address.current.city': '[name="jushog1"], #jushog1',
-        'address.current.street': '[name="jushog2"], #jushog2',
-        'address.current.building': '[name="jushog3"], #jushog3',
-        'address.vacation.sameAsCurrent': 'input[name="jushosame"]',
-        'address.vacation.pref': '#kenk, select[name*="kenk"], select[id*="kenk"]',
-        'address.vacation.city': '[name="jushok1"], #jushok1',
-        'address.vacation.street': '[name="jushok2"], #jushok2',
-        'address.vacation.building': '[name="jushok3"], #jushok3',
-        'tel.home': 'input[name^="telg"], #telg_h',
-        'tel.mobile': 'input[name^="keitai"], #keitai_h',
-        'email.primary': '[name="email"], #email',
-        'email.secondary': '[name="kmail"], #kmail',
-        'school.kubun': '[name="kubun"], #kubun',
-        'school.kokushi': '[name="kokushi"], #kokushi',
-        'school.initial': '[name="initial"], #initial',
-        'school.dname': '[name="dname"], select[name="dcd"], #dname',
-        'school.bname': '[name="bname"], select[name="bcd"], #bname',
-        'school.kname': '[name="kname"], select[name="paxcd"], #kname',
-        'school.from.Y': '[name="school_from_Y"], #school_from_Y',
-        'school.from.m': '[name="school_from_m"], #school_from_m',
-        'school.to.Y': '[name="school_to_Y"], #school_to_Y',
-        'school.to.m': '[name="school_to_m"], #school_to_m',
-        'school.zemi': '[name="zemi"], #zemi',
-        'school.club': '[name="club"], #club'
-      },
-      learnedFields: [
-        { label: '郵便番号(現住所)上3桁', selector: 'input[name="yubing_h"]', value: '' },
-        { label: '郵便番号(現住所)下4桁', selector: 'input[name="yubing_l"]', value: '' },
-        { label: '郵便番号(休暇中)上3桁', selector: 'input[name="yubink_h"]', value: '' },
-        { label: '郵便番号(休暇中)下4桁', selector: 'input[name="yubink_l"]', value: '' },
-        { label: 'メール確認', selector: 'input[name="email2"]', value: '' },
-        { label: '予備メール確認', selector: 'input[name="kmail2"]', value: '' }
-      ]
-    };
-  }
-
   async function loadData() {
     const defaultData = {
       profile: defaultProfile(),
-      patterns: { default: defaultPattern() },
-      savedSettings: { lastPattern: 'default' }
+      patterns: {},
+      savedSettings: { lastPattern: '' }
     };
     const str = typeof GM_getValue === 'function' ? GM_getValue(STORAGE_KEY, '') : localStorage.getItem(STORAGE_KEY);
     if (!str) return defaultData;
@@ -128,6 +76,7 @@
       const data = JSON.parse(str);
       const normalizedPatterns = {};
       Object.entries(data.patterns || {}).forEach(([name, pattern]) => {
+        if (name === 'default') return;
         if (pattern && typeof pattern === 'object' && pattern.mapping) {
           normalizedPatterns[name] = { ...pattern, learnedFields: pattern.learnedFields || [] };
         } else {
@@ -147,8 +96,16 @@
       return {
         ...defaultData,
         ...data,
-        profile: mergedProfile,
-        patterns: { ...defaultData.patterns, ...normalizedPatterns }
+
+
+        profile: { ...defaultData.profile, ...data.profile },
+        patterns: { ...defaultData.patterns, ...normalizedPatterns },
+        savedSettings: {
+          ...defaultData.savedSettings,
+          ...data.savedSettings,
+          lastPattern: data.savedSettings?.lastPattern === 'default' ? '' : data.savedSettings?.lastPattern || ''
+        }
+
       };
     } catch (e) {
       return defaultData;
@@ -263,19 +220,31 @@
       if (!isInteractive(node)) continue;
 
       let val = node.value;
-      if (node.type === 'radio' || node.type === 'checkbox') {
-        if (!node.checked) continue;
-        val = node.value;
+      let displayValue = '';
+      let checked = null;
+
+      if (node.tagName === 'SELECT') {
+        const selectedOption = node.selectedOptions && node.selectedOptions[0];
+        displayValue = selectedOption ? String(selectedOption.textContent || '').trim() : '';
       }
-      val = String(val || '').trim();
-      if (!val) continue;
+
+      if (node.type === 'radio' || node.type === 'checkbox') {
+        checked = !!node.checked;
+        val = node.checked ? node.value : '';
+      }
+
+      const normalizedVal = String(val || '').trim();
+      const shouldRecord = node.type === 'checkbox' ? true : !!normalizedVal;
+      if (!shouldRecord) continue;
 
       const labelText = getLabelText(node);
       const selector = buildSelector(node);
       learnedFields.push({
         label: labelText,
         selector,
-        value: val,
+        value: normalizedVal,
+        displayValue,
+        checked,
         name: node.name || '',
         placeholder: node.placeholder || '',
         tag: node.tagName.toLowerCase(),
@@ -287,7 +256,10 @@
         const isSafeKey = key.includes('sex') || key.includes('kubun') || key.includes('kokushi') || key.includes('initial');
         if (isShort && !isSafeKey) continue;
 
-        if (String(profVal).trim() === val) {
+        const profStr = String(profVal).trim();
+        const matchesValue = profStr && (profStr === normalizedVal || profStr === displayValue);
+        const matchesBoolean = typeof profVal === 'boolean' && checked !== null && profVal === checked;
+        if (matchesValue || matchesBoolean) {
           if (selector) {
             mapping[key] = selector;
             learnedCount++;
@@ -471,7 +443,7 @@
     let count = 0;
     const flatProfile = flattenObject(profile);
     for (const field of learnedFields) {
-      const { label, selector, value } = field;
+      const { label, selector, value, displayValue, checked } = field;
       let node = null;
       if (selector) {
         try {
@@ -486,12 +458,13 @@
         continue;
       }
       if (!node || !isInteractive(node)) continue;
-      let targetVal = value || '';
+      const hasBoolean = typeof checked === 'boolean';
+      let targetVal = value || displayValue || '';
       if (!targetVal && label) {
         const hit = Object.entries(flatProfile).find(([k]) => label.toLowerCase().includes(k.split('.').pop().toLowerCase()));
         if (hit) targetVal = hit[1];
       }
-      if (!targetVal) continue;
+      if (!targetVal && !hasBoolean) continue;
 
       if (node.tagName === 'SELECT') {
         let found = false;
@@ -507,9 +480,11 @@
           count++;
         }
       } else if (node.type === 'radio' || node.type === 'checkbox') {
-        if (node.value === targetVal) {
-          node.checked = true;
-          setNativeValue(node, node.value);
+        const desired = hasBoolean ? checked : node.value === targetVal;
+        if (typeof desired === 'boolean' && node.checked !== desired) {
+          node.checked = desired;
+          node.dispatchEvent(new Event('change', { bubbles: true }));
+          node.dispatchEvent(new Event('click', { bubbles: true }));
           count++;
         }
       } else {
@@ -697,7 +672,7 @@
     <div id="tab-fill" class="af-content active">
       <div class="af-label">適用するパターン</div>
       <select id="af-pattern-select" class="af-input">
-        <option value="default">Default (Generic/Axol)</option>
+        <option value="">パターンを選択</option>
       </select>
       <button id="act-fill" class="af-btn af-btn-primary">自動入力 (Fill)</button>
       <hr style="margin: 15px 0; border-color: #eee;">
@@ -791,8 +766,11 @@
 
   el('#af-pattern-select').addEventListener('change', async () => {
     const data = await loadData();
-    data.savedSettings.lastPattern = el('#af-pattern-select').value;
-    await saveData(data);
+    const current = el('#af-pattern-select').value;
+    if (data.patterns[current]) {
+      data.savedSettings.lastPattern = current;
+      await saveData(data);
+    }
   });
 
   function updateVacationPanelVisibility() {
@@ -1012,8 +990,7 @@
     data.patterns[name] = { mapping: result.mapping, learnedFields: result.learnedFields };
     await saveData(data);
 
-    updatePatternSelect(data);
-    el('#af-pattern-select').value = name;
+    updatePatternSelect(data, name);
     el('#af-status-msg').textContent = `✅ ${result.count}項目を学習し "${name}" に保存しました`;
     // 修正箇所: アロー関数の書き方を { } ブロックに変更
     setTimeout(() => { el('#af-status-msg').textContent = ''; }, 2000);
@@ -1024,22 +1001,19 @@
     const data = await loadData();
     const patternKey = el('#af-pattern-select').value;
 
+    if (!patternKey || !data.patterns[patternKey]) {
+      el('#af-status-msg').textContent = '⚠️ パターンを選択してください';
+      setTimeout(() => { el('#af-status-msg').textContent = ''; }, 2000);
+      return;
+    }
+
     el('#act-fill').classList.add('af-btn-running');
     el('#act-fill').textContent = '自動入力中...';
 
     let filledCount = 0;
-    if (patternKey === 'default') {
-      const preset = data.patterns?.default;
-      if (preset && preset.mapping) {
-        filledCount = await fillByPattern(data.profile, preset, 'default');
-      } else {
-        filledCount = fillDefault(data.profile);
-      }
-    } else {
-      const pattern = data.patterns[patternKey];
-      if (pattern) {
-        filledCount = await fillByPattern(data.profile, pattern, patternKey);
-      }
+    const pattern = data.patterns[patternKey];
+    if (pattern) {
+      filledCount = await fillByPattern(data.profile, pattern, patternKey);
     }
     el('#af-status-msg').textContent = `✨ ${filledCount} 箇所に入力しました`;
     el('#act-fill').classList.remove('af-btn-running');
@@ -1091,15 +1065,31 @@
     }
   });
 
-  function updatePatternSelect(data) {
+  function updatePatternSelect(data, selected) {
     const sel = el('#af-pattern-select');
-    sel.innerHTML = '<option value="default">Default (Generic/Axol)</option>';
-    Object.keys(data.patterns).forEach(key => {
+    sel.innerHTML = '';
+    const keys = Object.keys(data.patterns);
+
+    if (keys.length === 0) {
       const opt = document.createElement('option');
-      opt.value = key;
-      opt.textContent = key;
+      opt.value = '';
+      opt.textContent = 'パターンなし';
       sel.appendChild(opt);
-    });
+      sel.value = '';
+    } else {
+      keys.forEach(key => {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = key;
+        sel.appendChild(opt);
+      });
+
+      if (selected && data.patterns[selected]) {
+        sel.value = selected;
+      } else {
+        sel.value = keys[0];
+      }
+    }
 
     const manageSel = el('#af-manage-select');
     if (manageSel) {
@@ -1114,7 +1104,7 @@
   }
 
   function refreshManagePanel(data, selected) {
-    updatePatternSelect(data);
+    updatePatternSelect(data, selected);
     const manageSel = el('#af-manage-select');
     if (!manageSel) return;
     if (selected && data.patterns[selected]) manageSel.value = selected;
@@ -1129,7 +1119,6 @@
   (async () => {
     const data = await loadData();
     bindProfileToUI(data.profile);
-    updatePatternSelect(data);
     refreshManagePanel(data, data.savedSettings?.lastPattern);
   })();
 
