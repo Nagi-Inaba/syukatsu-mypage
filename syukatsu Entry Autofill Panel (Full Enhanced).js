@@ -18,6 +18,7 @@
   const STORAGE_KEY = 'syukatsu_autofill_data';
   const DEBUG = true;
   const FILL_FEEDBACK_MS = 1600;
+  const VACATION_CHECKBOX_KEY = 'address.vacation.sameAsCurrent';
   const PREFECTURES = [
     '北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県',
     '新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県',
@@ -190,6 +191,57 @@
     if (typeof GM_setValue === 'function') GM_setValue(STORAGE_KEY, str);
     else localStorage.setItem(STORAGE_KEY, str);
   }
+
+  function findVacationCheckboxes() {
+    const selector = PATTERN_ONE_MAPPING[VACATION_CHECKBOX_KEY];
+    if (!selector) return [];
+    try {
+      return Array.from(document.querySelectorAll(selector)).filter(node => node.type === 'checkbox');
+    } catch (error) {
+      log('vacation checkbox selector error', selector, error);
+      return [];
+    }
+  }
+
+  async function saveVacationCheckboxPreference(checked) {
+    const data = await loadData();
+    if (!data.profile?.address?.vacation) return;
+    data.profile.address.vacation.sameAsCurrent = !!checked;
+    await saveData(data);
+  }
+
+  async function applyVacationCheckboxPreference() {
+    const data = await loadData();
+    const pref = data.profile?.address?.vacation?.sameAsCurrent;
+    if (typeof pref !== 'boolean') return;
+
+    findVacationCheckboxes().forEach(box => {
+      if (box.checked === pref) return;
+      box.checked = pref;
+      box.dispatchEvent(new Event('change', { bubbles: true }));
+      box.dispatchEvent(new Event('click', { bubbles: true }));
+    });
+  }
+
+  function bindVacationCheckboxes() {
+    const boxes = findVacationCheckboxes();
+    boxes.forEach(box => {
+      if (box.dataset.afVacBound) return;
+      box.dataset.afVacBound = '1';
+      box.addEventListener('change', () => saveVacationCheckboxPreference(box.checked));
+    });
+    return boxes.length > 0;
+  }
+
+  async function initializeVacationCheckboxMemory(attempt = 0) {
+    const found = bindVacationCheckboxes();
+    await applyVacationCheckboxPreference();
+    if (!found && attempt < 3) {
+      setTimeout(() => initializeVacationCheckboxMemory(attempt + 1), 800);
+    }
+  }
+
+  initializeVacationCheckboxMemory();
 
   function flattenObject(obj, prefix = '') {
     let result = {};
