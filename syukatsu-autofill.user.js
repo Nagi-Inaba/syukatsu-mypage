@@ -20,6 +20,13 @@
   const STORAGE_KEY = 'syukatsu_autofill_profile';
   const AUTO_SUBMIT = false; // 入力後に送信を自動実行するなら true
   const DEBUG = false;
+  const PREFECTURES = [
+    '北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県',
+    '新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県',
+    '奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県',
+    '熊本県','大分県','宮崎県','鹿児島県','沖縄県'
+  ];
+  const SCHOOL_TYPES = ['大学院', '学部', '短大', '専門学校', '高専'];
 
   // ===== 汎用ユーティリティ =====
   const gmHas = typeof GM_getValue === 'function' && typeof GM_setValue === 'function';
@@ -125,6 +132,24 @@
   function issyukatsuEntryPage() {
     const b = document.body;
     return b && (b.id === 'entry_input' || /(\/entry\/input|\/navi\/input)/.test(location.pathname));
+  }
+
+  const generateSchoolId = () => `school-${Math.random().toString(36).slice(2, 8)}`;
+
+  function defaultSchoolEntry(category = '学部') {
+    return {
+      id: generateSchoolId(),
+      category,
+      kubun: '私立',
+      kokushi: '私立',
+      pref: '',
+      initial: '',
+      dcd: '', dname: '',
+      bcd: '', bname: '',
+      paxcd: '', kname: '',
+      from: { Y: '', m: '' }, to: { Y: '', m: '' },
+      zemi: '', club: ''
+    };
   }
 
   function fillFieldByName(name, value) {
@@ -427,6 +452,110 @@
     schoolAutomationTimer = setInterval(run, 600);
   }
 
+  function detectSchoolCategoryFromForm() {
+    const textNodes = [];
+    document.querySelectorAll('label, legend, h1, h2, h3, th, td, p').forEach(elm => {
+      if (elm && elm.textContent) textNodes.push(elm.textContent);
+    });
+    const allText = textNodes.join(' ');
+    for (const type of SCHOOL_TYPES) {
+      if (allText.includes(type)) return type;
+    }
+    return '学部';
+  }
+
+  function pickSchoolEntry(profile) {
+    const entries = (profile.schoolEntries && profile.schoolEntries.length ? profile.schoolEntries : [])
+      .map(e => ({ ...defaultSchoolEntry(e.category || '学部'), ...e }));
+    if (!entries.length && profile.school) entries.push({ ...defaultSchoolEntry(profile.school.category || '学部'), ...profile.school });
+    const requested = detectSchoolCategoryFromForm();
+    return entries.find(e => e.category === requested) || entries[0] || null;
+  }
+
+  function setSelectValueByText(select, value) {
+    if (!select || !value) return false;
+    for (const opt of select.options) {
+      if (opt.value === value || (opt.textContent || '').trim() === value) {
+        select.value = opt.value;
+        triggerInput(select);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function fillSelectsByOptionCandidates(candidates, value, filterFn = () => true) {
+    if (!value) return 0;
+    let count = 0;
+    const selects = Array.from(document.querySelectorAll('select')).filter(filterFn);
+    for (const sel of selects) {
+      const hasCandidate = Array.from(sel.options || []).some(opt => candidates.some(c => (opt.textContent || '').includes(c)));
+      if (!hasCandidate || !isElementInteractive(sel)) continue;
+      if (setSelectValueByText(sel, value)) count++;
+    }
+    return count;
+  }
+
+  function isSchoolPrefTarget(select) {
+    const label = ((select?.closest('label')?.textContent || select?.getAttribute('aria-label') || select?.name || '') || '').toLowerCase();
+    if (label.includes('現住所') || label.includes('休暇') || label.includes('連絡')) return false;
+    if (label.includes('学校') || label.includes('所在地') || label.includes('キャンパス') || label.includes('最終学歴')) return true;
+    const areaText = (select.closest('div, tr, section, label')?.textContent || '').toLowerCase();
+    if (areaText.includes('学校') || areaText.includes('学歴') || areaText.includes('キャンパス')) return true;
+    return !label;
+  }
+
+  function clickInitialButton(initial) {
+    if (!initial) return false;
+    const candidates = Array.from(document.querySelectorAll('button, input[type="button"], input[type="submit"], a'));
+    for (const btn of candidates) {
+      if (!isElementInteractive(btn)) continue;
+      const text = (btn.value || btn.textContent || '').trim();
+      if (!text) continue;
+      if (text.toLowerCase() === initial.toLowerCase()) {
+        btn.click();
+        triggerInput(btn);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function fillSchoolSequence(school) {
+    if (!school) return;
+    fillSelectsByOptionCandidates(SCHOOL_TYPES, school.category);
+    fillSelectsByOptionCandidates(['私立', '公立'], school.kubun);
+    fillSelectsByOptionCandidates(PREFECTURES, school.pref, isSchoolPrefTarget);
+
+    const steps = [
+      { key: 'initial', query: 'input[name*="initial"], input[id*="initial"], input[name*="initials"], input[name*="kibana"]' },
+      { key: 'dname', query: 'select[name*="dname"], select[id*="dname"], select[name*="school"], select[name*="daigaku"], input[name*="school"], input[name*="daigaku"]' },
+      { key: 'bname', query: 'select[name*="bname"], select[id*="bname"], select[name*="gakubu"], input[name*="gakubu"], input[name*="course"]' },
+      { key: 'kname', query: 'select[name*="kname"], select[id*="kname"], select[name*="gakka"], input[name*="gakka"], input[name*="senkou"]' }
+    ];
+
+    steps.forEach(step => {
+      const val = school[step.key];
+      if (!val) return;
+      let node = null;
+      try {
+        node = document.querySelector(step.query);
+      } catch (error) {
+        log('school step selector error', step.query, error);
+      }
+      if (!node || !isElementInteractive(node)) return;
+
+      if (node.tagName === 'SELECT') {
+        setSelectValueByText(node, val);
+      } else {
+        node.value = val;
+        triggerInput(node);
+      }
+    });
+
+    if (school.initial) clickInitialButton(school.initial);
+  }
+
   function setVacationAddressVisibility(visible) {
     const nodes = document.querySelectorAll('.jusho_k');
     nodes.forEach((node) => {
@@ -578,20 +707,22 @@
     }
 
     // --- 学校情報 ---
-    const sch = profile.school || {};
-    startSchoolAutomation(sch);
+    const selectedSchool = pickSchoolEntry(profile) || profile.school || defaultSchoolEntry('学部');
+    profile.school = selectedSchool;
+    fillSchoolSequence(selectedSchool);
+    startSchoolAutomation(selectedSchool);
 
-    if (sch.from) {
-      fillFieldByName('school_from_Y', sch.from.Y);
-      fillFieldByName('school_from_m', sch.from.m);
+    if (selectedSchool.from) {
+      fillFieldByName('school_from_Y', selectedSchool.from.Y);
+      fillFieldByName('school_from_m', selectedSchool.from.m);
     }
-    if (sch.to) {
-      fillFieldByName('school_to_Y', sch.to.Y);
-      fillFieldByName('school_to_m', sch.to.m);
+    if (selectedSchool.to) {
+      fillFieldByName('school_to_Y', selectedSchool.to.Y);
+      fillFieldByName('school_to_m', selectedSchool.to.m);
     }
 
-    if (sch.zemi) fillFieldByName('zemi', sch.zemi);
-    if (sch.club) fillFieldByName('club', sch.club);
+    if (selectedSchool.zemi) fillFieldByName('zemi', selectedSchool.zemi);
+    if (selectedSchool.club) fillFieldByName('club', selectedSchool.club);
 
     if (AUTO_SUBMIT) {
       const submit = document.querySelector('#submit');
@@ -618,6 +749,10 @@
     }
     #autofill-panel .row { display: flex; gap: 8px; }
     #autofill-panel .row > * { flex: 1; }
+    #autofill-panel .school-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; margin: 6px 0; background: #f8fafc; }
+    #autofill-panel .school-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; font-weight:600; }
+    #autofill-panel .school-remove { background: none; border: none; cursor: pointer; color: #64748b; font-size: 14px; }
+    #autofill-panel .school-remove:hover { color: #ef4444; }
     #autofill-panel .btn { padding: 8px 10px; border-radius: 8px; border: 1px solid #bbb; cursor: pointer; background: #e5e7eb; color: #111; }
     #autofill-panel .btn.primary { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
     #autofill-panel h4 { margin: 8px 0 4px; font-size: 13px; color: #333; }
@@ -694,32 +829,12 @@
     <input id="p-email" type="email" placeholder="メールアドレス">
     <input id="p-email2" type="email" placeholder="メールアドレス2（任意）">
 
-    <h4>学校情報（主なもの）</h4>
-    <div class="row">
-      <select id="p-kubun">
-        <option value="">学校区分</option>
-        <option value="1">大学院</option><option value="2">大学</option>
-        <option value="3">短大</option><option value="4">高専</option><option value="5">専門</option>
-      </select>
-      <select id="p-kokushi">
-        <option value="">設置区分</option>
-        <option value="1">国立</option><option value="2">公立</option>
-        <option value="3">私立</option><option value="4">国外</option>
-      </select>
-    </div>
-    <input id="p-initial" type="text" placeholder="学校名の頭文字（全角カナ1文字）">
-    <div class="row">
-      <input id="p-dname" type="text" placeholder="学校名（例: 大阪工業大学）">
-      <input id="p-dcd" type="text" placeholder="学校コード（任意）">
-    </div>
-    <div class="row">
-      <input id="p-bname" type="text" placeholder="学部・研究科名（例: 知的財産研究科）">
-      <input id="p-bcd" type="text" placeholder="学部コード（任意）">
-    </div>
-    <div class="row">
-      <input id="p-kname" type="text" placeholder="学科・専攻名（例: 知的財産専攻）">
-      <input id="p-paxcd" type="text" placeholder="学科コード（任意）">
-    </div>
+    <h4>現在/直近の学校情報</h4>
+    <div id="p-school-container"></div>
+    <button id="p-add-school" class="btn" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+      <span>＋</span><span>学校を追加</span>
+    </button>
+    <small class="muted">区分・所在地・頭文字はドロップダウン/ボタンを自動選択します。</small>
     <div class="row">
       <input id="p-from-y" type="text" placeholder="入学年">
       <input id="p-from-m" type="text" placeholder="入学月">
@@ -753,6 +868,111 @@
     vacFields: panel.querySelector('#p-vac-fields'),
   };
 
+  function buildPrefectureOptions(selected = '') {
+    const opts = ['<option value="">所在地</option>'];
+    PREFECTURES.forEach(p => {
+      const sel = p === selected ? 'selected' : '';
+      opts.push(`<option value="${p}" ${sel}>${p}</option>`);
+    });
+    return opts.join('');
+  }
+
+  function renderSchoolEntries(entries = []) {
+    const container = panel.querySelector('#p-school-container');
+    if (!container) return;
+    const normalized = entries.length ? entries : [defaultSchoolEntry('学部')];
+    container.innerHTML = '';
+
+    normalized.forEach((entry, idx) => {
+      const card = document.createElement('div');
+      card.className = 'school-card';
+      card.dataset.schoolId = entry.id || generateSchoolId();
+      card.dataset.dcd = entry.dcd || '';
+      card.dataset.bcd = entry.bcd || '';
+      card.dataset.paxcd = entry.paxcd || '';
+
+      const typeOptions = SCHOOL_TYPES.map(t => `<option value="${t}" ${t === entry.category ? 'selected' : ''}>${t}</option>`).join('');
+      const prefOptions = buildPrefectureOptions(entry.pref || '');
+      const canRemove = normalized.length > 1;
+
+      card.innerHTML = `
+        <div class="school-head">
+          <span>${entry.category || '学校情報'}</span>
+          ${canRemove ? '<button class="school-remove" title="削除">×</button>' : ''}
+        </div>
+        <div class="row">
+          <select data-field="category">${typeOptions}</select>
+          <select data-field="kubun">
+            <option value="">区分</option>
+            <option value="私立" ${entry.kubun === '私立' ? 'selected' : ''}>私立</option>
+            <option value="公立" ${entry.kubun === '公立' ? 'selected' : ''}>公立</option>
+          </select>
+        </div>
+        <div class="row">
+          <input data-field="initial" type="text" placeholder="頭文字" value="${entry.initial || ''}">
+          <select data-field="pref">${prefOptions}</select>
+        </div>
+        <div class="row">
+          <input data-field="dname" type="text" placeholder="学校名" value="${entry.dname || ''}">
+          <input data-field="bname" type="text" placeholder="学部 / コース" value="${entry.bname || ''}">
+        </div>
+        <div class="row">
+          <input data-field="kname" type="text" placeholder="学科 / 専攻" value="${entry.kname || ''}">
+        </div>
+      `;
+
+      const typeSelect = card.querySelector('[data-field="category"]');
+      const title = card.querySelector('.school-head span');
+      if (typeSelect && title) {
+        typeSelect.addEventListener('change', () => { title.textContent = typeSelect.value || '学校情報'; });
+      }
+      const removeBtn = card.querySelector('.school-remove');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+          card.remove();
+          if (!els('.school-card', container).length) renderSchoolEntries([defaultSchoolEntry('学部')]);
+        });
+      }
+      container.appendChild(card);
+    });
+  }
+
+  function readSchoolEntriesFromUI() {
+    const container = panel.querySelector('#p-school-container');
+    if (!container) return [];
+    return els('.school-card', container).map(card => {
+      const getField = sel => el(sel, card)?.value || '';
+      return {
+        id: card.dataset.schoolId || generateSchoolId(),
+        category: getField('[data-field="category"]') || '学部',
+        kubun: getField('[data-field="kubun"]'),
+        kokushi: getField('[data-field="kubun"]'),
+        pref: getField('[data-field="pref"]'),
+        initial: getField('[data-field="initial"]'),
+        dcd: card.dataset.dcd || '',
+        dname: getField('[data-field="dname"]'),
+        bcd: card.dataset.bcd || '',
+        bname: getField('[data-field="bname"]'),
+        paxcd: card.dataset.paxcd || '',
+        kname: getField('[data-field="kname"]'),
+        from: { Y: '', m: '' },
+        to: { Y: '', m: '' },
+        zemi: '',
+        club: ''
+      };
+    });
+  }
+
+  const addSchoolBtn = panel.querySelector('#p-add-school');
+  if (addSchoolBtn) {
+    addSchoolBtn.addEventListener('click', () => {
+      const entries = readSchoolEntriesFromUI();
+      const nextCategory = entries.length ? entries[entries.length - 1].category : SCHOOL_TYPES[0];
+      entries.push(defaultSchoolEntry(nextCategory));
+      renderSchoolEntries(entries);
+    });
+  }
+
   function updateVacationPanelVisibility() {
     if (!panelRefs.vacFields) return;
     if (panelRefs.vacSame && panelRefs.vacSame.checked) {
@@ -776,6 +996,7 @@
 
   // ===== UI <-> プロフィール =====
   function defaultProfile() {
+    const baseSchool = defaultSchoolEntry('学部');
     return {
       kanji_sei: "", kanji_na: "", kana_sei: "", kana_na: "", roma_sei: "", roma_na: "", sex: "",
       birth: { Y: "", m: "", d: "" },
@@ -785,12 +1006,8 @@
       },
       tel: { home: "", mobile: "" },
       email: { primary: "", primaryConfirm: true, secondary: "", secondaryConfirm: false },
-      school: {
-        kubun: "", kokushi: "", initial: "", dcd: "", dname: "",
-        bcd: "", bname: "", paxcd: "", kname: "",
-        from: { Y: "", m: "" }, to: { Y: "", m: "" },
-        zemi: "", club: ""
-      }
+      school: { ...baseSchool },
+      schoolEntries: [{ ...baseSchool }]
     };
   }
 
@@ -824,21 +1041,20 @@
       },
       tel: { home: document.querySelector('#p-tel-home').value, mobile: document.querySelector('#p-tel-mobile').value },
       email: { primary: document.querySelector('#p-email').value, primaryConfirm: true, secondary: document.querySelector('#p-email2').value, secondaryConfirm: !!document.querySelector('#p-email2').value },
-      school: {
-        kubun: document.querySelector('#p-kubun').value,
-        kokushi: document.querySelector('#p-kokushi').value,
-        initial: document.querySelector('#p-initial').value,
-        dcd: document.querySelector('#p-dcd').value,
-        dname: document.querySelector('#p-dname').value,
-        bcd: document.querySelector('#p-bcd').value,
-        bname: document.querySelector('#p-bname').value,
-        paxcd: document.querySelector('#p-paxcd').value,
-        kname: document.querySelector('#p-kname').value,
-        from: { Y: document.querySelector('#p-from-y').value, m: document.querySelector('#p-from-m').value },
-        to: { Y: document.querySelector('#p-to-y').value, m: document.querySelector('#p-to-m').value },
-        zemi: document.querySelector('#p-zemi').value,
-        club: document.querySelector('#p-club').value
-      }
+      ...(() => {
+        const entries = readSchoolEntriesFromUI();
+        const normalized = entries.length ? entries : [defaultSchoolEntry('学部')];
+        const enrichedFirst = {
+          ...normalized[0],
+          from: { Y: document.querySelector('#p-from-y').value, m: document.querySelector('#p-from-m').value },
+          to: { Y: document.querySelector('#p-to-y').value, m: document.querySelector('#p-to-m').value },
+          zemi: document.querySelector('#p-zemi').value,
+          club: document.querySelector('#p-club').value
+        };
+        const merged = [...normalized];
+        merged[0] = enrichedFirst;
+        return { school: enrichedFirst, schoolEntries: merged };
+      })()
     };
   }
 
@@ -909,27 +1125,16 @@
     document.querySelector('#p-tel-mobile').value = prof.tel.mobile ?? '';
     document.querySelector('#p-email').value = prof.email.primary ?? '';
     document.querySelector('#p-email2').value = prof.email.secondary ?? '';
-    document.querySelector('#p-kubun').value = prof.school.kubun ?? '';
-    document.querySelector('#p-kokushi').value = prof.school.kokushi ?? '';
-    document.querySelector('#p-initial').value = prof.school.initial ?? '';
-    const schDcd = document.querySelector('#p-dcd');
-    if (schDcd) schDcd.value = prof.school.dcd ?? '';
-    const schDname = document.querySelector('#p-dname');
-    if (schDname) schDname.value = prof.school.dname ?? '';
-    const schBcd = document.querySelector('#p-bcd');
-    if (schBcd) schBcd.value = prof.school.bcd ?? '';
-    const schBname = document.querySelector('#p-bname');
-    if (schBname) schBname.value = prof.school.bname ?? '';
-    const schPaxcd = document.querySelector('#p-paxcd');
-    if (schPaxcd) schPaxcd.value = prof.school.paxcd ?? '';
-    const schKname = document.querySelector('#p-kname');
-    if (schKname) schKname.value = prof.school.kname ?? '';
-    document.querySelector('#p-from-y').value = prof.school.from.Y ?? '';
-    document.querySelector('#p-from-m').value = prof.school.from.m ?? '';
-    document.querySelector('#p-to-y').value = prof.school.to.Y ?? '';
-    document.querySelector('#p-to-m').value = prof.school.to.m ?? '';
-    document.querySelector('#p-zemi').value = prof.school.zemi ?? '';
-    document.querySelector('#p-club').value = prof.school.club ?? '';
+    const schools = (prof.schoolEntries && prof.schoolEntries.length ? prof.schoolEntries : [prof.school || defaultSchoolEntry('学部')])
+      .map(s => ({ ...defaultSchoolEntry(s.category || '学部'), ...s }));
+    renderSchoolEntries(schools);
+    const topSchool = schools[0] || defaultSchoolEntry('学部');
+    document.querySelector('#p-from-y').value = topSchool.from.Y ?? '';
+    document.querySelector('#p-from-m').value = topSchool.from.m ?? '';
+    document.querySelector('#p-to-y').value = topSchool.to.Y ?? '';
+    document.querySelector('#p-to-m').value = topSchool.to.m ?? '';
+    document.querySelector('#p-zemi').value = topSchool.zemi ?? '';
+    document.querySelector('#p-club').value = topSchool.club ?? '';
   }
 
   // ===== ボタン動作 =====
