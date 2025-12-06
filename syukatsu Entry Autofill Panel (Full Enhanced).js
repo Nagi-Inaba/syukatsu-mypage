@@ -233,19 +233,31 @@
       if (!isInteractive(node)) continue;
 
       let val = node.value;
-      if (node.type === 'radio' || node.type === 'checkbox') {
-        if (!node.checked) continue;
-        val = node.value;
+      let displayValue = '';
+      let checked = null;
+
+      if (node.tagName === 'SELECT') {
+        const selectedOption = node.selectedOptions && node.selectedOptions[0];
+        displayValue = selectedOption ? String(selectedOption.textContent || '').trim() : '';
       }
-      val = String(val || '').trim();
-      if (!val) continue;
+
+      if (node.type === 'radio' || node.type === 'checkbox') {
+        checked = !!node.checked;
+        val = node.checked ? node.value : '';
+      }
+
+      const normalizedVal = String(val || '').trim();
+      const shouldRecord = node.type === 'checkbox' ? true : !!normalizedVal;
+      if (!shouldRecord) continue;
 
       const labelText = getLabelText(node);
       const selector = buildSelector(node);
       learnedFields.push({
         label: labelText,
         selector,
-        value: val,
+        value: normalizedVal,
+        displayValue,
+        checked,
         name: node.name || '',
         placeholder: node.placeholder || '',
         tag: node.tagName.toLowerCase(),
@@ -257,7 +269,10 @@
         const isSafeKey = key.includes('sex') || key.includes('kubun') || key.includes('kokushi') || key.includes('initial');
         if (isShort && !isSafeKey) continue;
 
-        if (String(profVal).trim() === val) {
+        const profStr = String(profVal).trim();
+        const matchesValue = profStr && (profStr === normalizedVal || profStr === displayValue);
+        const matchesBoolean = typeof profVal === 'boolean' && checked !== null && profVal === checked;
+        if (matchesValue || matchesBoolean) {
           if (selector) {
             mapping[key] = selector;
             learnedCount++;
@@ -441,7 +456,7 @@
     let count = 0;
     const flatProfile = flattenObject(profile);
     for (const field of learnedFields) {
-      const { label, selector, value } = field;
+      const { label, selector, value, displayValue, checked } = field;
       let node = null;
       if (selector) {
         try {
@@ -456,12 +471,13 @@
         continue;
       }
       if (!node || !isInteractive(node)) continue;
-      let targetVal = value || '';
+      const hasBoolean = typeof checked === 'boolean';
+      let targetVal = value || displayValue || '';
       if (!targetVal && label) {
         const hit = Object.entries(flatProfile).find(([k]) => label.toLowerCase().includes(k.split('.').pop().toLowerCase()));
         if (hit) targetVal = hit[1];
       }
-      if (!targetVal) continue;
+      if (!targetVal && !hasBoolean) continue;
 
       if (node.tagName === 'SELECT') {
         let found = false;
@@ -477,9 +493,11 @@
           count++;
         }
       } else if (node.type === 'radio' || node.type === 'checkbox') {
-        if (node.value === targetVal) {
-          node.checked = true;
-          setNativeValue(node, node.value);
+        const desired = hasBoolean ? checked : node.value === targetVal;
+        if (typeof desired === 'boolean' && node.checked !== desired) {
+          node.checked = desired;
+          node.dispatchEvent(new Event('change', { bubbles: true }));
+          node.dispatchEvent(new Event('click', { bubbles: true }));
           count++;
         }
       } else {
