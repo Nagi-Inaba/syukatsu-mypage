@@ -42,8 +42,10 @@
       "secondaryConfirm": false
     },
     "school": {
-      "kubun": "1",
-      "kokushi": "1",
+      "category": "学部",
+      "kubun": "私立",
+      "kokushi": "私立",
+      "pref": "",
       "initial": "",
       "dcd": "",
       "dname": "",
@@ -61,7 +63,33 @@
       },
       "zemi": "",
       "club": ""
-    }
+    },
+    "schoolEntries": [
+      {
+        "id": "school-sample",
+        "category": "学部",
+        "kubun": "私立",
+        "kokushi": "私立",
+        "pref": "",
+        "initial": "",
+        "dcd": "",
+        "dname": "",
+        "bcd": "",
+        "bname": "",
+        "paxcd": "",
+        "kname": "",
+        "from": {
+          "Y": "",
+          "m": ""
+        },
+        "to": {
+          "Y": "",
+          "m": ""
+        },
+        "zemi": "",
+        "club": ""
+      }
+    ]
   },
   "patterns": {
     "default": {
