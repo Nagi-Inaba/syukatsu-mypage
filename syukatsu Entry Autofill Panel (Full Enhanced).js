@@ -26,6 +26,58 @@
   ];
   const SCHOOL_TYPES = ['大学院', '学部', '短大', '専門学校', '高専'];
 
+  const PATTERN_ONE_MAPPING = {
+    kanji_sei: 'input[name*="sei" i][name*="kanji" i], input[name*="sei" i][aria-label*="姓" i], input[name*="last" i][name*="kanji" i], input[name*="family" i], input[name*="sei" i][data-label*="姓" i]',
+    kanji_na: 'input[name*="mei" i][name*="kanji" i], input[name*="mei" i][aria-label*="名" i], input[name*="first" i][name*="kanji" i], input[name*="given" i], input[name*="mei" i][data-label*="名" i]',
+    kana_sei: 'input[name*="sei" i][name*="kana" i], input[name*="sei" i][name*="furi" i], input[aria-label*="セイ" i], input[name*="seiKana" i]',
+    kana_na: 'input[name*="mei" i][name*="kana" i], input[name*="mei" i][name*="furi" i], input[aria-label*="メイ" i], input[name*="meiKana" i]',
+    roma_sei: 'input[name*="sei" i][name*="roma" i], input[name*="last" i][name*="roma" i], input[name*="family" i][name*="roma" i], input[name*="romaji" i][data-label*="姓" i]',
+    roma_na: 'input[name*="mei" i][name*="roma" i], input[name*="first" i][name*="roma" i], input[name*="romaji" i][data-label*="名" i]',
+    sex: 'input[type="radio"][name*="sex" i], input[type="radio"][name*="gender" i], select[name*="sex" i], select[name*="gender" i]',
+    bunkeiRikei: 'input[type="radio"][name*="bunkei" i], input[type="radio"][name*="rikei" i], select[name*="bunkei" i], select[name*="rikei" i]',
+    'birth.Y': 'input[name*="birth" i][name*="year" i], select[name*="birth" i][name*="year" i], select[name*="birth_y" i], select[name*="birthday_year" i], input[name*="birth_y" i]',
+    'birth.m': 'input[name*="birth" i][name*="month" i], select[name*="birth" i][name*="month" i], select[name*="birth_m" i], select[name*="birthday_month" i], input[name*="birth_m" i]',
+    'birth.d': 'input[name*="birth" i][name*="day" i], select[name*="birth" i][name*="day" i], select[name*="birth_d" i], select[name*="birthday_day" i], input[name*="birth_d" i]',
+    'email.primary': 'input[type="email"][name*="mail" i]:not([name*="confirm" i]), input[type="email"][name="mail"]',
+    'email.secondary': 'input[type="email"][name*="sub" i], input[type="email"][name*="second" i]',
+    'tel.mobile': 'input[type="tel"][name*="mobile" i], input[type="tel"][name*="keitai" i], input[type="tel"][name*="cell" i], input[type="tel"][name*="sp" i]',
+    'tel.home': 'input[type="tel"][name*="home" i], input[type="tel"][name*="ie" i], input[type="tel"][name*="tel" i]:not([name*="mobile" i]):not([name*="keitai" i])',
+    'address.current.postal': 'input[name*="zip" i], input[name*="post" i], input[name*="yubin" i]',
+    'address.current.pref': 'select[name*="pref" i], select[name*="todofuken" i], input[name*="pref" i][list], input[name*="pref" i]',
+    'address.current.city': 'input[name*="city" i], input[name*="shi" i], input[name*="ku" i], input[name*="gun" i]',
+    'address.current.street': 'input[name*="addr" i], input[name*="address" i], input[name*="banchi" i]',
+    'address.current.building': 'input[name*="bld" i], input[name*="building" i], input[name*="apartment" i], input[name*="mansion" i]',
+    'address.vacation.sameAsCurrent': 'input[type="checkbox"][name*="same" i][name*="address" i]',
+    'address.vacation.postal': 'input[name*="vac" i][name*="zip" i], input[name*="ryogai" i][name*="post" i]',
+    'address.vacation.pref': 'select[name*="vac" i][name*="pref" i], select[name*="ryogai" i][name*="pref" i]',
+    'address.vacation.city': 'input[name*="vac" i][name*="city" i], input[name*="ryogai" i][name*="city" i]',
+    'address.vacation.street': 'input[name*="vac" i][name*="address" i], input[name*="ryogai" i][name*="address" i]',
+    'address.vacation.building': 'input[name*="vac" i][name*="building" i], input[name*="ryogai" i][name*="bld" i]',
+    'address.vacation.tel': 'input[type="tel"][name*="vac" i], input[type="tel"][name*="ryogai" i]',
+    'school.category': 'select[name*="gakureki" i], select[name*="schooltype" i], select[name*="daigakuKubun" i]',
+    'school.kubun': 'select[name*="kubun" i], select[name*="kbn" i]',
+    'school.initial': 'input[name*="initial" i], input[name*="kibana" i]',
+    'school.pref': 'select[name*="campus_pref" i], select[name*="school_pref" i], select[name*="pref" i][data-group*="school" i]',
+    'school.dname': 'select[name*="dname" i], select[name*="school" i], input[name*="school" i]',
+    'school.bname': 'select[name*="bname" i], select[name*="gakubu" i], input[name*="gakubu" i], input[name*="course" i]',
+    'school.kname': 'select[name*="kname" i], select[name*="gakka" i], input[name*="gakka" i], input[name*="senkou" i]',
+    'school.from.Y': 'select[name*="ent" i][name*="year" i], select[name*="nyuugaku" i][name*="year" i], select[name*="kikanFromYear" i]',
+    'school.from.m': 'select[name*="ent" i][name*="month" i], select[name*="nyuugaku" i][name*="month" i], select[name*="kikanFromMonth" i]',
+    'school.to.Y': 'select[name*="grad" i][name*="year" i], select[name*="sotsu" i][name*="year" i], select[name*="kikanToYear" i]',
+    'school.to.m': 'select[name*="grad" i][name*="month" i], select[name*="sotsu" i][name*="month" i], select[name*="kikanToMonth" i]',
+    'highSchool.name': 'input[name*="koukou" i], input[name*="high" i][name*="school" i]',
+    'highSchool.initial': 'input[name*="koukou" i][name*="initial" i], input[name*="koukou" i][name*="kibana" i]',
+    'highSchool.pref': 'select[name*="koukou" i][name*="pref" i], select[name*="high" i][name*="pref" i], input[name*="koukou" i][name*="pref" i]',
+    'highSchool.department': 'input[name*="koukou" i][name*="gakka" i], input[name*="koukou" i][name*="course" i]',
+    'highSchool.major': 'input[name*="koukou" i][name*="senkou" i], input[name*="koukou" i][name*="major" i]',
+    'highSchool.from.Y': 'select[name*="koukou" i][name*="ent" i][name*="year" i], select[name*="koukou" i][name*="nyuugaku" i][name*="year" i]',
+    'highSchool.from.m': 'select[name*="koukou" i][name*="ent" i][name*="month" i], select[name*="koukou" i][name*="nyuugaku" i][name*="month" i]',
+    'highSchool.to.Y': 'select[name*="koukou" i][name*="grad" i][name*="year" i], select[name*="koukou" i][name*="sotsu" i][name*="year" i]',
+    'highSchool.to.m': 'select[name*="koukou" i][name*="grad" i][name*="month" i], select[name*="koukou" i][name*="sotsu" i][name*="month" i]'
+  };
+
+  const PATTERN_ONE = { mapping: PATTERN_ONE_MAPPING, learnedFields: [] };
+
   // ===== ユーティリティ =====
   const log = (...a) => DEBUG && console.log('[Autofill]', ...a);
   const el = (sel, root = document) => root.querySelector(sel);
@@ -67,8 +119,8 @@
   async function loadData() {
     const defaultData = {
       profile: defaultProfile(),
-      patterns: {},
-      savedSettings: { lastPattern: '' }
+      patterns: { 'パターン1': PATTERN_ONE },
+      savedSettings: { lastPattern: 'パターン1' }
     };
     const str = typeof GM_getValue === 'function' ? GM_getValue(STORAGE_KEY, '') : localStorage.getItem(STORAGE_KEY);
     if (!str) return defaultData;
@@ -103,7 +155,7 @@
         savedSettings: {
           ...defaultData.savedSettings,
           ...data.savedSettings,
-          lastPattern: data.savedSettings?.lastPattern === 'default' ? '' : data.savedSettings?.lastPattern || ''
+          lastPattern: data.savedSettings?.lastPattern === 'default' ? '' : data.savedSettings?.lastPattern || defaultData.savedSettings.lastPattern
         }
 
       };
@@ -234,7 +286,14 @@
       }
 
       const normalizedVal = String(val || '').trim();
-      const shouldRecord = node.type === 'checkbox' ? true : !!normalizedVal;
+      const shouldRecord =
+        node.type === 'checkbox'
+          ? true
+          : node.type === 'radio'
+            ? node.checked
+            : node.tagName === 'SELECT'
+              ? true
+              : !!normalizedVal;
       if (!shouldRecord) continue;
 
       const labelText = getLabelText(node);
@@ -726,10 +785,10 @@
       <button id="p-add-school" class="af-btn af-btn-outline af-btn-icon"><span>＋</span><span>学校を追加</span></button>
       <div class="af-label">高校情報</div>
       <div class="af-row"><input id="p-hs-name" class="af-input" placeholder="高校名"><input id="p-hs-initial" class="af-input" placeholder="略称/イニシャル"></div>
-      <div class="af-row"><input id="p-hs-pref" class="af-input" placeholder="都道府県"><input id="p-hs-department" class="af-input" placeholder="学科"></div>
+      <div class="af-row"><select id="p-hs-pref" class="af-input">${buildPrefectureOptions('')}</select><input id="p-hs-department" class="af-input" placeholder="学科"></div>
       <div class="af-row"><input id="p-hs-major" class="af-input" placeholder="専攻 / コース"></div>
-      <div class="af-row"><input id="p-hs-from-y" class="af-input" placeholder="入学年 YYYY"><input id="p-hs-from-m" class="af-input" placeholder="入学月 MM"></div>
-      <div class="af-row"><input id="p-hs-to-y" class="af-input" placeholder="卒業年 YYYY"><input id="p-hs-to-m" class="af-input" placeholder="卒業月 MM"></div>
+      <div class="af-row"><select id="p-hs-from-y" class="af-input">${buildYearOptions('', '入学年')}</select><select id="p-hs-from-m" class="af-input">${buildMonthOptions('', '入学月')}</select></div>
+      <div class="af-row"><select id="p-hs-to-y" class="af-input">${buildYearOptions('', '卒業年')}</select><select id="p-hs-to-m" class="af-input">${buildMonthOptions('', '卒業月')}</select></div>
       <button id="act-save-profile" class="af-btn af-btn-primary">プロフィール保存</button>
       <button id="act-export-json" class="af-btn af-btn-outline">JSON書き出し(Console)</button>
     </div>
@@ -790,6 +849,18 @@
     return '<option value="">都道府県</option>' + PREFECTURES.map(p => `<option value="${p}" ${p === selected ? 'selected' : ''}>${p}</option>`).join('');
   }
 
+  function buildYearOptions(selected = '', placeholder = '年') {
+    const current = new Date().getFullYear();
+    const years = [];
+    for (let y = current + 5; y >= current - 60; y--) years.push(y);
+    return `<option value="">${placeholder}</option>` + years.map(y => `<option value="${y}" ${String(y) === String(selected) ? 'selected' : ''}>${y}年</option>`).join('');
+  }
+
+  function buildMonthOptions(selected = '', placeholder = '月') {
+    const months = Array.from({ length: 12 }, (_, i) => i + 1);
+    return `<option value="">${placeholder}</option>` + months.map(m => `<option value="${m}" ${String(m) === String(selected) ? 'selected' : ''}>${m}月</option>`).join('');
+  }
+
   function renderSchoolEntries(entries = []) {
     const container = el('#p-school-container');
     if (!container) return;
@@ -800,15 +871,13 @@
       const card = document.createElement('div');
       card.className = 'af-school-card';
       card.dataset.schoolId = entry.id || generateSchoolId();
-      card.dataset.fromY = entry.from?.Y || '';
-      card.dataset.fromM = entry.from?.m || '';
-      card.dataset.toY = entry.to?.Y || '';
-      card.dataset.toM = entry.to?.m || '';
-      card.dataset.zemi = entry.zemi || '';
-      card.dataset.club = entry.club || '';
 
       const typeOptions = SCHOOL_TYPES.map(t => `<option value="${t}" ${t === entry.category ? 'selected' : ''}>${t}</option>`).join('');
       const prefOptions = buildPrefectureOptions(entry.pref || '');
+      const fromYearOptions = buildYearOptions(entry.from?.Y || '', '入学年');
+      const fromMonthOptions = buildMonthOptions(entry.from?.m || '', '入学月');
+      const toYearOptions = buildYearOptions(entry.to?.Y || '', '卒業年');
+      const toMonthOptions = buildMonthOptions(entry.to?.m || '', '卒業月');
       const canRemove = normalized.length > 1;
 
       card.innerHTML = `
@@ -830,6 +899,14 @@
         </div>
         <div class="af-row"><input class="af-input" data-field="dname" placeholder="学校名" value="${entry.dname || ''}"><input class="af-input" data-field="bname" placeholder="学部 / コース" value="${entry.bname || ''}"></div>
         <div class="af-row"><input class="af-input" data-field="kname" placeholder="学科 / 専攻" value="${entry.kname || ''}"></div>
+        <div class="af-row">
+          <select class="af-input" data-field="fromY">${fromYearOptions}</select>
+          <select class="af-input" data-field="fromM">${fromMonthOptions}</select>
+        </div>
+        <div class="af-row">
+          <select class="af-input" data-field="toY">${toYearOptions}</select>
+          <select class="af-input" data-field="toM">${toMonthOptions}</select>
+        </div>
       `;
 
       const typeSelect = card.querySelector('[data-field="category"]');
@@ -865,8 +942,8 @@
         dname: getField('[data-field="dname"]'),
         bname: getField('[data-field="bname"]'),
         kname: getField('[data-field="kname"]'),
-        from: { Y: card.dataset.fromY || '', m: card.dataset.fromM || '' },
-        to: { Y: card.dataset.toY || '', m: card.dataset.toM || '' },
+        from: { Y: getField('[data-field="fromY"]'), m: getField('[data-field="fromM"]') },
+        to: { Y: getField('[data-field="toY"]'), m: getField('[data-field="toM"]') },
         zemi: card.dataset.zemi || '',
         club: card.dataset.club || ''
       };
@@ -913,13 +990,14 @@
     renderSchoolEntries(p.schoolEntries && p.schoolEntries.length ? p.schoolEntries : (p.school ? [p.school] : []));
     el('#p-hs-name').value = p.highSchool.name;
     el('#p-hs-initial').value = p.highSchool.initial;
-    el('#p-hs-pref').value = p.highSchool.pref;
+    const hsPref = el('#p-hs-pref');
+    if (hsPref) hsPref.innerHTML = buildPrefectureOptions(p.highSchool.pref);
     el('#p-hs-department').value = p.highSchool.department;
     el('#p-hs-major').value = p.highSchool.major;
-    el('#p-hs-from-y').value = p.highSchool.from.Y;
-    el('#p-hs-from-m').value = p.highSchool.from.m;
-    el('#p-hs-to-y').value = p.highSchool.to.Y;
-    el('#p-hs-to-m').value = p.highSchool.to.m;
+    const hsFromY = el('#p-hs-from-y'); if (hsFromY) hsFromY.innerHTML = buildYearOptions(p.highSchool.from.Y, '入学年');
+    const hsFromM = el('#p-hs-from-m'); if (hsFromM) hsFromM.innerHTML = buildMonthOptions(p.highSchool.from.m, '入学月');
+    const hsToY = el('#p-hs-to-y'); if (hsToY) hsToY.innerHTML = buildYearOptions(p.highSchool.to.Y, '卒業年');
+    const hsToM = el('#p-hs-to-m'); if (hsToM) hsToM.innerHTML = buildMonthOptions(p.highSchool.to.m, '卒業月');
   }
 
   function getProfileFromUI() {
