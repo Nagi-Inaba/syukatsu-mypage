@@ -47,7 +47,7 @@
     'address.current.city': 'input[name*="city" i], input[name*="shi" i], input[name*="ku" i], input[name*="gun" i]',
     'address.current.street': 'input[name*="addr" i], input[name*="address" i], input[name*="banchi" i]',
     'address.current.building': 'input[name*="bld" i], input[name*="building" i], input[name*="apartment" i], input[name*="mansion" i]',
-    'address.vacation.sameAsCurrent': 'input[type="checkbox"][name*="same" i][name*="address" i]',
+    'address.vacation.sameAsCurrent': 'input[type="checkbox"][name*="same" i][name*="address" i], input[type="checkbox"][aria-label*="現住所と同じ" i], input[type="checkbox"][data-label*="現住所と同じ" i], input[type="checkbox"][id*="sameaddress" i], input[type="checkbox"][name*="same" i][aria-label*="住所" i]',
     'address.vacation.postal': 'input[name*="vac" i][name*="zip" i], input[name*="ryogai" i][name*="post" i]',
     'address.vacation.pref': 'select[name*="vac" i][name*="pref" i], select[name*="ryogai" i][name*="pref" i]',
     'address.vacation.city': 'input[name*="vac" i][name*="city" i], input[name*="ryogai" i][name*="city" i]',
@@ -103,6 +103,27 @@
     element.dispatchEvent(new Event('input', { bubbles: true }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
     element.dispatchEvent(new Event('blur', { bubbles: true }));
+  }
+
+  function isJqTransformHidden(node) {
+    return !!(node && node.classList && node.classList.contains('jqTransformHidden'));
+  }
+
+  function syncJqTransformSelect(select) {
+    if (!select) return;
+    const wrapper = select.closest('.jqTransformSelectWrapper');
+    if (!wrapper) return;
+
+    const option = select.options[select.selectedIndex];
+    const displayText = option ? (option.textContent || '').trim() : select.value;
+    const span = wrapper.querySelector('div > span');
+    if (span) span.textContent = displayText || '-▼-';
+
+    const links = wrapper.querySelectorAll('ul li a');
+    links.forEach(link => {
+      const linkText = (link.textContent || '').trim();
+      link.classList.toggle('selected', linkText === displayText);
+    });
   }
 
   function isInteractive(node) {
@@ -352,7 +373,8 @@
       }
 
       for (const node of nodes) {
-        if (!isInteractive(node)) continue;
+        const isJqHidden = isJqTransformHidden(node);
+        if (!isInteractive(node) && !isJqHidden) continue;
 
         if (node.tagName === 'SELECT') {
             let found = false;
@@ -372,6 +394,7 @@
             }
             if(found) {
                 setNativeValue(node, node.value);
+                if (isJqHidden) syncJqTransformSelect(node);
                 count++;
             }
         }
@@ -400,6 +423,7 @@
             } else {
                 if (node.value === val && !node.checked) {
                     node.checked = true;
+                    node.dispatchEvent(new Event('click', { bubbles: true }));
                     setNativeValue(node, val);
                     count++;
                 }
@@ -426,7 +450,8 @@
     for (const [key, val] of Object.entries(flat)) {
         const fieldName = key.split('.').pop();
         const target = document.querySelector(`[name*="${fieldName}"]`);
-        if (!target || !isInteractive(target)) continue;
+        const isJqHidden = isJqTransformHidden(target);
+        if (!target || (!isInteractive(target) && !isJqHidden)) continue;
 
         const stringVal = typeof val === 'boolean' ? String(val) : String(val || '');
 
@@ -442,13 +467,14 @@
             }
             if (matched) {
                 setNativeValue(target, target.value);
+                if (isJqHidden) syncJqTransformSelect(target);
                 count++;
             }
         } else if (target.type === 'radio') {
             const name = target.name;
             const radios = name ? document.querySelectorAll(`input[type="radio"][name="${name}"]`) : [target];
             for (const radio of radios) {
-                if (!isInteractive(radio)) continue;
+                if (!isInteractive(radio) && !isJqTransformHidden(radio)) continue;
                 if (radio.value === stringVal && !radio.checked) {
                     radio.checked = true;
                     radio.dispatchEvent(new Event('change', { bubbles: true }));
@@ -704,6 +730,7 @@
     .af-btn-primary:hover { background: #1d4ed8; }
     .af-btn-outline { background: #fff; border: 1px solid #cbd5e1; color: #333; }
     .af-btn-icon { display:flex; align-items:center; justify-content:center; gap:6px; }
+    .af-btn-flash { background: #15803d !important; color: #fff !important; transition: background 0.2s ease; }
     .af-msg { margin-top: 8px; font-size: 12px; color: #059669; text-align: center; min-height: 1.5em; }
     .af-btn-running { background: #0f172a !important; color: #fff !important; animation: pulse 0.8s infinite; }
     .af-btn-done { background: #16a34a !important; color: #fff !important; }
@@ -1044,6 +1071,11 @@
   }
 
   el('#act-save-profile').addEventListener('click', async () => {
+    const saveBtn = el('#act-save-profile');
+    if (saveBtn) {
+      saveBtn.classList.add('af-btn-flash');
+      setTimeout(() => saveBtn.classList.remove('af-btn-flash'), 200);
+    }
     const currentData = await loadData();
     currentData.profile = { ...currentData.profile, ...getProfileFromUI() };
     await saveData(currentData);
