@@ -1,0 +1,1164 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="robots" content="noarchive"/>
+<meta name="robots" content="noindex,nofollow"/>	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no"/>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/><title>登録フォーム|ＮＥＣグループ</title>
+<base href="https://job.axol.jp/bx/s/necgroup_27/entry/"/>
+<style>
+	.custom .logo img { max-width: 200px;} @media screen and (max-width:599px) {.custom .logo img { max-width: calc(200px * 0.8); max-height: 60px;}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+	<link rel="stylesheet" href="https://static.axol.jp/bx/st/public/css/common.css" type="text/css">
+	<link rel="stylesheet" href="https://static.axol.jp/bx/st/public/css/pages.css" type="text/css">
+			<link rel="stylesheet" href="https://static.axol.jp/bx/st/public/css/simple.css" type="text/css">
+<link rel="stylesheet" href="https://static.axol.jp/bx/st/public/css/simple_style.css" type="text/css">
+	
+<script src="https://static.axol.jp/bx/st/js/jquery.js" charset="utf-8"></script>
+<script src="https://static.axol.jp/bx/st/js/jquery.easing.js" charset="utf-8"></script>
+<script src="https://static.axol.jp/bx/st/js/saiyo.js" charset="utf-8"></script>
+<script src="https://static.axol.jp/bx/st/js/AxolUtils.js" charset="utf-8"></script>
+<script src="https://static.axol.jp/bx/st/js/FormBuilderValidator.js" charset="utf-8"></script>
+
+<script>
+  var st_url="https://static.axol.jp/bx/st";
+  var st_user_url="https://static.axol.jp/bx/st/s/necgroup_27";
+</script>
+
+
+
+
+
+
+</head>
+		<script>
+		$(document).ready(function() {
+			(function(){
+				const scrollStartEvent = new $.Event("scrollstart");
+				const scrollEndEvent = new $.Event("scrollend");
+				let onScroll = false;
+				let scrollTimer = null;
+				$(window).on('scroll.startstop', function(){
+					if (!onScroll) {
+						onScroll = true;
+						$(window).trigger(scrollStartEvent);
+					}
+					if (scrollTimer) {
+						clearTimeout(scrollTimer);
+					}
+					scrollTimer = setTimeout(function(){
+						onScroll = false;
+						$(window).trigger(scrollEndEvent);
+					}, 1000); // 慣性スクロール最後考慮して1秒。
+				});
+			})();
+
+			const $toPageTop = $('#page-top');
+			$toPageTop.on('click.toPageTop', function(e){
+				$('body, html').animate({scrollTop:0}, 500, 'swing');
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			}).hide();
+			const $window = $(window);
+			$window.on('scrollstart.toPageTop', function() {
+				$toPageTop.removeClass('onScroll').addClass('onScroll');
+			}).on('scrollend.toPageTop', function(){
+				if ($window.scrollTop() > 100) {
+					$toPageTop.fadeIn();
+				} else {
+					$toPageTop.fadeOut();
+				}
+				$toPageTop.removeClass('onScroll');
+			});
+		});
+	</script>
+
+
+<body id="entry_input" class="nomenu cls_s customize custom s2 m4 indigo">
+<div id="page__all" class="page__all">
+  <span id="page-top">▲</span>
+		<div class="header__img"></div>
+	<div class="page__inner">
+		<header id="header__top" class="header">
+
+			<span class="logo"><img src="https://upload.axol.jp/bx/s/necgroup_27/mypage/1/iBMbhmCaewVNKJxTYziwwQvGqYnBYD.jpg" alt="Company logo"/></span>
+			<label class="menu__btn" for="menu__switch">
+				<i class="material-symbols-outlined">menu</i>
+			</label>
+			<input id="menu__switch" type="checkbox" class="menu__check"/>
+			<div class="menu__back">
+				<nav id="menu" class="menu__wrap">
+					
+					
+				
+				
+								</nav>
+				<div class="menu__close"></div>
+			</div>
+			<script>
+				document.addEventListener('DOMContentLoaded', function() {
+					document.querySelector('.menu__close').addEventListener('click', function() {
+						const menuCheck = document.getElementById('menu__switch');
+						if (menuCheck) {
+							menuCheck.checked = false;
+						}
+					});
+				});
+			</script>
+		</header>
+
+		<main id="main__contents" class="main main__contents">
+
+		
+					<h1 id="contents__title" class="contents__title">登録フォーム</h1>
+				
+		
+		<div class="contents ">
+							<script>
+										(function( $, undefined ){
+$(document).ready(function(){
+var fncs = [function(datas){
+  var tmp = {};
+  tmp['Y']=axol.array_key_exists('birth_Y', datas) ? datas['birth_Y'] : '';
+  tmp['m']=axol.array_key_exists('birth_m', datas) ? datas['birth_m'] : '';
+  tmp['d']=axol.array_key_exists('birth_d', datas) ? datas['birth_d'] : '';
+  tmp['H']=axol.array_key_exists('birth_H', datas) ? datas['birth_H'] : '';
+  tmp['i']=axol.array_key_exists('birth_i', datas) ? datas['birth_i'] : '';
+  tmp['s']=axol.array_key_exists('birth_s', datas) ? datas['birth_s'] : '';
+  var ret = $.axolFormBuilder.getDateArray(tmp, 3);
+  return (ret['empty']) ? {'birth':''} : {'birth':ret};
+},
+function(datas){
+  var h=axol.array_key_exists('yubing_h', datas) ? datas['yubing_h'].toString() : '';
+  var l=axol.array_key_exists('yubing_l', datas) ? datas['yubing_l'].toString() : '';
+  var ret='';if (!h.length && !l.length) { ret = ''; } else { ret = h+'-'+l; }
+  return {'yubing': ret};
+},
+function(datas){
+  var h=axol.array_key_exists('telg_h', datas) ? datas['telg_h'].toString() : '';
+  var m=axol.array_key_exists('telg_m', datas) ? datas['telg_m'].toString() : '';
+  var l=axol.array_key_exists('telg_l', datas) ? datas['telg_l'].toString() : '';
+  var ret='';if (!h.length && !m.length && !l.length) { ret = ''; } else { ret = h+'-'+m+'-'+l; }
+  return {'telg': ret};
+},
+function(datas){
+  var h=axol.array_key_exists('keitai_h', datas) ? datas['keitai_h'].toString() : '';
+  var m=axol.array_key_exists('keitai_m', datas) ? datas['keitai_m'].toString() : '';
+  var l=axol.array_key_exists('keitai_l', datas) ? datas['keitai_l'].toString() : '';
+  var ret='';if (!h.length && !m.length && !l.length) { ret = ''; } else { ret = h+'-'+m+'-'+l; }
+  return {'keitai': ret};
+},
+function(datas){
+  var h=axol.array_key_exists('yubink_h', datas) ? datas['yubink_h'].toString() : '';
+  var l=axol.array_key_exists('yubink_l', datas) ? datas['yubink_l'].toString() : '';
+  var ret='';if (!h.length && !l.length) { ret = ''; } else { ret = h+'-'+l; }
+  return {'yubink': ret};
+},
+function(datas){
+  var h=axol.array_key_exists('telk_h', datas) ? datas['telk_h'].toString() : '';
+  var m=axol.array_key_exists('telk_m', datas) ? datas['telk_m'].toString() : '';
+  var l=axol.array_key_exists('telk_l', datas) ? datas['telk_l'].toString() : '';
+  var ret='';if (!h.length && !m.length && !l.length) { ret = ''; } else { ret = h+'-'+m+'-'+l; }
+  return {'telk': ret};
+},
+function(datas){
+  var tmp = {};
+  tmp['Y']=axol.array_key_exists('school_from_Y', datas) ? datas['school_from_Y'] : '';
+  tmp['m']=axol.array_key_exists('school_from_m', datas) ? datas['school_from_m'] : '';
+  tmp['d']=axol.array_key_exists('school_from_d', datas) ? datas['school_from_d'] : '';
+  tmp['H']=axol.array_key_exists('school_from_H', datas) ? datas['school_from_H'] : '';
+  tmp['i']=axol.array_key_exists('school_from_i', datas) ? datas['school_from_i'] : '';
+  tmp['s']=axol.array_key_exists('school_from_s', datas) ? datas['school_from_s'] : '';
+  var ret = $.axolFormBuilder.getDateArray(tmp, 2);
+  return (ret['empty']) ? {'school_from':''} : {'school_from':ret};
+},
+function(datas){
+  var tmp = {};
+  tmp['Y']=axol.array_key_exists('school_to_Y', datas) ? datas['school_to_Y'] : '';
+  tmp['m']=axol.array_key_exists('school_to_m', datas) ? datas['school_to_m'] : '';
+  tmp['d']=axol.array_key_exists('school_to_d', datas) ? datas['school_to_d'] : '';
+  tmp['H']=axol.array_key_exists('school_to_H', datas) ? datas['school_to_H'] : '';
+  tmp['i']=axol.array_key_exists('school_to_i', datas) ? datas['school_to_i'] : '';
+  tmp['s']=axol.array_key_exists('school_to_s', datas) ? datas['school_to_s'] : '';
+  var ret = $.axolFormBuilder.getDateArray(tmp, 2);
+  return (ret['empty']) ? {'school_to':''} : {'school_to':ret};
+}];
+var strings = {'FB_AlertMsg':"入力内容にエラーがあります。再入力してください。",
+'FB_RequiredRuleFmt':"%1$s は必須です",
+'FB_StrLengthMaxRuleFmt':"%1$s は %2$s 文字以内で入力してください",
+'FB_RegexKanaRuleFmt':"%1$s にカナ以外の文字が入力されています",
+'FB_RegexAlphaNameRuleFmt':"%1$s は、英字と次の記号文字(.=-,\')以外は使用できません",
+'FB_RegexPostalRuleFmt':"%1$s は郵便番号として不正です",
+'FB_RegexTelRuleFmt':"%1$s は電話番号として不正です",
+'FB_OrRequireRuleFmt':"%1$s のいずれかの入力は必須です",
+'FB_RegexEmailRuleFmt':"%1$s はメールアドレスとして不正です",
+'FB_CompareRuleFmt':"%1$s と %2$s が一致していません",
+'FB_ChoiceRangeMaxRuleFmt':"%1$s は %2$s つ以内で選択してください",
+'FB_DateRuleFmt':"%1$s の日付が不正です"};
+var items = [{'names':{'kaigaig':'日本国外の場合','yubing':'郵便番号','keng':'現住所(都道府県)'}, 'type':'ifcase', 'trigger':{'names':{'kaigaig':''}, 'type':'require', 'errformat':''}, 'caseSuccess':[], 'caseError':[{'names':{'yubing':'','keng':''}, 'type':'require', 'errformat':''}]},
+{'names':{'kaigaig':'日本国外の場合','telg_kaigai':'自宅電話番号','keitai_kaigai':'携帯電話番号','telg':'自宅電話番号','keitai':'携帯電話番号'}, 'type':'ifcase', 'trigger':{'names':{'kaigaig':''}, 'type':'require', 'errformat':''}, 'caseSuccess':[{'names':{'telg_kaigai':'','keitai_kaigai':''}, 'type':'orRequire', 'set':'telg_kaigai, keitai_kaigai', 'errformat':''}], 'caseError':[{'names':{'telg':'','keitai':''}, 'type':'orRequire', 'set':'telg, keitai', 'errformat':''}]},
+{'names':{'jushosame':'現在の連絡先と同じ','jushok1':'休暇中の連絡先(市区郡町村)','jushok2':'休暇中の連絡先(町域・番地)','kaigaik':'日本国外の場合','telk_kaigai':'電話番号','yubink':'郵便番号','kenk':'休暇中の連絡先(都道府県)','telk':'電話番号'}, 'type':'ifcase', 'trigger':{'names':{'jushosame':''}, 'type':'noneed', 'errformat':''}, 'caseSuccess':[{'names':{'jushok1':'','jushok2':''}, 'type':'require', 'errformat':''}, {'names':{'kaigaik':'','telk_kaigai':'','yubink':'','kenk':'','telk':''}, 'type':'ifcase', 'trigger':{'names':{'kaigaik':''}, 'type':'require', 'errformat':''}, 'caseSuccess':[{'names':{'telk_kaigai':''}, 'type':'require', 'errformat':''}], 'caseError':[{'names':{'yubink':'','kenk':'','telk':''}, 'type':'require', 'errformat':''}]}], 'caseError':[]},
+{'names':{'email':'メールアドレス','email2':'確認用'}, 'name1':'email', 'name2':'email2', 'type':'compare', 'errformat':''},
+{'names':{'kmail':'メールアドレス2','kmail2':'確認用'}, 'name1':'kmail', 'name2':'kmail2', 'type':'compare', 'errformat':''},
+{'names':{'dcd':'学校','dname':'学校','bname':'学部','kname':'学科','bcd':'学部','paxcd':'学科'}, 'type':'ifcase', 'trigger':{'names':{'dcd':''}, 'type':'noneed', 'errformat':''}, 'caseSuccess':[], 'caseError':[{'names':{'dcd':'','dname':'','bname':'','kname':'','bcd':'','paxcd':''}, 'type':'ifcase', 'trigger':{'names':{'dcd':''}, 'type':'containValue', 'values':['9992','9991','9993','9994','2073','9996','9998','9997'], 'errformat':'', 'isNullError':false, 'isOrOk':false}, 'caseSuccess':[{'names':{'dname':'','bname':'','kname':''}, 'type':'require', 'errformat':''}], 'caseError':[{'names':{'bcd':'','paxcd':''}, 'type':'require', 'errformat':''}]}]},
+{'names':{'memo352':'設問 4','memo347':'設問 5'}, 'type':'ifcase', 'trigger':{'names':{'memo352':''}, 'type':'containValue', 'values':['10343'], 'errformat':'', 'isNullError':true, 'isOrOk':true}, 'caseSuccess':[{'names':{'memo347':''}, 'type':'require', 'errformat':''}, {'names':{'memo347':''}, 'type':'show', 'errformat':'', 'selector':'.memo347_line'}], 'caseError':[{'names':{'memo347':''}, 'type':'hide', 'errformat':'', 'selector':'.memo347_line'}]},
+{'names':{'memo348':'設問 6','memo726':'設問 7'}, 'type':'ifcase', 'trigger':{'names':{'memo348':''}, 'type':'containValue', 'values':['11694'], 'errformat':'', 'isNullError':true, 'isOrOk':true}, 'caseSuccess':[{'names':{'memo726':''}, 'type':'require', 'errformat':''}, {'names':{'memo726':''}, 'type':'show', 'errformat':'', 'selector':'.memo726_line'}], 'caseError':[{'names':{'memo726':''}, 'type':'hide', 'errformat':'', 'selector':'.memo726_line'}]},
+{'names':{'memo348':'設問 6','memo349':'設問 8'}, 'type':'ifcase', 'trigger':{'names':{'memo348':''}, 'type':'containValue', 'values':['10313'], 'errformat':'', 'isNullError':true, 'isOrOk':true}, 'caseSuccess':[{'names':{'memo349':''}, 'type':'require', 'errformat':''}, {'names':{'memo349':''}, 'type':'show', 'errformat':'', 'selector':'.memo349_line'}], 'caseError':[{'names':{'memo349':''}, 'type':'hide', 'errformat':'', 'selector':'.memo349_line'}]},
+{'names':{'memo350':'設問 9','memo351':'設問 10'}, 'type':'ifcase', 'trigger':{'names':{'memo350':''}, 'type':'containValue', 'values':['10335'], 'errformat':'', 'isNullError':true, 'isOrOk':true}, 'caseSuccess':[{'names':{'memo351':''}, 'type':'require', 'errformat':''}, {'names':{'memo351':''}, 'type':'show', 'errformat':'', 'selector':'.memo351_line'}], 'caseError':[{'names':{'memo351':''}, 'type':'hide', 'errformat':'', 'selector':'.memo351_line'}]},
+{'names':{'kanji_sei':'漢字姓','kanji_na':'漢字名','kana_sei':'カナ姓','kana_na':'カナ名','sex':'性別','birth':'生年月日','jushog1':'現住所(市区郡町村)','jushog2':'現住所(町域・番地)','email':'メールアドレス','email2':'確認用','kubun':'学校区分','kokushi':'設置区分','dcd':'学校','school_from':'入学年月','school_to':'卒業（予定）年月','memo8':'設問 1','memo9':'設問 2','memo516':'設問 3','memo352':'設問 4','memo348':'設問 6','memo350':'設問 9'}, 'type':'require', 'errformat':''},
+{'names':{'kanji_sei':'漢字姓','kanji_na':'漢字名','kana_sei':'カナ姓','kana_na':'カナ名','roma_sei':'ローマ字姓','roma_na':'ローマ字名'}, 'type':'strLength', 'min':'', 'max':'50', 'errformat':''},
+{'names':{'kana_sei':'カナ姓','kana_na':'カナ名','initial':'学校名の頭文字'}, 'type':'regex', 'opt':'kana', 'errformat':''},
+{'names':{'roma_sei':'ローマ字姓','roma_na':'ローマ字名'}, 'type':'regex', 'opt':'alphabetname', 'errformat':''},
+{'names':{'yubing_kaigai':'郵便番号','yubink_kaigai':'郵便番号'}, 'type':'regex', 'opt':'postal', 'errformat':''},
+{'names':{'jushog1':'現住所(市区郡町村)','jushog2':'現住所(町域・番地)','jushog3':'現住所(建物名・部屋番号)','jushok1':'休暇中の連絡先(市区郡町村)','jushok2':'休暇中の連絡先(町域・番地)','jushok3':'休暇中の連絡先(建物名・部屋番号)'}, 'type':'strLength', 'min':'', 'max':'190', 'errformat':''},
+{'names':{'telg_kaigai':'自宅電話番号','keitai_kaigai':'携帯電話番号','telk_kaigai':'電話番号'}, 'type':'regex', 'opt':'tel', 'errformat':''},
+{'names':{'email':'メールアドレス','email2':'確認用','kmail':'メールアドレス2','kmail2':'確認用'}, 'type':'strLength', 'min':'', 'max':'200', 'errformat':''},
+{'names':{'email':'メールアドレス','email2':'確認用','kmail':'メールアドレス2','kmail2':'確認用'}, 'type':'regex', 'opt':'email', 'errformat':''},
+{'names':{'dname':'学校','bname':'学部','kname':'学科'}, 'type':'strLength', 'min':'', 'max':'150', 'errformat':''},
+{'names':{'memo347':'設問 5','memo726':'設問 7','memo349':'設問 8','memo351':'設問 10'}, 'type':'strLength', 'min':'', 'max':'100', 'errformat':''},
+{'names':{'memo350':'設問 9'}, 'type':'choiceRange', 'min':'', 'max':'5', 'errformat':''},
+{'names':{'birth':'生年月日'}, 'minYear':'1976', 'maxYear':'2009', 'mode':'3', 'type':'validDate', 'errformat':''},
+{'names':{'yubing':'郵便番号','yubink':'郵便番号'}, 'type':'regex', 'opt':'jpPostal', 'errformat':''},
+{'names':{'telg':'自宅電話番号','keitai':'携帯電話番号','telk':'電話番号'}, 'type':'regex', 'opt':'jptel', 'errformat':''},
+{'names':{'school_from':'入学年月'}, 'minYear':'1996', 'maxYear':'2026', 'mode':'2', 'type':'validDate', 'errformat':''},
+{'names':{'school_to':'卒業（予定）年月'}, 'minYear':'2021', 'maxYear':'2030', 'mode':'2', 'type':'validDate', 'errformat':''}];
+var answeredFileNames = [];
+var useJsAlert = true;
+var isDoubleSendBreak = false;
+var isPrecheck = false;
+$.axolFormBuilder.register('form1', 'form[name="form1"]', fncs, strings, items, answeredFileNames, useJsAlert, 2, isDoubleSendBreak, isPrecheck);
+});
+})(jQuery);														</script>
+			
+			
+
+<div class="top__text">
+  ページの案内に従い、入力・選択してください。
+  </div>
+
+<form novalidate="" method="post" action="input" name="form1" autocomplete="off">
+<input name="fb_csrf" value="cYzR-iH(JQd39%P-)K8nbLbvF4qau@5YGE)p6EQLfnS+6)wDS_A@Q_eJb" type="hidden"/>
+
+
+
+<section>
+  <h2 class="form__title">
+    基本情報
+      </h2>
+  <div class="form__wrap">
+          <div class="form__item" role="group" aria-labelledby="item_kanji">
+  <div id="item_kanji" class="form__item__title__wrap">
+    <div class="form__item__title">漢字氏名</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__group type__name fb_checkpoint">
+        <label><span>漢字姓</span><input size="10" placeholder="漢字姓" type="text" name="kanji_sei" value="" required=""/></label>
+    <label><span>漢字名</span><input size="10" placeholder="漢字名" type="text" name="kanji_na" value="" required=""/></label>
+        <div class="fb_ownAlertStrs"></div>
+  </div>
+</div>
+    
+          <div class="form__item" role="group" aria-labelledby="item_kana">
+  <div id="item_kana" class="form__item__title__wrap">
+    <div class="form__item__title">カナ氏名</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__group type__name fb_checkpoint">
+        <label><span>カナ姓</span><input size="10" placeholder="カナ姓" type="text" name="kana_sei" value="" required=""/></label>
+    <label><span>カナ名</span><input size="10" placeholder="カナ名" type="text" name="kana_na" value="" required=""/></label>
+        <div class="fb_ownAlertStrs"></div>
+  </div>
+</div>
+    
+          <div class="form__item" role="group" aria-labelledby="item_roma">
+  <div id="item_roma" class="form__item__title__wrap">
+    <div class="form__item__title">ローマ字氏名</div>
+      </div>
+  <div class="need__item">
+      </div>
+  <div class="form__item__group type__name fb_checkpoint">
+        <label><span>ローマ字姓</span><input style="ime-mode:disabled;" size="10" placeholder="ローマ字姓" type="text" name="roma_sei" value=""/></label>
+    <label><span>ローマ字名</span><input style="ime-mode:disabled;" size="10" placeholder="ローマ字名" type="text" name="roma_na" value=""/></label>
+        <div class="fb_ownAlertStrs"></div>
+  </div>
+</div>
+    
+          <div class="form__item" role="radiogroup" aria-labelledby="item_sex">
+  <div id="item_sex" class="form__item__title__wrap">
+    <div class="form__item__title">性別</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__group type__sex fb_checkpoint">
+    <label>
+<input value="1" name="sex" type="radio" required=""/>
+<span>男性</span>
+</label>
+<label>
+<input value="2" name="sex" type="radio" required=""/>
+<span>女性</span>
+</label>
+<label>
+<input value="3" name="sex" type="radio" required=""/>
+<span>その他</span>
+</label>
+        <div class="fb_ownAlertStrs"></div>
+  </div>
+</div>
+    
+          <div class="form__item" role="group" aria-labelledby="item_birth">
+  <div id="item_birth" class="form__item__title__wrap">
+    <div class="form__item__title">生年月日</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__group type__birth fb_checkpoint">
+    <p class="caption__text"></p>    <span name="birth"><span class="select_wrap">
+<select name="birth_Y" class="fb_dateElement_Y" namealias="birth" required="">
+<option value="">--</option>
+<option value="1976">1976</option>
+<option value="1977">1977</option>
+<option value="1978">1978</option>
+<option value="1979">1979</option>
+<option value="1980">1980</option>
+<option value="1981">1981</option>
+<option value="1982">1982</option>
+<option value="1983">1983</option>
+<option value="1984">1984</option>
+<option value="1985">1985</option>
+<option value="1986">1986</option>
+<option value="1987">1987</option>
+<option value="1988">1988</option>
+<option value="1989">1989</option>
+<option value="1990">1990</option>
+<option value="1991">1991</option>
+<option value="1992">1992</option>
+<option value="1993">1993</option>
+<option value="1994">1994</option>
+<option value="1995">1995</option>
+<option value="1996">1996</option>
+<option value="1997">1997</option>
+<option value="1998">1998</option>
+<option value="1999">1999</option>
+<option value="2000">2000</option>
+<option value="2001">2001</option>
+<option value="2002">2002</option>
+<option value="2003">2003</option>
+<option value="2004">2004</option>
+<option value="2005">2005</option>
+<option value="2006">2006</option>
+<option value="2007">2007</option>
+<option value="2008">2008</option>
+<option value="2009">2009</option>
+</select>
+</span>年 <span class="select_wrap">
+<select name="birth_m" class="fb_dateElement_m" namealias="birth" required="">
+<option value="">--</option>
+<option value="1">01</option>
+<option value="2">02</option>
+<option value="3">03</option>
+<option value="4">04</option>
+<option value="5">05</option>
+<option value="6">06</option>
+<option value="7">07</option>
+<option value="8">08</option>
+<option value="9">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+</span>月 <span class="select_wrap">
+<select name="birth_d" class="fb_dateElement_d" namealias="birth" required="">
+<option value="">--</option>
+<option value="1">01</option>
+<option value="2">02</option>
+<option value="3">03</option>
+<option value="4">04</option>
+<option value="5">05</option>
+<option value="6">06</option>
+<option value="7">07</option>
+<option value="8">08</option>
+<option value="9">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+<option value="13">13</option>
+<option value="14">14</option>
+<option value="15">15</option>
+<option value="16">16</option>
+<option value="17">17</option>
+<option value="18">18</option>
+<option value="19">19</option>
+<option value="20">20</option>
+<option value="21">21</option>
+<option value="22">22</option>
+<option value="23">23</option>
+<option value="24">24</option>
+<option value="25">25</option>
+<option value="26">26</option>
+<option value="27">27</option>
+<option value="28">28</option>
+<option value="29">29</option>
+<option value="30">30</option>
+<option value="31">31</option>
+</select>
+</span>日</span>
+    <div class="fb_ownAlertStrs"></div>
+  </div>
+</div>
+    
+          
+<div class="form__item" role="group" aria-labelledby="item_jushog">
+  <div id="item_jushog" class="form__item__title__wrap">
+    <div class="form__item__title">現住所</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__multi jusho_g">
+        <div class="notice__wrap">
+      <p class="notice__example">日本国外の場合はチェックしてください。</p>
+      <label>
+<input name="kaigaig" value="1" type="checkbox"/>
+<span>日本国外の場合</span>
+</label>
+    </div>
+    
+    <div class="form__item item__input">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">郵便番号</div>
+        				<strong class="need__sub">必須</strong>      </div>
+      <div class="form__item__group">
+        <div class="jsJushoKaigaiG type__postal kaigai__g fb_checkpoint">
+          <input style="ime-mode:disabled;" size="20" placeholder="郵便番号" type="text" name="yubing_kaigai" value=""/>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+        <div class="jsJushoJapanG type__postal fb_checkpoint">
+          <span name="yubing"><input name="yubing_h" namealias="yubing" type="text" size="3" value="" style="ime-mode:disabled;"/> - <input name="yubing_l" namealias="yubing" type="text" size="4" value="" style="ime-mode:disabled;"/></span><input type="button" class="btn sm other search_g" value="郵便番号から検索"/>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+      </div>
+    </div>
+
+        <div class="form__item item__input">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">都道府県</div>
+        				<strong class="need__sub">必須</strong>      </div>
+      <div class="form__item__group type__prefectures fb_checkpoint">
+        <span class="select_wrap">
+<select id="keng" name="keng">
+<option value="">（選択してください）</option>
+<option value="1">北海道</option>
+<option value="2">青森県</option>
+<option value="3">岩手県</option>
+<option value="4">宮城県</option>
+<option value="5">秋田県</option>
+<option value="6">山形県</option>
+<option value="7">福島県</option>
+<option value="8">茨城県</option>
+<option value="9">栃木県</option>
+<option value="10">群馬県</option>
+<option value="11">埼玉県</option>
+<option value="12">千葉県</option>
+<option value="13">東京都</option>
+<option value="14">神奈川県</option>
+<option value="15">新潟県</option>
+<option value="16">富山県</option>
+<option value="17">石川県</option>
+<option value="18">福井県</option>
+<option value="19">山梨県</option>
+<option value="20">長野県</option>
+<option value="21">岐阜県</option>
+<option value="22">静岡県</option>
+<option value="23">愛知県</option>
+<option value="24">三重県</option>
+<option value="25">滋賀県</option>
+<option value="26">京都府</option>
+<option value="27">大阪府</option>
+<option value="28">兵庫県</option>
+<option value="29">奈良県</option>
+<option value="30">和歌山県</option>
+<option value="31">鳥取県</option>
+<option value="32">島根県</option>
+<option value="33">岡山県</option>
+<option value="34">広島県</option>
+<option value="35">山口県</option>
+<option value="36">徳島県</option>
+<option value="37">香川県</option>
+<option value="38">愛媛県</option>
+<option value="39">高知県</option>
+<option value="40">福岡県</option>
+<option value="41">佐賀県</option>
+<option value="42">長崎県</option>
+<option value="43">熊本県</option>
+<option value="44">大分県</option>
+<option value="45">宮崎県</option>
+<option value="46">鹿児島県</option>
+<option value="47">沖縄県</option>
+<option value="99">日本国外</option>
+</select>
+</span>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+
+        <div class="form__item item__input">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">市区郡町村</div>
+        				<strong class="need__sub">必須</strong>        <span class="caption__text"></span>
+      </div>
+      <div class="form__item__group fb_checkpoint">
+        <input size="30" placeholder="現住所(市区郡町村)" type="text" name="jushog1" value=""/>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+
+        <div class="form__item item__input">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">町域・番地</div>
+        				<strong class="need__sub">必須</strong>        <span class="caption__text">記入例　３－３－３</span>
+      </div>
+      <div class="form__item__group fb_checkpoint">
+        <input size="30" placeholder="現住所(町域・番地)" type="text" name="jushog2" value=""/>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+
+        <div class="form__item item__input">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">建物名・部屋番号</div>
+                <span class="caption__text">記入例　〇〇〇マンション１２３号室</span>
+      </div>
+      <div class="form__item__group fb_checkpoint">
+        <input size="30" placeholder="現住所(建物名・部屋番号)" type="text" name="jushog3" value=""/>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+          
+          
+<div class="form__item" role="group" aria-labelledby="item_tel">
+  <div id="item_tel" class="form__item__title__wrap">
+    <div class="form__item__title">電話番号</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__multi">
+    <div class="notice__wrap">
+      <p class="notice__example">▼ 自宅電話番号・携帯電話番号のいずれかを必ずご記入ください。</p>
+                </div>
+
+    <div class="form__item item__input">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">自宅電話番号</div>
+              </div>
+      <div class="form__item__group tel__style">
+        <p class="caption__text">
+          （半角）&nbsp;例：03-1234-XXXX
+                  </p>
+        <div class="jsJushoKaigaiG jusho__kaigai__g type__tel fb_checkpoint">
+          <input style="ime-mode:disabled;" size="30" placeholder="自宅電話番号" type="text" name="telg_kaigai" value=""/>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+        <div class="jsJushoJapanG type__tel fb_checkpoint">
+          <span name="telg"><input name="telg_h" namealias="telg" type="text" size="5" value="" style="ime-mode:disabled;"/> - <input name="telg_m" namealias="telg" type="text" size="4" value="" style="ime-mode:disabled;"/> - <input name="telg_l" namealias="telg" type="text" size="4" value="" style="ime-mode:disabled;"/></span>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+      </div>
+    </div>
+    <div class="form__item item__input">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">携帯電話番号</div>
+              </div>
+      <div class="form__item__group tel__style">
+        <p class="caption__text">
+          （半角）&nbsp;例：090-1234-XXXX
+                  </p>
+        <div class="jsJushoKaigaiG jusho__kaigai__g type__tel fb_checkpoint">
+          <input style="ime-mode:disabled;" size="30" placeholder="携帯電話番号" type="text" name="keitai_kaigai" value=""/>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+        <div class="jsJushoJapanG type__tel fb_checkpoint">
+          <span name="keitai"><input name="keitai_h" namealias="keitai" type="text" size="5" value="" style="ime-mode:disabled;"/> - <input name="keitai_m" namealias="keitai" type="text" size="4" value="" style="ime-mode:disabled;"/> - <input name="keitai_l" namealias="keitai" type="text" size="4" value="" style="ime-mode:disabled;"/></span>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+          
+          
+<div class="form__item" role="group" aria-labelledby="item_jushok">
+  <div id="item_jushok" class="form__item__title__wrap">
+    <div class="form__item__title">休暇中の連絡先</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__multi">
+        <div class="notice__wrap">
+      <p class="notice__example">現在の連絡先と同じ場合はチェックしてください。</p>
+      <label>
+<input name="jushosame" value="1" type="checkbox"/>
+<span>現在の連絡先と同じ</span>
+</label>
+      <div class="fb_ownAlertStrs"></div>
+    </div>
+        <div class="notice__wrap jusho_k">
+      <p class="notice__example">日本国外の場合はチェックしてください。</p>
+      <label>
+<input name="kaigaik" value="1" type="checkbox"/>
+<span>日本国外の場合</span>
+</label>
+    </div>
+
+        <div class="form__item item__input jusho_k">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">郵便番号</div>
+        				<strong class="need__sub">必須</strong>      </div>
+      <div class="form__item__group">
+        <div class="jsJushoKaigaiK kaigai__k type__postal fb_checkpoint">
+          <input style="ime-mode:disabled;" size="20" placeholder="郵便番号" type="text" name="yubink_kaigai" value=""/>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+        <div class="jsJushoJapanK type__postal fb_checkpoint">
+          <span name="yubink"><input name="yubink_h" namealias="yubink" type="text" size="3" value="" style="ime-mode:disabled;"/> - <input name="yubink_l" namealias="yubink" type="text" size="4" value="" style="ime-mode:disabled;"/></span><input type="button" class="btn sm other search_k" value="郵便番号から検索"/>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+      </div>
+    </div>
+
+        <div class="form__item item__input jusho_k">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">都道府県</div>
+        				<strong class="need__sub">必須</strong>      </div>
+      <div class="form__item__group type__prefectures fb_checkpoint">
+        <span class="select_wrap">
+<select id="kenk" name="kenk">
+<option value="">（選択してください）</option>
+<option value="1">北海道</option>
+<option value="2">青森県</option>
+<option value="3">岩手県</option>
+<option value="4">宮城県</option>
+<option value="5">秋田県</option>
+<option value="6">山形県</option>
+<option value="7">福島県</option>
+<option value="8">茨城県</option>
+<option value="9">栃木県</option>
+<option value="10">群馬県</option>
+<option value="11">埼玉県</option>
+<option value="12">千葉県</option>
+<option value="13">東京都</option>
+<option value="14">神奈川県</option>
+<option value="15">新潟県</option>
+<option value="16">富山県</option>
+<option value="17">石川県</option>
+<option value="18">福井県</option>
+<option value="19">山梨県</option>
+<option value="20">長野県</option>
+<option value="21">岐阜県</option>
+<option value="22">静岡県</option>
+<option value="23">愛知県</option>
+<option value="24">三重県</option>
+<option value="25">滋賀県</option>
+<option value="26">京都府</option>
+<option value="27">大阪府</option>
+<option value="28">兵庫県</option>
+<option value="29">奈良県</option>
+<option value="30">和歌山県</option>
+<option value="31">鳥取県</option>
+<option value="32">島根県</option>
+<option value="33">岡山県</option>
+<option value="34">広島県</option>
+<option value="35">山口県</option>
+<option value="36">徳島県</option>
+<option value="37">香川県</option>
+<option value="38">愛媛県</option>
+<option value="39">高知県</option>
+<option value="40">福岡県</option>
+<option value="41">佐賀県</option>
+<option value="42">長崎県</option>
+<option value="43">熊本県</option>
+<option value="44">大分県</option>
+<option value="45">宮崎県</option>
+<option value="46">鹿児島県</option>
+<option value="47">沖縄県</option>
+<option value="99">日本国外</option>
+</select>
+</span>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+
+        <div class="form__item item__input jusho_k">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">市区郡町村</div>
+        				<strong class="need__sub">必須</strong>        <span class="caption__text"></span>
+      </div>
+      <div class="form__item__group fb_checkpoint">
+        <input size="30" placeholder="休暇中の連絡先(市区郡町村)" type="text" name="jushok1" value=""/>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+
+        <div class="form__item item__input jusho_k">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">町域・番地</div>
+        				<strong class="need__sub">必須</strong>        <span class="caption__text">記入例　３－３－３</span>
+      </div>
+      <div class="form__item__group fb_checkpoint">
+        <input size="30" placeholder="休暇中の連絡先(町域・番地)" type="text" name="jushok2" value=""/>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+
+        <div class="form__item item__input jusho_k">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">建物名・部屋番号</div>
+                <span class="caption__text">記入例　〇〇〇マンション１２３号室</span>
+      </div>
+      <div class="form__item__group fb_checkpoint">
+        <input size="30" placeholder="休暇中の連絡先(建物名・部屋番号)" type="text" name="jushok3" value=""/>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+
+        <div class="form__item item__input jusho_k">
+      <div class="form__item__title__wrap">
+        <div class="form__item__title">電話番号</div>
+        				<strong class="need__sub">必須</strong>      </div>
+      <div class="form__item__group tel__style">
+        <span class="caption__text">
+          （半角）&nbsp;例：03-1234-XXXX
+                  </span>
+        <div class="jsJushoKaigaiK jusho__kaigai__k type__tel fb_checkpoint">
+          <input style="ime-mode:disabled;" size="30" placeholder="電話番号" type="text" name="telk_kaigai" value=""/>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+        <div class="jsJushoJapanK type__tel fb_checkpoint">
+          <span name="telk"><input name="telk_h" namealias="telk" type="text" size="5" value="" style="ime-mode:disabled;"/> - <input name="telk_m" namealias="telk" type="text" size="4" value="" style="ime-mode:disabled;"/> - <input name="telk_l" namealias="telk" type="text" size="4" value="" style="ime-mode:disabled;"/></span>
+          <div class="fb_ownAlertStrs"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+          <div class="form__item" role="group" aria-labelledby="item_email">
+  <div id="item_email" class="form__item__title__wrap">
+    <div class="form__item__title">メールアドレス</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__group type__e-mail fb_checkpoint">
+    <p class="normal__text">
+      入力ミス防止のため同じメールアドレスを２度ご記入ください。
+          </p>
+    <p class="support__text">
+      携帯電話のメールアドレスはご遠慮ください。
+          </p>
+    <div class="mail__double">
+      <label>
+        <span>メールアドレス</span>
+        <input style="ime-mode:disabled;" size="25" placeholder="メールアドレス" type="text" name="email" value="" required=""/>
+      </label>
+      <label>
+        <span>確認用</span>
+        <input style="ime-mode:disabled;" size="25" placeholder="確認用" type="text" name="email2" value="" required=""/>
+      </label>
+      <div class="fb_ownAlertStrs"></div>
+    </div>
+  </div>
+</div>
+    
+          <div class="form__item" role="group" aria-labelledby="item_kmail">
+  <div id="item_kmail" class="form__item__title__wrap">
+    <div class="form__item__title">メールアドレス2</div>
+      </div>
+  <div class="need__item">
+      </div>
+  <div class="form__item__group type__k-mail fb_checkpoint">
+    <p class="normal__text">
+      入力ミス防止のため同じメールアドレスを２度ご記入ください。
+          </p>
+    <div class="mail__double">
+      <label>
+        <span>メールアドレス2</span>
+        <input style="ime-mode:disabled;" size="25" placeholder="メールアドレス2" type="text" name="kmail" value=""/>
+      </label>
+      <label>
+        <span>確認用</span>
+        <input style="ime-mode:disabled;" size="25" placeholder="確認用" type="text" name="kmail2" value=""/>
+      </label>
+      <div class="fb_ownAlertStrs"></div>
+    </div>
+  </div>
+</div>
+      </div>
+</section>
+
+  <script>
+
+$('document').ready(function(){
+
+    var $keng = $('select[name="keng"]');
+  $.axolJushoForeignToggle($('input[name="kaigaig"]'), $keng, $('div.jsJushoKaigaiG'), $('div.jsJushoJapanG'));
+
+    $('.search_g').axolJushoSearch(
+    'https://job.axol.jp/bx/s/necgroup_27/entry/input/postalsearch',
+    $('input[name="yubing_h"]'),
+    $('input[name="yubing_l"]'),
+    $keng,
+    $('input[name="jushog1"]')
+  );
+    
+
+      $('input[name="jushosame"]').axolJushoSameToggle($('div.jusho_k'));
+  
+  var $kenk = $('select[name="kenk"]');
+  $.axolJushoForeignToggle($('input[name="kaigaik"]'), $kenk, $('div.jsJushoKaigaiK'), $('div.jsJushoJapanK'));
+
+  $('.search_k').axolJushoSearch(
+    'https://job.axol.jp/bx/s/necgroup_27/entry/input/postalsearch',
+    $('input[name="yubink_h"]'),
+    $('input[name="yubink_l"]'),
+    $kenk,
+    $('input[name="jushok1"]')
+  );
+	
+});
+
+</script>
+
+
+
+<section>
+
+  <h2 class="form__title">
+    学校情報
+      </h2>
+  <div class="form__wrap">
+          <div class="jsAxolSchool_wrap">
+
+    <div class="form__item jsAxolSchool_scroll_top" role="radiogroup" aria-labelledby="schoolkubun-label">
+    <div id="schoolkubun-label" class="form__item__title__wrap">
+      <div class="form__item__title">学校区分</div>
+          </div>
+    <div class="need__item">
+      <strong class="mark">必須</strong>
+    </div>
+    <div class="form__item__group type__section fb_checkpoint">
+      <div class="jsAxolSchool_search_params_active search_params_active">
+        <label>
+<input value="1" name="kubun" type="radio" required=""/>
+<span>大学院</span>
+</label>
+<label>
+<input value="2" name="kubun" type="radio" required=""/>
+<span>大学</span>
+</label>
+<label>
+<input value="3" name="kubun" type="radio" required=""/>
+<span>短期大学</span>
+</label>
+<label>
+<input value="4" name="kubun" type="radio" required=""/>
+<span>高等専門学校</span>
+</label>
+<label>
+<input value="5" name="kubun" type="radio" required=""/>
+<span>専門学校</span>
+</label>
+      </div>
+      <p class="caption__text jsAxolSchool_kubun_caption">変更する場合は学校名の頭文字にある「条件変更」ボタンを押してください。</p>
+      <div class="fb_ownAlertStrs"></div>
+    </div>
+  </div>
+
+    <div class="form__item" role="radiogroup" aria-labelledby="radiogroup-label">
+    <div class="form__item__title__wrap">
+      <div class="form__item__title">設置区分</div>
+          </div>
+    <div class="need__item">
+      <strong class="mark">必須</strong>
+    </div>
+    <div class="form__item__group type__set fb_checkpoint">
+      <div class="jsAxolSchool_search_params_active search_params_active">
+        <label>
+<input value="1" name="kokushi" type="radio" required=""/>
+<span>国立</span>
+</label>
+<label>
+<input value="2" name="kokushi" type="radio" required=""/>
+<span>公立</span>
+</label>
+<label>
+<input value="3" name="kokushi" type="radio" required=""/>
+<span>私立</span>
+</label>
+<label>
+<input value="4" name="kokushi" type="radio" required=""/>
+<span>日本国外</span>
+</label>
+      </div>
+      <p class="caption__text jsAxolSchool_kubun_caption">変更する場合は学校名の頭文字にある「条件変更」ボタンを押してください。</p>
+      <div class="fb_ownAlertStrs"></div>
+    </div>
+  </div>
+
+    <div class="form__item jsAxolSchool_freeze_scroll_top">
+    <div class="form__item__title__wrap">
+      <div class="form__item__title">学校名の頭文字</div>
+          </div>
+    <div class="need__item">
+      <strong class="mark">必須</strong>
+    </div>
+    <div class="form__item__group type__school__head fb_checkpoint">
+      <p class="caption__text">（全角カタカナ１文字＜濁点含む＞、日本国外の場合は空欄）</p>
+      <div class="school__head__wrap">
+        <div class="jsAxolSchool_search_params_active search_params_active">
+          <input size="2" type="text" name="initial" value=""/>
+          <input type="button" id="jsAxolSchool_dcd_search" class="btn sm other" value="学校検索">
+        </div>
+        <input type="button" id="jsAxolSchool_dcd_search_edit" class="btn sm other" value="条件変更">
+      </div>
+      <div class="fb_ownAlertStrs"></div>
+    </div>
+  </div>
+
+    <div class="form__item">
+    <div class="form__item__title__wrap">
+      <div class="form__item__title">学校</div>
+          </div>
+    <div class="need__item">
+      <strong class="mark">必須</strong>
+    </div>
+    <div class="form__item__group type__school fb_checkpoint">
+      <div id="jsAxolSchool_d_line" class="">
+        （上記より学校を検索してください。）
+              </div>
+      <div id="jsAxolSchool_d_line_active" class="school__list__wrap">
+        <p class="caption__text">リストに学校が表示されない場合は（リストにない学校）を選択してください。</p>
+        <p class="caption__text sr-only">学校を選択すると、学部・学科の欄が表示されます。</p>
+        <p class="caption__text sr-only">リストにない学校を選択すると、学校名の入力欄が表示されます。</p>
+        <div class="">
+          <span class="select_wrap">
+<select size="10" id="dcd" name="dcd" required="">
+<option value="">（選択してください）</option>
+<option value="9992">（リストにない学校）</option>
+</select>
+</span>
+        </div>
+        <div class="jsAxolSchool_dbk_text_wrap">
+          <input size="40" placeholder="学校" type="text" name="dname" value=""/>
+        </div>
+      </div>
+      <div class="fb_ownAlertStrs"></div>
+    </div>
+  </div>
+
+    <div class="form__item jsAxolSchool_bk_wrap">
+    <div class="form__item__title__wrap">
+      <div class="form__item__title">学部</div>
+          </div>
+    <div class="need__item">
+      <strong class="mark">必須</strong>
+    </div>
+    <div class="form__item__group">
+      <div class="jsAxolSchool_dbk_select_wrap fb_checkpoint">
+        <span class="select_wrap">
+<select id="bcd" name="bcd">
+<option value="">（選択してください）</option>
+</select>
+</span>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+      <div class="jsAxolSchool_dbk_text_wrap fb_checkpoint">
+        <input size="40" placeholder="学部" type="text" name="bname" value=""/>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+  </div>
+
+    <div class="form__item jsAxolSchool_bk_wrap">
+    <div class="form__item__title__wrap">
+      <div class="form__item__title">学科</div>
+          </div>
+    <div class="need__item">
+      <strong class="mark">必須</strong>
+    </div>
+    <div class="form__item__group">
+      <div class="jsAxolSchool_dbk_select_wrap fb_checkpoint">
+        <span class="select_wrap">
+<select id="paxcd" name="paxcd">
+<option value="">（選択してください）</option>
+</select>
+</span>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+      <div class="jsAxolSchool_dbk_text_wrap fb_checkpoint">
+        <input size="40" placeholder="学科" type="text" name="kname" value=""/>
+        <div class="fb_ownAlertStrs"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  $('document').ready(function(){
+    $.axolSchoolManage.register({
+      school_url: 'https://job.axol.jp/bx/s/necgroup_27/entry/input/dcdsearch',
+      bk_url: 'https://job.axol.jp/bx/s/necgroup_27/entry/input/bcdpaxcdsearch',
+      k_default_msg: '学部を選択すると学科が表示されます',
+      kubun_str: '学校区分',
+      kokushi_str: '設置区分',
+      require_msg: '%1$s は必須です'
+    });
+  });
+</script>
+
+    
+          <div class="form__item" role="group" aria-labelledby="item_schoolfrom">
+  <div id="item_schoolfrom" class="form__item__title__wrap">
+    <div class="form__item__title">入学年月</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__group type__entrance fb_checkpoint">
+    <span name="school_from"><span class="select_wrap">
+<select name="school_from_Y" class="fb_dateElement_Y" namealias="school_from" required="">
+<option value="">--</option>
+<option value="1996">1996</option>
+<option value="1997">1997</option>
+<option value="1998">1998</option>
+<option value="1999">1999</option>
+<option value="2000">2000</option>
+<option value="2001">2001</option>
+<option value="2002">2002</option>
+<option value="2003">2003</option>
+<option value="2004">2004</option>
+<option value="2005">2005</option>
+<option value="2006">2006</option>
+<option value="2007">2007</option>
+<option value="2008">2008</option>
+<option value="2009">2009</option>
+<option value="2010">2010</option>
+<option value="2011">2011</option>
+<option value="2012">2012</option>
+<option value="2013">2013</option>
+<option value="2014">2014</option>
+<option value="2015">2015</option>
+<option value="2016">2016</option>
+<option value="2017">2017</option>
+<option value="2018">2018</option>
+<option value="2019">2019</option>
+<option value="2020">2020</option>
+<option value="2021">2021</option>
+<option value="2022">2022</option>
+<option value="2023">2023</option>
+<option value="2024">2024</option>
+<option value="2025">2025</option>
+<option value="2026">2026</option>
+</select>
+</span>年 <span class="select_wrap">
+<select name="school_from_m" class="fb_dateElement_m" namealias="school_from" required="">
+<option value="">--</option>
+<option value="1">01</option>
+<option value="2">02</option>
+<option value="3">03</option>
+<option value="4">04</option>
+<option value="5">05</option>
+<option value="6">06</option>
+<option value="7">07</option>
+<option value="8">08</option>
+<option value="9">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+</span>月</span>
+    <div class="fb_ownAlertStrs"></div>
+  </div>
+</div>
+    
+          <div class="form__item" role="group" aria-labelledby="item_schoolto">
+  <div id="item_schoolto" class="form__item__title__wrap">
+    <div class="form__item__title">卒業（予定）年月</div>
+      </div>
+  <div class="need__item">
+    <strong class="mark">必須</strong>  </div>
+  <div class="form__item__group type__graduate fb_checkpoint">
+    <span name="school_to"><span class="select_wrap">
+<select name="school_to_Y" class="fb_dateElement_Y" namealias="school_to" required="">
+<option value="">--</option>
+<option value="2021">2021</option>
+<option value="2022">2022</option>
+<option value="2023">2023</option>
+<option value="2024">2024</option>
+<option value="2025">2025</option>
+<option value="2026">2026</option>
+<option value="2027">2027</option>
+<option value="2028">2028</option>
+<option value="2029">2029</option>
+<option value="2030">2030</option>
+</select>
+</span>年 <span class="select_wrap">
+<select name="school_to_m" class="fb_dateElement_m" namealias="school_to" required="">
+<option value="">--</option>
+<option value="1">01</option>
+<option value="2">02</option>
+<option value="3">03</option>
+<option value="4">04</option>
+<option value="5">05</option>
+<option value="6">06</option>
+<option value="7">07</option>
+<option value="8">08</option>
+<option value="9">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+</span>月</span>
+    <div class="fb_ownAlertStrs"></div>
+  </div>
+</div>
+    
+    
+    
+    
+		
+			</div>
+</section>
+
+
+<div class="form__bottom">
+  <p>
+    内容を確認し、よろしければ次の画面に進んでください。
+      </p>
+  <button id="submit" class="btn md action next" name="submit" type="submit" value="次の画面に進む">次の画面に進む</button>
+</div>
+
+</form>
+
+	    </div>
+
+		</main>
+        		</div>
+
+    
+  
+  
+</div>
+
+
+
+</body>
+</html>
