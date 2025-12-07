@@ -37,6 +37,23 @@
       return element.placeholder.trim();
     }
 
+    const container = element.parentElement;
+    if (container) {
+      const labelInContainer = container.querySelector('label');
+      if (labelInContainer && labelInContainer.textContent.trim()) {
+        return labelInContainer.textContent.trim();
+      }
+
+      const textNodes = Array.from(container.childNodes)
+        .filter((node) => node.nodeType === Node.TEXT_NODE)
+        .map((node) => node.textContent.trim())
+        .filter(Boolean);
+
+      if (textNodes.length) {
+        return textNodes.join(' ');
+      }
+    }
+
     return '';
   };
 
