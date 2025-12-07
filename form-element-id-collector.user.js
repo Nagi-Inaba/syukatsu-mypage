@@ -16,6 +16,8 @@
 
   const ignoredInputTypes = new Set(['button', 'submit', 'reset', 'image', 'file', 'hidden']);
 
+  const normalizeText = (text) => text.replace(/\s+/g, ' ').trim();
+
   const getLabelText = (element) => {
     if (element.id) {
       const labelByFor = document.querySelector(`label[for="${CSS.escape(element.id)}"]`);
@@ -37,21 +39,36 @@
       return element.placeholder.trim();
     }
 
-    const container = element.parentElement;
-    if (container) {
-      const labelInContainer = container.querySelector('label');
-      if (labelInContainer && labelInContainer.textContent.trim()) {
-        return labelInContainer.textContent.trim();
+    let ancestor = element.parentElement;
+    while (ancestor) {
+      const labelInAncestor = ancestor.querySelector('label');
+      if (labelInAncestor) {
+        const labelText = normalizeText(labelInAncestor.textContent);
+        if (labelText) {
+          return labelText;
+        }
       }
 
-      const textNodes = Array.from(container.childNodes)
+      const textNodes = Array.from(ancestor.childNodes)
         .filter((node) => node.nodeType === Node.TEXT_NODE)
-        .map((node) => node.textContent.trim())
+        .map((node) => normalizeText(node.textContent))
         .filter(Boolean);
 
       if (textNodes.length) {
         return textNodes.join(' ');
       }
+
+      if (ancestor.tagName && ancestor.tagName.toLowerCase() === 'dd') {
+        const previous = ancestor.previousElementSibling;
+        if (previous && previous.tagName.toLowerCase() === 'dt') {
+          const dtText = normalizeText(previous.textContent);
+          if (dtText) {
+            return dtText;
+          }
+        }
+      }
+
+      ancestor = ancestor.parentElement;
     }
 
     return '';
