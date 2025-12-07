@@ -27,57 +27,12 @@
   ];
   const SCHOOL_TYPES = ['大学院', '学部', '短大', '専門学校', '高専'];
 
-  const PATTERN_ONE_MAPPING = {
-    kanji_sei: 'input[name*="sei" i][name*="kanji" i], input[name*="sei" i][aria-label*="姓" i], input[name*="last" i][name*="kanji" i], input[name*="family" i], input[name*="sei" i][data-label*="姓" i]',
-    kanji_na: 'input[name*="mei" i][name*="kanji" i], input[name*="mei" i][aria-label*="名" i], input[name*="first" i][name*="kanji" i], input[name*="given" i], input[name*="mei" i][data-label*="名" i]',
-    kana_sei: 'input[name*="sei" i][name*="kana" i], input[name*="sei" i][name*="furi" i], input[aria-label*="セイ" i], input[name*="seiKana" i]',
-    kana_na: 'input[name*="mei" i][name*="kana" i], input[name*="mei" i][name*="furi" i], input[aria-label*="メイ" i], input[name*="meiKana" i]',
-    roma_sei: 'input[name*="sei" i][name*="roma" i], input[name*="last" i][name*="roma" i], input[name*="family" i][name*="roma" i], input[name*="romaji" i][data-label*="姓" i]',
-    roma_na: 'input[name*="mei" i][name*="roma" i], input[name*="first" i][name*="roma" i], input[name*="romaji" i][data-label*="名" i]',
-    sex: 'input[type="radio"][name*="sex" i], input[type="radio"][name*="gender" i], select[name*="sex" i], select[name*="gender" i]',
-    bunkeiRikei: 'input[type="radio"][name*="bunkei" i], input[type="radio"][name*="rikei" i], select[name*="bunkei" i], select[name*="rikei" i]',
-    'birth.Y': 'input[name*="birth" i][name*="year" i], select[name*="birth" i][name*="year" i], select[name*="birth_y" i], select[name*="birthday_year" i], input[name*="birth_y" i]',
-    'birth.m': 'input[name*="birth" i][name*="month" i], select[name*="birth" i][name*="month" i], select[name*="birth_m" i], select[name*="birthday_month" i], input[name*="birth_m" i]',
-    'birth.d': 'input[name*="birth" i][name*="day" i], select[name*="birth" i][name*="day" i], select[name*="birth_d" i], select[name*="birthday_day" i], input[name*="birth_d" i]',
-    'email.primary': 'input[type="email"][name*="mail" i]:not([name*="confirm" i]), input[type="email"][name="mail"]',
-    'email.secondary': 'input[type="email"][name*="sub" i], input[type="email"][name*="second" i]',
-    'tel.mobile': 'input[type="tel"][name*="mobile" i], input[type="tel"][name*="keitai" i], input[type="tel"][name*="cell" i], input[type="tel"][name*="sp" i]',
-    'tel.home': 'input[type="tel"][name*="home" i], input[type="tel"][name*="ie" i], input[type="tel"][name*="tel" i]:not([name*="mobile" i]):not([name*="keitai" i])',
-    'address.current.postal': 'input[name*="zip" i], input[name*="post" i], input[name*="yubin" i]',
-    'address.current.pref': 'select[name*="pref" i], select[name*="todofuken" i], input[name*="pref" i][list], input[name*="pref" i]',
-    'address.current.city': 'input[name*="city" i], input[name*="shi" i], input[name*="ku" i], input[name*="gun" i]',
-    'address.current.street': 'input[name*="addr" i], input[name*="address" i], input[name*="banchi" i]',
-    'address.current.building': 'input[name*="bld" i], input[name*="building" i], input[name*="apartment" i], input[name*="mansion" i]',
-    'address.vacation.sameAsCurrent': 'input[type="checkbox"][name*="same" i][name*="address" i], input[type="checkbox"][aria-label*="現住所と同じ" i], input[type="checkbox"][data-label*="現住所と同じ" i], input[type="checkbox"][id*="sameaddress" i], input[type="checkbox"][name*="same" i][aria-label*="住所" i]',
-    'address.vacation.postal': 'input[name*="vac" i][name*="zip" i], input[name*="ryogai" i][name*="post" i]',
-    'address.vacation.pref': 'select[name*="vac" i][name*="pref" i], select[name*="ryogai" i][name*="pref" i]',
-    'address.vacation.city': 'input[name*="vac" i][name*="city" i], input[name*="ryogai" i][name*="city" i]',
-    'address.vacation.street': 'input[name*="vac" i][name*="address" i], input[name*="ryogai" i][name*="address" i]',
-    'address.vacation.building': 'input[name*="vac" i][name*="building" i], input[name*="ryogai" i][name*="bld" i]',
-    'address.vacation.tel': 'input[type="tel"][name*="vac" i], input[type="tel"][name*="ryogai" i]',
-    'school.category': 'select[name*="gakureki" i], select[name*="schooltype" i], select[name*="daigakuKubun" i]',
-    'school.kubun': 'select[name*="kubun" i], select[name*="kbn" i]',
-    'school.initial': 'input[name*="initial" i], input[name*="kibana" i]',
-    'school.pref': 'select[name*="campus_pref" i], select[name*="school_pref" i], select[name*="pref" i][data-group*="school" i]',
-    'school.dname': 'select[name*="dname" i], select[name*="school" i], input[name*="school" i]',
-    'school.bname': 'select[name*="bname" i], select[name*="gakubu" i], input[name*="gakubu" i], input[name*="course" i]',
-    'school.kname': 'select[name*="kname" i], select[name*="gakka" i], input[name*="gakka" i], input[name*="senkou" i]',
-    'school.from.Y': 'select[name*="ent" i][name*="year" i], select[name*="nyuugaku" i][name*="year" i], select[name*="kikanFromYear" i]',
-    'school.from.m': 'select[name*="ent" i][name*="month" i], select[name*="nyuugaku" i][name*="month" i], select[name*="kikanFromMonth" i]',
-    'school.to.Y': 'select[name*="grad" i][name*="year" i], select[name*="sotsu" i][name*="year" i], select[name*="kikanToYear" i]',
-    'school.to.m': 'select[name*="grad" i][name*="month" i], select[name*="sotsu" i][name*="month" i], select[name*="kikanToMonth" i]',
-    'highSchool.name': 'input[name*="koukou" i], input[name*="high" i][name*="school" i]',
-    'highSchool.initial': 'input[name*="koukou" i][name*="initial" i], input[name*="koukou" i][name*="kibana" i]',
-    'highSchool.pref': 'select[name*="koukou" i][name*="pref" i], select[name*="high" i][name*="pref" i], input[name*="koukou" i][name*="pref" i]',
-    'highSchool.department': 'input[name*="koukou" i][name*="gakka" i], input[name*="koukou" i][name*="course" i]',
-    'highSchool.major': 'input[name*="koukou" i][name*="senkou" i], input[name*="koukou" i][name*="major" i]',
-    'highSchool.from.Y': 'select[name*="koukou" i][name*="ent" i][name*="year" i], select[name*="koukou" i][name*="nyuugaku" i][name*="year" i]',
-    'highSchool.from.m': 'select[name*="koukou" i][name*="ent" i][name*="month" i], select[name*="koukou" i][name*="nyuugaku" i][name*="month" i]',
-    'highSchool.to.Y': 'select[name*="koukou" i][name*="grad" i][name*="year" i], select[name*="koukou" i][name*="sotsu" i][name*="year" i]',
-    'highSchool.to.m': 'select[name*="koukou" i][name*="grad" i][name*="month" i], select[name*="koukou" i][name*="sotsu" i][name*="month" i]'
-  };
 
-  const PATTERN_ONE = { mapping: PATTERN_ONE_MAPPING, learnedFields: [] };
+  const VACATION_CHECKBOX_SELECTOR = 'input[type="checkbox"][name*="same" i][name*="address" i], input[type="checkbox"][aria-label*="現住所と同じ" i], input[type="checkbox"][data-label*="現住所と同じ" i], input[type="checkbox"][id*="sameaddress" i], input[type="checkbox"][name*="same" i][aria-label*="住所" i]';
+
+  const BUILTIN_PATTERNS = {
+    'job.axol': { type: 'job.axol' }
+  };
 
   // ===== ユーティリティ =====
   const log = (...a) => DEBUG && console.log('[Autofill]', ...a);
@@ -141,16 +96,16 @@
   async function loadData() {
     const defaultData = {
       profile: defaultProfile(),
-      patterns: { 'パターン1': PATTERN_ONE },
-      savedSettings: { lastPattern: 'パターン1' }
+      patterns: { ...BUILTIN_PATTERNS },
+      savedSettings: { lastPattern: 'job.axol' }
     };
     const str = typeof GM_getValue === 'function' ? GM_getValue(STORAGE_KEY, '') : localStorage.getItem(STORAGE_KEY);
     if (!str) return defaultData;
     try {
       const data = JSON.parse(str);
-      const normalizedPatterns = {};
+      const normalizedPatterns = { ...BUILTIN_PATTERNS };
       Object.entries(data.patterns || {}).forEach(([name, pattern]) => {
-        if (name === 'default') return;
+        if (name === 'default' || name === 'パターン1') return;
         if (pattern && typeof pattern === 'object' && pattern.mapping) {
           normalizedPatterns[name] = { ...pattern, learnedFields: pattern.learnedFields || [] };
         } else {
@@ -177,7 +132,9 @@
         savedSettings: {
           ...defaultData.savedSettings,
           ...data.savedSettings,
-          lastPattern: data.savedSettings?.lastPattern === 'default' ? '' : data.savedSettings?.lastPattern || defaultData.savedSettings.lastPattern
+          lastPattern: data.savedSettings?.lastPattern === 'default' || data.savedSettings?.lastPattern === 'パターン1'
+            ? defaultData.savedSettings.lastPattern
+            : data.savedSettings?.lastPattern || defaultData.savedSettings.lastPattern
         }
 
       };
@@ -193,8 +150,7 @@
   }
 
   function findVacationCheckboxes() {
-    const selector = PATTERN_ONE_MAPPING[VACATION_CHECKBOX_KEY];
-    if (!selector) return [];
+    const selector = VACATION_CHECKBOX_SELECTOR;
     try {
       return Array.from(document.querySelectorAll(selector)).filter(node => node.type === 'checkbox');
     } catch (error) {
@@ -404,6 +360,9 @@
 
   // ===== コアロジック 2: 適用 (Fill) =====
   async function fillByPattern(profile, patternEntry, patternName = 'unnamed pattern') {
+    if (patternEntry?.type === 'job.axol') {
+      return fillJobAxol(profile);
+    }
     const pattern = patternEntry.mapping || patternEntry;
     let count = 0;
 
@@ -495,6 +454,119 @@
     return count;
   }
 
+  async function fillJobAxol(profile) {
+    let count = 0;
+    const school = pickSchoolEntry(profile) || defaultSchoolEntry('学部');
+    const birth = profile.birth || {};
+    const current = profile.address?.current || {};
+    const vacation = profile.address?.vacation || {};
+    const [zipH, zipL] = splitPostal(current.postal);
+    const [vacZipH, vacZipL] = splitPostal(vacation.postal);
+
+    count += setInputValue('input[name="kanji_sei"]', profile.kanji_sei);
+    count += setInputValue('input[name="kanji_na"]', profile.kanji_na);
+    count += setInputValue('input[name="kana_sei"]', profile.kana_sei);
+    count += setInputValue('input[name="kana_na"]', profile.kana_na);
+    count += setInputValue('input[name="roma_sei"]', profile.roma_sei);
+    count += setInputValue('input[name="roma_na"]', profile.roma_na);
+
+    count += setRadioValue('sex', profile.sex);
+    count += setSelectValue('select[name="birth_Y"]', birth.Y);
+    count += setSelectValue('select[name="birth_m"]', birth.m);
+    count += setSelectValue('select[name="birth_d"]', birth.d);
+
+    count += setInputValue('input[name="yubing_h"]', zipH);
+    count += setInputValue('input[name="yubing_l"]', zipL);
+    count += setSelectValue('select[name="keng"]', current.pref);
+    count += setInputValue('input[name="jushog1"]', current.city);
+    count += setInputValue('input[name="jushog2"]', current.street);
+    count += setInputValue('input[name="jushog3"]', current.building);
+    count += setTelGroup('telg', profile.tel?.home);
+    count += setTelGroup('keitai', profile.tel?.mobile);
+
+    count += setCheckboxValue('input[name="jushosame"]', vacation.sameAsCurrent);
+    if (!vacation.sameAsCurrent) {
+      count += setInputValue('input[name="yubink_h"]', vacZipH);
+      count += setInputValue('input[name="yubink_l"]', vacZipL);
+      count += setSelectValue('select[name="kenk"]', vacation.pref);
+      count += setInputValue('input[name="jushok1"]', vacation.city);
+      count += setInputValue('input[name="jushok2"]', vacation.street);
+      count += setInputValue('input[name="jushok3"]', vacation.building);
+      count += setTelGroup('telk', vacation.tel);
+    }
+
+    count += setInputValue('input[name="email"]', profile.email?.primary);
+    count += setInputValue('input[name="email2"]', profile.email?.primary);
+    count += setInputValue('input[name="kmail"]', profile.email?.secondary);
+    if (profile.email?.secondary) count += setInputValue('input[name="kmail2"]', profile.email.secondary);
+
+    count += setRadioValue('kubun', mapSchoolCategoryToKubun(school.category));
+    const kokushiVal = mapSchoolKokushi(school);
+    if (kokushiVal) count += setRadioValue('kokushi', kokushiVal);
+    count += setInputValue('input[name="initial"]', school.initial || '');
+
+    const searchBtn = document.querySelector('#jsAxolSchool_dcd_search');
+    if (searchBtn && isInteractive(searchBtn)) {
+      searchBtn.click();
+      searchBtn.dispatchEvent(new Event('change', { bubbles: true }));
+      searchBtn.dispatchEvent(new Event('input', { bubbles: true }));
+      count++;
+      await waitForCondition(() => true, 300);
+    }
+
+    const dcdSelect = document.querySelector('select#dcd');
+    if (dcdSelect) {
+      await waitForCondition(() => dcdSelect.options.length > 1, 5000);
+      const selected = selectOption(dcdSelect, school.dcd, school.dname);
+      if (selected) {
+        count++;
+        dcdSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (!selected || dcdSelect.value === '9992' || dcdSelect.value === '') {
+        count += setInputValue('input[name="dname"]', school.dname || '');
+      }
+    } else {
+      count += setInputValue('input[name="dname"]', school.dname || '');
+    }
+
+    const bcdSelect = document.querySelector('select#bcd');
+    if (bcdSelect) {
+      await waitForCondition(() => bcdSelect.options.length > 1, 5000);
+      const selected = selectOption(bcdSelect, school.bcd, school.bname);
+      if (selected) {
+        count++;
+        bcdSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (!selected || bcdSelect.value === '') {
+        count += setInputValue('input[name="bname"]', school.bname || '');
+      }
+    } else {
+      count += setInputValue('input[name="bname"]', school.bname || '');
+    }
+
+    const paxSelect = document.querySelector('select#paxcd');
+    if (paxSelect) {
+      await waitForCondition(() => paxSelect.options.length > 1, 5000);
+      const selected = selectOption(paxSelect, school.paxcd, school.kname);
+      if (selected) {
+        count++;
+        paxSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (!selected || paxSelect.value === '') {
+        count += setInputValue('input[name="kname"]', school.kname || '');
+      }
+    } else {
+      count += setInputValue('input[name="kname"]', school.kname || '');
+    }
+
+    count += setSelectValue('select[name="school_from_Y"]', school.from?.Y);
+    count += setSelectValue('select[name="school_from_m"]', school.from?.m);
+    count += setSelectValue('select[name="school_to_Y"]', school.to?.Y);
+    count += setSelectValue('select[name="school_to_m"]', school.to?.m);
+
+    return count;
+  }
+
   function fillDefault(profile) {
     let count = 0;
     const flat = flattenObject(profile);
@@ -561,6 +633,101 @@
       };
       tick();
     });
+  }
+
+  function splitPostal(value = '') {
+    const digits = String(value || '').replace(/\D/g, '');
+    return [digits.slice(0, 3) || '', digits.slice(3, 7) || ''];
+  }
+
+  function splitTelSegments(value = '') {
+    const digits = String(value || '').replace(/\D/g, '');
+    if (!digits) return ['', '', ''];
+    if (digits.length <= 4) return [digits, '', ''];
+    if (digits.length <= 7) return [digits.slice(0, 3), digits.slice(3), ''];
+    return [digits.slice(0, 3), digits.slice(3, -4), digits.slice(-4)];
+  }
+
+  function setInputValue(selector, value) {
+    if (value === undefined || value === null || value === '') return 0;
+    let node = null;
+    try { node = document.querySelector(selector); } catch (e) { log('selector error', selector, e); }
+    if (!node || (!isInteractive(node) && !isJqTransformHidden(node))) return 0;
+    setNativeValue(node, value);
+    return 1;
+  }
+
+  function setSelectValue(selector, value) {
+    if (!value) return 0;
+    let node = null;
+    try { node = document.querySelector(selector); } catch (e) { log('selector error', selector, e); }
+    if (!node || node.tagName !== 'SELECT' || (!isInteractive(node) && !isJqTransformHidden(node))) return 0;
+    if (setSelectValueByText(node, value)) {
+      if (isJqTransformHidden(node)) syncJqTransformSelect(node);
+      return 1;
+    }
+    return 0;
+  }
+
+  function setRadioValue(name, value) {
+    if (value === undefined || value === null || value === '') return 0;
+    const radios = Array.from(document.querySelectorAll(`input[type="radio"][name="${CSS.escape(name)}"]`));
+    let updated = 0;
+    radios.forEach(radio => {
+      if (!isInteractive(radio)) return;
+      if (radio.value === String(value)) {
+        if (!radio.checked) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change', { bubbles: true }));
+          radio.dispatchEvent(new Event('click', { bubbles: true }));
+        }
+        updated = 1;
+      }
+    });
+    return updated;
+  }
+
+  function setCheckboxValue(selector, desired) {
+    if (desired === undefined || desired === null) return 0;
+    const node = document.querySelector(selector);
+    if (!node || node.type !== 'checkbox' || !isInteractive(node)) return 0;
+    const shouldCheck = !!desired;
+    if (node.checked !== shouldCheck) {
+      node.checked = shouldCheck;
+      node.dispatchEvent(new Event('change', { bubbles: true }));
+      node.dispatchEvent(new Event('click', { bubbles: true }));
+    }
+    return 1;
+  }
+
+  function setTelGroup(prefix, value) {
+    const [h, m, l] = splitTelSegments(value);
+    return setInputValue(`input[name="${prefix}_h"]`, h) + setInputValue(`input[name="${prefix}_m"]`, m) + setInputValue(`input[name="${prefix}_l"]`, l);
+  }
+
+  function selectOption(select, value, text) {
+    if (!select) return false;
+    if (value && setSelectValueByText(select, value)) return true;
+    if (text && setSelectValueByText(select, text)) return true;
+    return false;
+  }
+
+  function mapSchoolCategoryToKubun(category = '') {
+    const normalized = category.trim();
+    if (normalized.includes('大学院')) return '1';
+    if (normalized.includes('短')) return '3';
+    if (normalized.includes('高専')) return '4';
+    if (normalized.includes('専')) return '5';
+    return '2';
+  }
+
+  function mapSchoolKokushi(entry = {}) {
+    const base = String(entry.kokushi || entry.kubun || '').trim();
+    if (base.includes('国')) return '1';
+    if (base.includes('公')) return '2';
+    if (base.includes('私')) return '3';
+    if (base.includes('外')) return '4';
+    return '';
   }
 
   function findByLabel(labelText) {
