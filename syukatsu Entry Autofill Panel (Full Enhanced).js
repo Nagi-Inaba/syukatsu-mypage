@@ -390,6 +390,44 @@
     };
   }
 
+  function mergeProfilePreferFilled(saved, ui) {
+    if (Array.isArray(saved) && Array.isArray(ui)) {
+      return ui.length ? ui : saved;
+    }
+
+    if (typeof saved !== 'object' || saved === null || typeof ui !== 'object' || ui === null) {
+      if (typeof ui === 'string') return ui === '' ? saved : ui;
+      return ui === undefined || ui === null ? saved : ui;
+    }
+
+    const result = Array.isArray(saved) ? [] : {};
+    const keys = new Set([...Object.keys(saved), ...Object.keys(ui)]);
+
+    keys.forEach(key => {
+      const savedVal = saved[key];
+      const uiVal = ui[key];
+
+      if (Array.isArray(savedVal) || Array.isArray(uiVal)) {
+        result[key] = mergeProfilePreferFilled(Array.isArray(savedVal) ? savedVal : [], Array.isArray(uiVal) ? uiVal : []);
+        return;
+      }
+
+      if (typeof savedVal === 'object' && savedVal !== null && typeof uiVal === 'object' && uiVal !== null) {
+        result[key] = mergeProfilePreferFilled(savedVal, uiVal);
+        return;
+      }
+
+      if (typeof uiVal === 'string') {
+        result[key] = uiVal === '' ? savedVal : uiVal;
+        return;
+      }
+
+      result[key] = uiVal === undefined || uiVal === null ? savedVal : uiVal;
+    });
+
+    return result;
+  }
+
   // ===== コアロジック 1: 学習 (Learn) =====
   function learnPage(profile) {
     const flatProfile = flattenObject(profile);
@@ -1783,7 +1821,7 @@
     el('#act-fill').classList.add('af-btn-running');
     el('#act-fill').textContent = '自動入力中...';
 
-    const hydratedProfile = { ...data.profile, ...getProfileFromUI() };
+    const hydratedProfile = mergeProfilePreferFilled(data.profile, getProfileFromUI());
     data.profile = hydratedProfile;
     await saveData(data);
 
