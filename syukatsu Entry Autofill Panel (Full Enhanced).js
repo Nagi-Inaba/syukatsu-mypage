@@ -1052,20 +1052,25 @@
 
     const currentAddressLine = `${current.city || ''}${current.street || ''}`.trim();
     const vacationAddressLine = `${vacation.city || ''}${vacation.street || ''}`.trim();
+    const shouldFillVacationAddress = !vacation.sameAsCurrent;
 
     count += fillPostalSegments(current.postal, explicitSelectors.currentPostal);
     count += applyToSelector(explicitSelectors.currentPref, current.pref);
     count += applyToSelector(explicitSelectors.currentAddress, currentAddressLine);
     count += applyToSelector(explicitSelectors.currentBuilding, current.building);
 
-    count += fillPostalSegments(vacation.postal, explicitSelectors.vacationPostal);
-    count += applyToSelector(explicitSelectors.vacationPref, vacation.pref);
-    count += applyToSelector(explicitSelectors.vacationAddress, vacationAddressLine);
-    count += applyToSelector(explicitSelectors.vacationBuilding, vacation.building);
+    if (shouldFillVacationAddress) {
+      count += fillPostalSegments(vacation.postal, explicitSelectors.vacationPostal);
+      count += applyToSelector(explicitSelectors.vacationPref, vacation.pref);
+      count += applyToSelector(explicitSelectors.vacationAddress, vacationAddressLine);
+      count += applyToSelector(explicitSelectors.vacationBuilding, vacation.building);
+    }
 
     count += fillTelSegments(profile.tel?.home, explicitSelectors.currentTel);
     count += fillTelSegments(profile.tel?.mobile, explicitSelectors.mobileTel);
-    count += fillTelSegments(vacation.tel, explicitSelectors.vacationTel);
+    if (shouldFillVacationAddress) {
+      count += fillTelSegments(vacation.tel, explicitSelectors.vacationTel);
+    }
 
     count += applyToSelector(explicitSelectors.vacationSame, vacation.sameAsCurrent);
 
@@ -1077,27 +1082,30 @@
     count += applyToSelector(explicitSelectors.memoZemi, school.zemi || profile.school?.zemi);
     count += applyToSelector(explicitSelectors.memoClub, school.club || profile.school?.club);
 
-    count += applyMappingList(
-      {
-        kanji_sei: textInputSelectors.kanji_sei,
-        kanji_na: textInputSelectors.kanji_na,
-        kana_sei: textInputSelectors.kana_sei,
-        kana_na: textInputSelectors.kana_na,
-        currentAddressLine: textInputSelectors.currentAddressLine,
-        currentBuilding: textInputSelectors.currentBuilding,
-        vacationAddressLine: textInputSelectors.vacationAddressLine,
-        vacationBuilding: textInputSelectors.vacationBuilding,
-        memoZemi: textInputSelectors.memoZemi,
-        memoClub: textInputSelectors.memoClub
-      },
-      {
-        ...profile,
-        currentAddressLine,
-        vacationAddressLine,
-        memoZemi: school.zemi || profile.school?.zemi,
-        memoClub: school.club || profile.school?.club
-      }
-    );
+    const mappingTargets = {
+      kanji_sei: textInputSelectors.kanji_sei,
+      kanji_na: textInputSelectors.kanji_na,
+      kana_sei: textInputSelectors.kana_sei,
+      kana_na: textInputSelectors.kana_na,
+      currentAddressLine: textInputSelectors.currentAddressLine,
+      currentBuilding: textInputSelectors.currentBuilding,
+      memoZemi: textInputSelectors.memoZemi,
+      memoClub: textInputSelectors.memoClub
+    };
+    if (shouldFillVacationAddress) {
+      mappingTargets.vacationAddressLine = textInputSelectors.vacationAddressLine;
+      mappingTargets.vacationBuilding = textInputSelectors.vacationBuilding;
+    }
+
+    const mappingData = {
+      ...profile,
+      currentAddressLine,
+      vacationAddressLine,
+      memoZemi: school.zemi || profile.school?.zemi,
+      memoClub: school.club || profile.school?.club
+    };
+
+    count += applyMappingList(mappingTargets, mappingData);
 
     count += applyValueToNode(findFieldByKeywords([['漢字', '姓'], ['氏名', '姓']]), profile.kanji_sei);
     count += applyValueToNode(findFieldByKeywords([['漢字', '名'], ['氏名', '名']]), profile.kanji_na);
@@ -1124,17 +1132,19 @@
     count += applyValueToNode(findFieldByKeywords([['住所', '番地'], ['丁目'], ['町域']]), current.street);
     count += applyValueToNode(findFieldByKeywords([['建物'], ['マンション'], ['号室']]), current.building);
 
-    count += fillPostalByKeywords(vacation.postal, [['郵便', '休暇'], ['郵便', '連絡']]);
-    const vacPref = findFieldByKeywords([['都道府県', '休暇'], ['都道府県', '連絡']], node => node.tagName === 'SELECT');
-    const vacPrefCount = applyValueToNode(vacPref, vacation.pref);
-    count += vacPrefCount;
-    if (vacPref && vacPrefCount && isJqTransformHidden(vacPref)) {
-      syncJqTransformSelect(vacPref);
+    if (shouldFillVacationAddress) {
+      count += fillPostalByKeywords(vacation.postal, [['郵便', '休暇'], ['郵便', '連絡']]);
+      const vacPref = findFieldByKeywords([['都道府県', '休暇'], ['都道府県', '連絡']], node => node.tagName === 'SELECT');
+      const vacPrefCount = applyValueToNode(vacPref, vacation.pref);
+      count += vacPrefCount;
+      if (vacPref && vacPrefCount && isJqTransformHidden(vacPref)) {
+        syncJqTransformSelect(vacPref);
+      }
+      count += applyValueToNode(findFieldByKeywords([['休暇', '市'], ['連絡', '市']]), vacation.city);
+      count += applyValueToNode(findFieldByKeywords([['休暇', '番地'], ['連絡', '番地']]), vacation.street);
+      count += applyValueToNode(findFieldByKeywords([['休暇', '建物'], ['連絡', '建物']]), vacation.building);
+      count += fillTelByKeywords(vacation.tel, [['電話', '休暇'], ['電話', '連絡']]);
     }
-    count += applyValueToNode(findFieldByKeywords([['休暇', '市'], ['連絡', '市']]), vacation.city);
-    count += applyValueToNode(findFieldByKeywords([['休暇', '番地'], ['連絡', '番地']]), vacation.street);
-    count += applyValueToNode(findFieldByKeywords([['休暇', '建物'], ['連絡', '建物']]), vacation.building);
-    count += fillTelByKeywords(vacation.tel, [['電話', '休暇'], ['電話', '連絡']]);
 
     count += fillTelByKeywords(profile.tel?.home, [['自宅', '電話'], ['TEL', '自宅'], ['電話', '自宅']]);
     count += fillTelByKeywords(profile.tel?.mobile, [['携帯', '電話'], ['ケータイ'], ['携帯']]);
