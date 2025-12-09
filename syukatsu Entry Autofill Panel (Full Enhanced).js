@@ -93,6 +93,15 @@
     return true;
   }
 
+  function findAssociatedLabel(input) {
+    if (!input) return null;
+    if (input.id) {
+      const explicit = document.querySelector(`label[for="${CSS.escape(input.id)}"]`);
+      if (explicit) return explicit;
+    }
+    return input.closest('label');
+  }
+
   function dispatchClickSequence(target) {
     if (!target) return false;
     const events = ['mousedown', 'mouseup', 'click'];
@@ -691,14 +700,22 @@
     const radios = Array.from(document.querySelectorAll(`input[type="radio"][name="${CSS.escape(name)}"]`));
     let updated = 0;
     radios.forEach(radio => {
-      if (!isInteractive(radio)) return;
       if (radio.value === String(value)) {
-        if (!radio.checked) {
-          radio.checked = true;
-          radio.dispatchEvent(new Event('change', { bubbles: true }));
-          radio.dispatchEvent(new Event('click', { bubbles: true }));
+        if (isInteractive(radio)) {
+          if (!radio.checked) {
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+            radio.dispatchEvent(new Event('click', { bubbles: true }));
+          }
+          updated = 1;
+          return;
         }
-        updated = 1;
+
+        const label = findAssociatedLabel(radio);
+        if (label && isInteractive(label)) {
+          if (!radio.checked) dispatchClickSequence(label);
+          updated = 1;
+        }
       }
     });
     return updated;
