@@ -31,7 +31,8 @@
   const VACATION_CHECKBOX_SELECTOR = 'input[type="checkbox"][name*="same" i][name*="address" i], input[type="checkbox"][aria-label*="現住所と同じ" i], input[type="checkbox"][data-label*="現住所と同じ" i], input[type="checkbox"][id*="sameaddress" i], input[type="checkbox"][name*="same" i][aria-label*="住所" i]';
 
   const BUILTIN_PATTERNS = {
-    'job.axol': { type: 'job.axol' }
+    'job.axol': { type: 'job.axol' },
+    'i-web': { type: 'i-web' }
   };
 
   // ===== ユーティリティ =====
@@ -383,6 +384,9 @@
     if (patternEntry?.type === 'job.axol') {
       return fillJobAxol(profile);
     }
+    if (patternEntry?.type === 'i-web') {
+      return fillIWeb(profile);
+    }
     const pattern = patternEntry.mapping || patternEntry;
     let count = 0;
 
@@ -580,6 +584,194 @@
     count += setSelectValue('select[name="school_from_m"]', school.from?.m);
     count += setSelectValue('select[name="school_to_Y"]', school.to?.Y);
     count += setSelectValue('select[name="school_to_m"]', school.to?.m);
+
+    return count;
+  }
+
+  function keywordTextFor(node) {
+    const parts = [
+      getLabelText(node),
+      node.placeholder,
+      node.getAttribute('aria-label'),
+      node.name,
+      node.id
+    ];
+    return parts.filter(Boolean).map(t => String(t).toLowerCase()).join(' ');
+  }
+
+  function matchesKeywordSet(node, keywordSet) {
+    const text = keywordTextFor(node);
+    return keywordSet.every(kw => text.includes(kw));
+  }
+
+  function findFieldByKeywords(keywordSets, filterFn = () => true) {
+    const nodes = Array.from(document.querySelectorAll('input, select, textarea'));
+    return nodes.find(node => {
+      if (!isInteractive(node) && !isJqTransformHidden(node)) return false;
+      if (!filterFn(node)) return false;
+      return keywordSets.some(set => matchesKeywordSet(node, set));
+    });
+  }
+
+  function applyValueToNode(node, value) {
+    if (!node || value === undefined || value === null || value === '') return 0;
+    if (node.tagName === 'SELECT') {
+      if (setSelectValueByText(node, String(value))) {
+        if (isJqTransformHidden(node)) syncJqTransformSelect(node);
+        return 1;
+      }
+      return 0;
+    }
+    if (node.type === 'radio') {
+      const name = node.name;
+      if (!name) return 0;
+      const target = document.querySelector(`input[type="radio"][name="${CSS.escape(name)}"][value="${CSS.escape(String(value))}"]`);
+      if (target && !target.checked) {
+        target.checked = true;
+        target.dispatchEvent(new Event('change', { bubbles: true }));
+        target.dispatchEvent(new Event('click', { bubbles: true }));
+        return 1;
+      }
+      return 0;
+    }
+    setNativeValue(node, value);
+    return 1;
+  }
+
+  function fillDateByGrouping(keywordSets, dateObj = {}) {
+    const values = [dateObj.Y, dateObj.m, dateObj.d].filter(v => v !== undefined && v !== null && v !== '');
+    if (!values.length) return 0;
+    const candidates = Array.from(document.querySelectorAll('select, input')).filter(node =>
+      matchesAnyKeyword(node, keywordSets)
+    );
+    if (!candidates.length) return 0;
+    const ordered = candidates
+      .filter(node => isInteractive(node) || isJqTransformHidden(node))
+      .sort((a, b) => {
+        const rectA = a.getBoundingClientRect();
+        const rectB = b.getBoundingClientRect();
+        return rectA.top === rectB.top ? rectA.left - rectB.left : rectA.top - rectB.top;
+      });
+    let count = 0;
+    const [yNode, mNode, dNode] = ordered;
+    if (dateObj.Y) count += applyValueToNode(yNode, dateObj.Y);
+    if (dateObj.m) count += applyValueToNode(mNode, dateObj.m);
+    if (dateObj.d) count += applyValueToNode(dNode, dateObj.d);
+    return count;
+  }
+
+  function matchesAnyKeyword(node, keywordSets) {
+    return keywordSets.some(set => matchesKeywordSet(node, set));
+  }
+
+  function fillPostalByKeywords(postal, keywordSets) {
+    const digits = String(postal || '').replace(/\D/g, '');
+    if (!digits) return 0;
+    const nodes = Array.from(document.querySelectorAll('input')).filter(node => matchesAnyKeyword(node, keywordSets));
+    if (!nodes.length) return 0;
+    const [h, l] = digits.length > 3 ? [digits.slice(0, 3), digits.slice(3, 7)] : [digits, ''];
+    let count = 0;
+    if (nodes.length === 1) {
+      count += applyValueToNode(nodes[0], digits);
+    } else {
+      const sorted = nodes.sort((a, b) => a.maxLength - b.maxLength);
+      count += applyValueToNode(sorted[0], h);
+      count += applyValueToNode(sorted[1] || sorted[0], l);
+    }
+    return count;
+  }
+
+  function fillTelByKeywords(value, keywordSets) {
+    if (!value) return 0;
+    const digits = String(value).replace(/\D/g, '');
+    const [h, m, l] = splitTelSegments(digits);
+    const nodes = Array.from(document.querySelectorAll('input')).filter(node => matchesAnyKeyword(node, keywordSets));
+    if (!nodes.length) return 0;
+    let count = 0;
+    const sorted = nodes.sort((a, b) => a.maxLength - b.maxLength);
+    if (h) count += applyValueToNode(sorted[0], h);
+    if (m && sorted[1]) count += applyValueToNode(sorted[1], m);
+    if (l && sorted[2]) count += applyValueToNode(sorted[2], l);
+    return count;
+  }
+
+  function fillGenderRadios(value) {
+    if (!value) return 0;
+    const radios = Array.from(document.querySelectorAll('input[type="radio"]'));
+    let count = 0;
+    for (const radio of radios) {
+      if (!isInteractive(radio)) continue;
+      if (radio.value === String(value)) {
+        count += applyValueToNode(radio, value);
+        if (count) return count;
+      }
+    }
+    const maleKeywords = ['男'];
+    const femaleKeywords = ['女'];
+    for (const radio of radios) {
+      const text = keywordTextFor(radio);
+      if (value === '1' && maleKeywords.some(k => text.includes(k))) {
+        count += applyValueToNode(radio, radio.value || value);
+        break;
+      }
+      if (value === '2' && femaleKeywords.some(k => text.includes(k))) {
+        count += applyValueToNode(radio, radio.value || value);
+        break;
+      }
+    }
+    return count;
+  }
+
+  function fillIWeb(profile) {
+    let count = 0;
+    const birth = profile.birth || {};
+    const current = profile.address?.current || {};
+    const vacation = profile.address?.vacation || {};
+    const school = pickSchoolEntry(profile) || defaultSchoolEntry('学部');
+
+    count += applyValueToNode(findFieldByKeywords([['漢字', '姓'], ['氏名', '姓']]), profile.kanji_sei);
+    count += applyValueToNode(findFieldByKeywords([['漢字', '名'], ['氏名', '名']]), profile.kanji_na);
+    count += applyValueToNode(findFieldByKeywords([['カナ', '姓'], ['ﾌﾘｶﾞﾅ', '姓'], ['ふりがな', '姓']]), profile.kana_sei);
+    count += applyValueToNode(findFieldByKeywords([['カナ', '名'], ['ﾌﾘｶﾞﾅ', '名'], ['ふりがな', '名']]), profile.kana_na);
+    count += applyValueToNode(findFieldByKeywords([['ローマ', '姓'], ['ﾛｰﾏ', '姓']]), profile.roma_sei);
+    count += applyValueToNode(findFieldByKeywords([['ローマ', '名'], ['ﾛｰﾏ', '名']]), profile.roma_na);
+
+    count += fillGenderRadios(profile.sex);
+    count += fillDateByGrouping([['生年月日'], ['誕生日']], birth);
+
+    count += fillPostalByKeywords(current.postal, [['郵便', '現'], ['郵便', '住所'], ['郵便']]);
+    const prefSelect = findFieldByKeywords([['都道府県'], ['都', '県']], node => node.tagName === 'SELECT');
+    count += applyValueToNode(prefSelect, current.pref);
+    count += applyValueToNode(findFieldByKeywords([['住所', '市'], ['市区', '郡'], ['市区町村']]), current.city);
+    count += applyValueToNode(findFieldByKeywords([['住所', '番地'], ['丁目'], ['町域']]), current.street);
+    count += applyValueToNode(findFieldByKeywords([['建物'], ['マンション'], ['号室']]), current.building);
+
+    count += fillPostalByKeywords(vacation.postal, [['郵便', '休暇'], ['郵便', '連絡']]);
+    const vacPref = findFieldByKeywords([['都道府県', '休暇'], ['都道府県', '連絡']], node => node.tagName === 'SELECT');
+    count += applyValueToNode(vacPref, vacation.pref);
+    count += applyValueToNode(findFieldByKeywords([['休暇', '市'], ['連絡', '市']]), vacation.city);
+    count += applyValueToNode(findFieldByKeywords([['休暇', '番地'], ['連絡', '番地']]), vacation.street);
+    count += applyValueToNode(findFieldByKeywords([['休暇', '建物'], ['連絡', '建物']]), vacation.building);
+    count += fillTelByKeywords(vacation.tel, [['電話', '休暇'], ['電話', '連絡']]);
+
+    count += fillTelByKeywords(profile.tel?.home, [['自宅', '電話'], ['TEL', '自宅'], ['電話', '自宅']]);
+    count += fillTelByKeywords(profile.tel?.mobile, [['携帯', '電話'], ['ケータイ'], ['携帯']]);
+
+    count += applyValueToNode(findFieldByKeywords([['メール', '確認'], ['email', '確認']]), profile.email?.primary);
+    count += applyValueToNode(findFieldByKeywords([['メール'], ['email']]), profile.email?.primary);
+    count += applyValueToNode(findFieldByKeywords([['メール', '2'], ['予備', 'メール']]), profile.email?.secondary);
+
+    const kubunRadio = findFieldByKeywords([['学校', '区分'], ['学歴', '区分']], node => node.type === 'radio');
+    count += applyValueToNode(kubunRadio, mapSchoolCategoryToKubun(school.category));
+    const kokushiRadio = findFieldByKeywords([['設置'], ['国公立']], node => node.type === 'radio');
+    count += applyValueToNode(kokushiRadio, mapSchoolKokushi(school));
+    count += applyValueToNode(findFieldByKeywords([['学校', '名'], ['大学', '名']]), school.dname || school.dcd || '');
+    count += applyValueToNode(findFieldByKeywords([['学部']]), school.bname || school.bcd || '');
+    count += applyValueToNode(findFieldByKeywords([['学科'], ['専攻']]), school.kname || school.paxcd || '');
+    count += fillDateByGrouping([['入学'], ['入校'], ['入園']], school.from || {});
+    count += fillDateByGrouping([['卒業'], ['修了'], ['卒園']], school.to || {});
+    count += applyValueToNode(findFieldByKeywords([['ゼミ'], ['研究室']]), school.zemi);
+    count += applyValueToNode(findFieldByKeywords([['サークル'], ['部活']]), school.club);
 
     return count;
   }
