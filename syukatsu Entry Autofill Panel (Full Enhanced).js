@@ -1829,7 +1829,7 @@
       setTimeout(() => saveBtn.classList.remove('af-btn-flash'), 200);
     }
     const currentData = await loadData();
-    currentData.profile = { ...currentData.profile, ...getProfileFromUI() };
+    currentData.profile = mergeProfilePreferFilled(currentData.profile, getProfileFromUI());
     await saveData(currentData);
     el('#af-status-msg').textContent = '✅ プロフィールを保存しました';
     // 修正箇所: アロー関数の書き方を { } ブロックに変更
