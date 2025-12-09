@@ -1339,10 +1339,14 @@
     el('#act-fill').classList.add('af-btn-running');
     el('#act-fill').textContent = '自動入力中...';
 
+    const hydratedProfile = { ...data.profile, ...getProfileFromUI() };
+    data.profile = hydratedProfile;
+    await saveData(data);
+
     let filledCount = 0;
     const pattern = data.patterns[patternKey];
     if (pattern) {
-      filledCount = await fillByPattern(data.profile, pattern, patternKey);
+      filledCount = await fillByPattern(hydratedProfile, pattern, patternKey);
     }
     el('#af-status-msg').textContent = `✨ ${filledCount} 箇所に入力しました`;
     el('#act-fill').classList.remove('af-btn-running');
