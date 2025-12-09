@@ -35,6 +35,19 @@
     'i-web': { type: 'i-web' }
   };
 
+  function normalizePatternEntry(name, pattern) {
+    if (!pattern || typeof pattern !== 'object') return { mapping: {}, learnedFields: [] };
+    const base = BUILTIN_PATTERNS[name] || {};
+    const normalized = {
+      learnedFields: Array.isArray(pattern.learnedFields) ? pattern.learnedFields : []
+    };
+    const mappingCandidate = pattern.mapping || (!pattern.type ? pattern : null);
+    if (mappingCandidate && typeof mappingCandidate === 'object') normalized.mapping = mappingCandidate;
+    const type = pattern.type || base.type;
+    if (type) normalized.type = type;
+    return normalized;
+  }
+
   // ===== ユーティリティ =====
   const log = (...a) => DEBUG && console.log('[Autofill]', ...a);
   const el = (sel, root = document) => root.querySelector(sel);
@@ -117,8 +130,35 @@
     );
   }
 
+  function isVisible(node) {
+    if (!node) return false;
+    const style = window.getComputedStyle(node);
+    if (style.display === 'none' || style.visibility === 'hidden') return false;
+    const rect = node.getBoundingClientRect();
+    return !(rect.width === 0 && rect.height === 0);
+  }
+
+  function findSchoolSearchButton() {
+    const selectors = [
+      '#jsAxolSchool_dcd_search',
+      'button[id*="school"][id*="search"], input[id*="school"][id*="search"]',
+      'button[name*="dcd"][name*="search"], input[name*="dcd"][name*="search"]'
+    ];
+    for (const sel of selectors) {
+      try {
+        const btn = document.querySelector(sel);
+        if (btn && isInteractive(btn)) return btn;
+      } catch (error) {
+        log('school search selector error', sel, error);
+      }
+    }
+    const keywordBtn = Array.from(document.querySelectorAll('button, input[type="button"], input[type="submit"], a'))
+      .find(node => isInteractive(node) && ((node.textContent || node.value || '').includes('学校検索')));
+    return keywordBtn || null;
+  }
+
   function triggerSchoolSearch() {
-    const searchBtn = document.querySelector('#jsAxolSchool_dcd_search');
+    const searchBtn = findSchoolSearchButton();
     if (!searchBtn) return false;
     return dispatchClickSequence(searchBtn);
   }
@@ -136,11 +176,7 @@
       const normalizedPatterns = { ...BUILTIN_PATTERNS };
       Object.entries(data.patterns || {}).forEach(([name, pattern]) => {
         if (name === 'default' || name === 'パターン1') return;
-        if (pattern && typeof pattern === 'object' && pattern.mapping) {
-          normalizedPatterns[name] = { ...pattern, learnedFields: pattern.learnedFields || [] };
-        } else {
-          normalizedPatterns[name] = { mapping: pattern || {}, learnedFields: [] };
-        }
+        normalizedPatterns[name] = normalizePatternEntry(name, pattern);
       });
       const mergedProfile = { ...defaultData.profile, ...data.profile };
       mergedProfile.schoolEntries = Array.isArray(data.profile?.schoolEntries) && data.profile.schoolEntries.length
@@ -487,6 +523,76 @@
     return count;
   }
 
+  function findVisibleSchoolDialog() {
+    const selectors = [
+      '#jsAxolSchool_dcd_dialog',
+      '.ui-dialog',
+      '[role="dialog"]',
+      '.modal',
+      '[id*="school"][id*="dialog"], [class*="school"][class*="dialog"]'
+    ];
+    for (const sel of selectors) {
+      try {
+        const hit = Array.from(document.querySelectorAll(sel)).find(isVisible);
+        if (hit) return hit;
+      } catch (error) {
+        log('school dialog selector error', sel, error);
+      }
+    }
+    return null;
+  }
+
+  function activateSchoolNode(node) {
+    if (!node) return false;
+    if (node.tagName === 'OPTION') {
+      const select = node.parentElement;
+      if (select) {
+        select.value = node.value;
+        setNativeValue(select, select.value);
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        return true;
+      }
+    }
+    if (node.type === 'radio' || node.type === 'checkbox') {
+      if (!node.checked) {
+        node.checked = true;
+        node.dispatchEvent(new Event('change', { bubbles: true }));
+        node.dispatchEvent(new Event('click', { bubbles: true }));
+      }
+      return true;
+    }
+    return dispatchClickSequence(node);
+  }
+
+  async function selectSchoolFromSearchDialog(school) {
+    if (!school || !(school.dname || school.initial || school.dcd)) return false;
+    const dialog = await waitForElement(findVisibleSchoolDialog, 5000, 200);
+    if (!dialog) return false;
+
+    let target = null;
+    if (school.dcd) {
+      try {
+        target = dialog.querySelector(`input[type="radio"][value="${CSS.escape(school.dcd)}"]`) || dialog.querySelector(`option[value="${CSS.escape(school.dcd)}"]`);
+      } catch (error) {
+        log('school dialog code search error', error);
+      }
+    }
+
+    if (!target) {
+      const keywords = [school.dname, school.initial].filter(Boolean).map(k => k.trim()).filter(Boolean);
+      if (keywords.length) {
+        const candidates = Array.from(dialog.querySelectorAll('button, a, input, option, td, span, div, li')).filter(isVisible);
+        target = candidates.find(node => keywords.some(kw => (node.textContent || node.value || '').includes(kw)));
+      }
+    }
+
+    if (target && activateSchoolNode(target)) {
+      await waitForCondition(() => !findVisibleSchoolDialog(), 4000, 150);
+      return true;
+    }
+    return false;
+  }
+
   async function fillJobAxol(profile) {
     let count = 0;
     const school = pickSchoolEntry(profile) || defaultSchoolEntry('学部');
@@ -541,7 +647,8 @@
     const searchTriggered = triggerSchoolSearch();
     if (searchTriggered) {
       count++;
-      await waitForCondition(() => true, 300);
+      const selectedFromDialog = await selectSchoolFromSearchDialog(school);
+      if (!selectedFromDialog) await waitForCondition(() => true, 300);
     }
 
     const dcdSelect = document.querySelector('select#dcd');
@@ -847,6 +954,19 @@
       const tick = () => {
         if (cond()) return resolve(true);
         if (Date.now() - start > timeout) return resolve(false);
+        setTimeout(tick, interval);
+      };
+      tick();
+    });
+  }
+
+  async function waitForElement(findFn, timeout = 5000, interval = 150) {
+    const start = Date.now();
+    return new Promise(resolve => {
+      const tick = () => {
+        const found = findFn();
+        if (found) return resolve(found);
+        if (Date.now() - start > timeout) return resolve(null);
         setTimeout(tick, interval);
       };
       tick();
