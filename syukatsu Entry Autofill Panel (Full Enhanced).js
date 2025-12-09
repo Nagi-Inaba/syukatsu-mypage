@@ -79,6 +79,24 @@
     return !!(node && node.classList && node.classList.contains('jqTransformHidden'));
   }
 
+  function findJqTransformLink(node) {
+    if (!node) return null;
+    const wrapper = node.closest('.jqTransformCheckboxWrapper, .jqTransformRadioWrapper') || node.parentElement;
+    if (!wrapper) return null;
+    const selector = node.type === 'radio' ? 'a.jqTransformRadio' : 'a.jqTransformCheckbox';
+    return wrapper.querySelector(selector);
+  }
+
+  function syncJqTransformInput(node, desiredChecked = undefined) {
+    const link = findJqTransformLink(node);
+    if (!link) return false;
+    if (desiredChecked !== undefined) {
+      const current = link.classList.contains('jqTransformChecked');
+      if (current === desiredChecked) return false;
+    }
+    return dispatchClickSequence(link);
+  }
+
   function syncJqTransformSelect(select) {
     if (!select) return;
     const wrapper = select.closest('.jqTransformSelectWrapper');
@@ -761,9 +779,25 @@
       if (!name) return 0;
       const target = document.querySelector(`input[type="radio"][name="${CSS.escape(name)}"][value="${CSS.escape(String(value))}"]`);
       if (target && !target.checked) {
+        if (isJqTransformHidden(target)) {
+          if (syncJqTransformInput(target, true)) return 1;
+        }
         target.checked = true;
         target.dispatchEvent(new Event('change', { bubbles: true }));
         target.dispatchEvent(new Event('click', { bubbles: true }));
+        return 1;
+      }
+      return 0;
+    }
+    if (node.type === 'checkbox') {
+      const desired = typeof value === 'boolean' ? value : Boolean(value);
+      if (isJqTransformHidden(node)) {
+        if (syncJqTransformInput(node, desired)) return 1;
+      }
+      if (node.checked !== desired) {
+        node.checked = desired;
+        node.dispatchEvent(new Event('change', { bubbles: true }));
+        node.dispatchEvent(new Event('click', { bubbles: true }));
         return 1;
       }
       return 0;
@@ -1193,6 +1227,22 @@
       }
     }
     return false;
+  }
+
+  function detectBuiltInPattern(data) {
+    const host = location.hostname.toLowerCase();
+    const href = location.href.toLowerCase();
+    const hasJqTransform = document.querySelector('.jqTransformSelectWrapper, .jqTransformRadioWrapper, .jqTransformCheckboxWrapper');
+
+    if (hasJqTransform || host.includes('i-web') || href.includes('i-web')) {
+      if (data.patterns['i-web']) return 'i-web';
+    }
+
+    if (host.includes('job.axol.jp') && data.patterns['job.axol']) {
+      return 'job.axol';
+    }
+
+    return data.savedSettings?.lastPattern || null;
   }
 
   function fillSelectsByOptionCandidates(candidates, value, filterFn = () => true) {
@@ -1815,8 +1865,17 @@
 
   (async () => {
     const data = await loadData();
+    const suggested = detectBuiltInPattern(data);
+    const availableKeys = Object.keys(data.patterns || {});
+    const selectedKey = suggested && data.patterns[suggested] ? suggested : (data.savedSettings?.lastPattern || availableKeys[0]);
+
+    if (selectedKey && data.savedSettings?.lastPattern !== selectedKey) {
+      data.savedSettings.lastPattern = selectedKey;
+      await saveData(data);
+    }
+
     bindProfileToUI(data.profile);
-    refreshManagePanel(data, data.savedSettings?.lastPattern);
+    refreshManagePanel(data, selectedKey);
   })();
 
 })();
