@@ -89,7 +89,12 @@
         "zemi": "",
         "club": ""
       }
-    ]
+    ],
+    "research": {
+      "labName": "",
+      "theme": "",
+      "summary": ""
+    }
   },
   "patterns": {
     "default": {

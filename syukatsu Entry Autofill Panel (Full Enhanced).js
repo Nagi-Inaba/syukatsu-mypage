@@ -383,6 +383,7 @@
       email: { primary: "", primaryConfirm: true, secondary: "", secondaryConfirm: false },
       school: { ...baseSchool },
       schoolEntries: [{ ...baseSchool }],
+      research: { labName: "", theme: "", summary: "" },
       highSchool: {
         name: "", pref: "", initial: "", department: "", major: "",
         from: { Y: "", m: "" }, to: { Y: "", m: "" }
@@ -1728,6 +1729,10 @@
       <div class="af-label">現在/直近の学校情報</div>
       <div id="p-school-container"></div>
       <button id="p-add-school" class="af-btn af-btn-outline af-btn-icon"><span>＋</span><span>学校を追加</span></button>
+      <div class="af-label">研究室・ゼミ</div>
+      <input id="p-research-name" class="af-input" placeholder="ゼミ・研究室名">
+      <input id="p-research-theme" class="af-input" placeholder="テーマ">
+      <textarea id="p-research-summary" class="af-input" placeholder="概要" style="min-height:70px;"></textarea>
       <div class="af-label">高校情報</div>
       <div class="af-row"><input id="p-hs-name" class="af-input" placeholder="高校名"><input id="p-hs-initial" class="af-input" placeholder="略称/イニシャル"></div>
       <div class="af-row"><select id="p-hs-pref" class="af-input">${buildPrefectureOptions('')}</select><input id="p-hs-department" class="af-input" placeholder="学科"></div>
@@ -1933,6 +1938,9 @@
     const vacTel = el('#p-vac-tel'); if (vacTel) vacTel.value = vac.tel;
     updateVacationPanelVisibility();
     renderSchoolEntries(p.schoolEntries && p.schoolEntries.length ? p.schoolEntries : (p.school ? [p.school] : []));
+    const researchName = el('#p-research-name'); if (researchName) researchName.value = p.research.labName;
+    const researchTheme = el('#p-research-theme'); if (researchTheme) researchTheme.value = p.research.theme;
+    const researchSummary = el('#p-research-summary'); if (researchSummary) researchSummary.value = p.research.summary;
     el('#p-hs-name').value = p.highSchool.name;
     el('#p-hs-initial').value = p.highSchool.initial;
     const hsPref = el('#p-hs-pref');
@@ -1976,6 +1984,9 @@
     p.schoolEntries = readSchoolEntriesFromUI();
     if (!p.schoolEntries.length) p.schoolEntries = [defaultSchoolEntry('学部')];
     p.school = { ...p.schoolEntries[0] };
+    p.research.labName = el('#p-research-name')?.value || '';
+    p.research.theme = el('#p-research-theme')?.value || '';
+    p.research.summary = el('#p-research-summary')?.value || '';
     p.highSchool.name = el('#p-hs-name').value;
     p.highSchool.initial = el('#p-hs-initial').value;
     p.highSchool.pref = el('#p-hs-pref').value;
