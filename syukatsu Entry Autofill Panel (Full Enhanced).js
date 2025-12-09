@@ -1274,6 +1274,14 @@
     const target = String(value).trim();
     if (!target) return false;
 
+    const normalizePrefecture = name => {
+      if (!name) return '';
+      return name.replace(/[\s\u3000]/g, '').replace(/(都|府|県)$/u, '');
+    };
+
+    const targetPrefNormalized = normalizePrefecture(target);
+    const isPrefectureTarget = PREFECTURES.some(pref => normalizePrefecture(pref) === targetPrefNormalized);
+
     const targetNumber = Number(target);
     const hasNumericTarget = !Number.isNaN(targetNumber);
     const prefectureIndex = PREFECTURES.findIndex(pref => pref === target);
@@ -1284,11 +1292,14 @@
       const optValue = opt.value;
       const optNumber = Number(optValue);
 
+      const optPrefNormalized = normalizePrefecture(optText) || normalizePrefecture(optValue);
+
       const matchesExact = optValue === target || optText === target;
       const matchesNumber = hasNumericTarget && (!Number.isNaN(optNumber) ? optNumber === targetNumber : optValue === String(targetNumber));
       const matchesPrefectureCode = prefectureCode !== null && (!Number.isNaN(optNumber) ? optNumber === prefectureCode : optValue === String(prefectureCode));
+      const matchesPrefectureLoose = isPrefectureTarget && optPrefNormalized === targetPrefNormalized;
 
-      if (matchesExact || matchesNumber || matchesPrefectureCode) {
+      if (matchesExact || matchesNumber || matchesPrefectureCode || matchesPrefectureLoose) {
         select.value = opt.value;
         setNativeValue(select, select.value);
         return true;
