@@ -923,6 +923,16 @@
     return count;
   }
 
+  function safeQuerySelector(selector) {
+    if (!selector) return null;
+    try {
+      return document.querySelector(selector);
+    } catch (error) {
+      log('selector error', selector, error);
+      return null;
+    }
+  }
+
   function fillPostalSegments(postal, selectors = []) {
     const digits = String(postal || '').replace(/\D/g, '');
     if (!digits || selectors.length === 0) return 0;
@@ -1050,10 +1060,15 @@
       memoClub: 'input[name="bikob"]'
     };
 
-    count += applyToSelector(explicitSelectors.kanji_sei, profile.kanji_sei);
-    count += applyToSelector(explicitSelectors.kanji_na, profile.kanji_na);
-    count += applyToSelector(explicitSelectors.kana_sei, profile.kana_sei);
-    count += applyToSelector(explicitSelectors.kana_na, profile.kana_na);
+    const kanjiSeiNode = safeQuerySelector(explicitSelectors.kanji_sei);
+    const kanjiNaNode = safeQuerySelector(explicitSelectors.kanji_na);
+    const kanaSeiNode = safeQuerySelector(explicitSelectors.kana_sei);
+    const kanaNaNode = safeQuerySelector(explicitSelectors.kana_na);
+
+    count += applyValueToNode(kanjiSeiNode, profile.kanji_sei);
+    count += applyValueToNode(kanjiNaNode, profile.kanji_na);
+    count += applyValueToNode(kanaSeiNode, profile.kana_sei);
+    count += applyValueToNode(kanaNaNode, profile.kana_na);
 
     count += applyToSelector(explicitSelectors.birthY, birth.Y);
     count += applyToSelector(explicitSelectors.birthM, birth.m);
@@ -1116,10 +1131,18 @@
 
     count += applyMappingList(mappingTargets, mappingData);
 
-    count += applyValueToNode(findFieldByKeywords([['漢字', '姓'], ['氏名', '姓']]), profile.kanji_sei);
-    count += applyValueToNode(findFieldByKeywords([['漢字', '名'], ['氏名', '名']]), profile.kanji_na);
-    count += applyValueToNode(findFieldByKeywords([['カナ', '姓'], ['ﾌﾘｶﾞﾅ', '姓'], ['ふりがな', '姓']]), profile.kana_sei);
-    count += applyValueToNode(findFieldByKeywords([['カナ', '名'], ['ﾌﾘｶﾞﾅ', '名'], ['ふりがな', '名']]), profile.kana_na);
+    if (!kanjiSeiNode) {
+      count += applyValueToNode(findFieldByKeywords([['漢字', '姓'], ['氏名', '姓']]), profile.kanji_sei);
+    }
+    if (!kanjiNaNode) {
+      count += applyValueToNode(findFieldByKeywords([['漢字', '名'], ['氏名', '名']]), profile.kanji_na);
+    }
+    if (!kanaSeiNode) {
+      count += applyValueToNode(findFieldByKeywords([['カナ', '姓'], ['ﾌﾘｶﾞﾅ', '姓'], ['ふりがな', '姓']]), profile.kana_sei);
+    }
+    if (!kanaNaNode) {
+      count += applyValueToNode(findFieldByKeywords([['カナ', '名'], ['ﾌﾘｶﾞﾅ', '名'], ['ふりがな', '名']]), profile.kana_na);
+    }
     count += applyValueToNode(findFieldByKeywords([['ローマ', '姓'], ['ﾛｰﾏ', '姓']]), profile.roma_sei);
     count += applyValueToNode(findFieldByKeywords([['ローマ', '名'], ['ﾛｰﾏ', '名']]), profile.roma_na);
 
@@ -1829,8 +1852,6 @@
       const card = document.createElement('div');
       card.className = 'af-school-card';
       card.dataset.schoolId = entry.id || generateSchoolId();
-      card.dataset.zemi = entry.zemi || '';
-      card.dataset.club = entry.club || '';
 
       const typeOptions = SCHOOL_TYPES.map(t => `<option value="${t}" ${t === entry.category ? 'selected' : ''}>${t}</option>`).join('');
       const prefOptions = buildPrefectureOptions(entry.pref || '');
@@ -1866,6 +1887,9 @@
         <div class="af-row">
           <select class="af-input" data-field="toY">${toYearOptions}</select>
           <select class="af-input" data-field="toM">${toMonthOptions}</select>
+        </div>
+        <div class="af-row">
+          <input class="af-input" data-field="zemi" placeholder="ゼミ / 研究室" value="${entry.zemi || ''}">
         </div>
         <div class="af-row">
           <input class="af-input" data-field="club" placeholder="クラブ / サークル / 部活" value="${entry.club || ''}">
@@ -1907,8 +1931,8 @@
         kname: getField('[data-field="kname"]'),
         from: { Y: getField('[data-field="fromY"]'), m: getField('[data-field="fromM"]') },
         to: { Y: getField('[data-field="toY"]'), m: getField('[data-field="toM"]') },
-        zemi: card.dataset.zemi || '',
-        club: getField('[data-field="club"]') || card.dataset.club || ''
+        zemi: getField('[data-field="zemi"]') || '',
+        club: getField('[data-field="club"]') || ''
       };
     });
   }
