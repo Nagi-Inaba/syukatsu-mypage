@@ -902,30 +902,38 @@
   }
 
   function fillGenderRadios(value) {
-    if (!value) return 0;
+    if (!value) return { count: 0, selected: null };
     const radios = Array.from(document.querySelectorAll('input[type="radio"]'));
     let count = 0;
+    let selected = null;
     for (const radio of radios) {
-      if (!isInteractive(radio)) continue;
+      if (!isInteractive(radio) && !isJqTransformHidden(radio)) continue;
       if (radio.value === String(value)) {
-        count += applyValueToNode(radio, value);
-        if (count) return count;
+        const applied = applyValueToNode(radio, value);
+        if (applied) selected = radio;
+        count += applied;
+        if (count) return { count, selected };
       }
     }
     const maleKeywords = ['男'];
     const femaleKeywords = ['女'];
     for (const radio of radios) {
+      if (!isInteractive(radio) && !isJqTransformHidden(radio)) continue;
       const text = keywordTextFor(radio);
       if (value === '1' && maleKeywords.some(k => text.includes(k))) {
-        count += applyValueToNode(radio, radio.value || value);
+        const applied = applyValueToNode(radio, radio.value || value);
+        if (applied) selected = radio;
+        count += applied;
         break;
       }
       if (value === '2' && femaleKeywords.some(k => text.includes(k))) {
-        count += applyValueToNode(radio, radio.value || value);
+        const applied = applyValueToNode(radio, radio.value || value);
+        if (applied) selected = radio;
+        count += applied;
         break;
       }
     }
-    return count;
+    return { count, selected };
   }
 
   function fillIWeb(profile) {
@@ -942,19 +950,31 @@
     count += applyValueToNode(findFieldByKeywords([['ローマ', '姓'], ['ﾛｰﾏ', '姓']]), profile.roma_sei);
     count += applyValueToNode(findFieldByKeywords([['ローマ', '名'], ['ﾛｰﾏ', '名']]), profile.roma_na);
 
-    count += fillGenderRadios(profile.sex);
+    const genderResult = fillGenderRadios(profile.sex);
+    count += genderResult.count;
+    if (genderResult.selected && isJqTransformHidden(genderResult.selected)) {
+      syncJqTransformInput(genderResult.selected, true);
+    }
     count += fillDateByGrouping([['生年月日'], ['誕生日']], birth);
 
     count += fillPostalByKeywords(current.postal, [['郵便', '現'], ['郵便', '住所'], ['郵便']]);
     const prefSelect = findFieldByKeywords([['都道府県'], ['都', '県']], node => node.tagName === 'SELECT');
-    count += applyValueToNode(prefSelect, current.pref);
+    const prefCount = applyValueToNode(prefSelect, current.pref);
+    count += prefCount;
+    if (prefSelect && prefCount && isJqTransformHidden(prefSelect)) {
+      syncJqTransformSelect(prefSelect);
+    }
     count += applyValueToNode(findFieldByKeywords([['住所', '市'], ['市区', '郡'], ['市区町村']]), current.city);
     count += applyValueToNode(findFieldByKeywords([['住所', '番地'], ['丁目'], ['町域']]), current.street);
     count += applyValueToNode(findFieldByKeywords([['建物'], ['マンション'], ['号室']]), current.building);
 
     count += fillPostalByKeywords(vacation.postal, [['郵便', '休暇'], ['郵便', '連絡']]);
     const vacPref = findFieldByKeywords([['都道府県', '休暇'], ['都道府県', '連絡']], node => node.tagName === 'SELECT');
-    count += applyValueToNode(vacPref, vacation.pref);
+    const vacPrefCount = applyValueToNode(vacPref, vacation.pref);
+    count += vacPrefCount;
+    if (vacPref && vacPrefCount && isJqTransformHidden(vacPref)) {
+      syncJqTransformSelect(vacPref);
+    }
     count += applyValueToNode(findFieldByKeywords([['休暇', '市'], ['連絡', '市']]), vacation.city);
     count += applyValueToNode(findFieldByKeywords([['休暇', '番地'], ['連絡', '番地']]), vacation.street);
     count += applyValueToNode(findFieldByKeywords([['休暇', '建物'], ['連絡', '建物']]), vacation.building);
@@ -968,9 +988,17 @@
     count += applyValueToNode(findFieldByKeywords([['メール', '2'], ['予備', 'メール']]), profile.email?.secondary);
 
     const kubunRadio = findFieldByKeywords([['学校', '区分'], ['学歴', '区分']], node => node.type === 'radio');
-    count += applyValueToNode(kubunRadio, mapSchoolCategoryToKubun(school.category));
+    const kubunCount = applyValueToNode(kubunRadio, mapSchoolCategoryToKubun(school.category));
+    count += kubunCount;
+    if (kubunRadio && kubunCount && isJqTransformHidden(kubunRadio)) {
+      syncJqTransformInput(kubunRadio, true);
+    }
     const kokushiRadio = findFieldByKeywords([['設置'], ['国公立']], node => node.type === 'radio');
-    count += applyValueToNode(kokushiRadio, mapSchoolKokushi(school));
+    const kokushiCount = applyValueToNode(kokushiRadio, mapSchoolKokushi(school));
+    count += kokushiCount;
+    if (kokushiRadio && kokushiCount && isJqTransformHidden(kokushiRadio)) {
+      syncJqTransformInput(kokushiRadio, true);
+    }
     count += applyValueToNode(findFieldByKeywords([['学校', '名'], ['大学', '名']]), school.dname || school.dcd || '');
     count += applyValueToNode(findFieldByKeywords([['学部']]), school.bname || school.bcd || '');
     count += applyValueToNode(findFieldByKeywords([['学科'], ['専攻']]), school.kname || school.paxcd || '');
