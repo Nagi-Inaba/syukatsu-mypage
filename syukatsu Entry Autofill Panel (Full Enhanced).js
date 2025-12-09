@@ -887,6 +887,63 @@
     return count;
   }
 
+  function applyToSelector(selector, value) {
+    if (!selector) return 0;
+    let node = null;
+    try {
+      node = document.querySelector(selector);
+    } catch (error) {
+      log('selector error', selector, error);
+      return 0;
+    }
+    return applyValueToNode(node, value);
+  }
+
+  function applyMappingList(mapping, values = {}) {
+    if (!mapping) return 0;
+    let count = 0;
+    for (const [key, selectors] of Object.entries(mapping)) {
+      const val = values[key];
+      if (val === undefined || val === null || val === '') continue;
+      const selArray = Array.isArray(selectors) ? selectors : [selectors];
+      for (const sel of selArray) {
+        if (!sel) continue;
+        count += applyToSelector(sel, val);
+      }
+    }
+    return count;
+  }
+
+  function fillPostalSegments(postal, selectors = []) {
+    const digits = String(postal || '').replace(/\D/g, '');
+    if (!digits || selectors.length === 0) return 0;
+    const [head, tail] = digits.length > 3 ? [digits.slice(0, 3), digits.slice(3, 7)] : [digits, ''];
+    let count = 0;
+    if (selectors[0] && head) count += applyToSelector(selectors[0], head);
+    if (selectors[1] && tail) count += applyToSelector(selectors[1], tail);
+    return count;
+  }
+
+  function fillTelSegments(value, selectors = []) {
+    if (!value || selectors.length === 0) return 0;
+    const digits = String(value).replace(/\D/g, '');
+    const [h, m, l] = splitTelSegments(digits);
+    let count = 0;
+    if (selectors[0] && h) count += applyToSelector(selectors[0], h);
+    if (selectors[1] && m) count += applyToSelector(selectors[1], m);
+    if (selectors[2] && l) count += applyToSelector(selectors[2], l);
+    return count;
+  }
+
+  function fillEmailParts(email, selectors = []) {
+    if (!email) return 0;
+    const [account = '', domain = ''] = String(email).split('@');
+    let count = 0;
+    if (selectors[0] && account) count += applyToSelector(selectors[0], account);
+    if (selectors[1] && domain) count += applyToSelector(selectors[1], domain);
+    return count;
+  }
+
   function fillTelByKeywords(value, keywordSets) {
     if (!value) return 0;
     const digits = String(value).replace(/\D/g, '');
@@ -942,6 +999,105 @@
     const current = profile.address?.current || {};
     const vacation = profile.address?.vacation || {};
     const school = pickSchoolEntry(profile) || defaultSchoolEntry('学部');
+
+    const textInputSelectors = {
+      kanji_sei: ['input[name="kname1"]'],
+      kanji_na: ['input[name="kname2"]'],
+      kana_sei: ['input[name="yname1"]'],
+      kana_na: ['input[name="yname2"]'],
+      currentAddressLine: ['input[name="gadrs1"]'],
+      currentBuilding: ['input[name="gadrs2"]'],
+      vacationAddressLine: ['input[name="kadrs1"]'],
+      vacationBuilding: ['input[name="kadrs2"]'],
+      memoZemi: ['input[name="bikoa"]'],
+      memoClub: ['input[name="bikob"]']
+    };
+
+    const explicitSelectors = {
+      kanji_sei: 'input[name="kname1"]',
+      kanji_na: 'input[name="kname2"]',
+      kana_sei: 'input[name="yname1"]',
+      kana_na: 'input[name="yname2"]',
+      birthY: 'select[name="ybirth"]',
+      birthM: 'select[name="mbirth"]',
+      birthD: 'select[name="dbirth"]',
+      currentPostal: ['input[name="gyubin1"]', 'input[name="gyubin2"]'],
+      currentPref: 'select[name="gken"]',
+      currentAddress: 'input[name="gadrs1"]',
+      currentBuilding: 'input[name="gadrs2"]',
+      currentTel: ['input[name="gtel1"]', 'input[name="gtel2"]', 'input[name="gtel3"]'],
+      mobileTel: ['input[name="kttel1"]', 'input[name="kttel2"]', 'input[name="kttel3"]'],
+      vacationSame: 'input[name="adch"]',
+      vacationPostal: ['input[name="kyubin1"]', 'input[name="kyubin2"]'],
+      vacationPref: 'select[name="kken"]',
+      vacationAddress: 'input[name="kadrs1"]',
+      vacationBuilding: 'input[name="kadrs2"]',
+      vacationTel: ['input[name="ktel1"]', 'input[name="ktel2"]', 'input[name="ktel3"]'],
+      emailPrimary: ['input[name="account1"]', 'input[name="domain1"]'],
+      emailPrimaryConfirm: ['input[name="account2"]', 'input[name="domain2"]'],
+      emailSecondary: ['input[name="account3"]', 'input[name="domain3"]'],
+      emailSecondaryConfirm: ['input[name="account4"]', 'input[name="domain4"]'],
+      memoZemi: 'input[name="bikoa"]',
+      memoClub: 'input[name="bikob"]'
+    };
+
+    count += applyToSelector(explicitSelectors.kanji_sei, profile.kanji_sei);
+    count += applyToSelector(explicitSelectors.kanji_na, profile.kanji_na);
+    count += applyToSelector(explicitSelectors.kana_sei, profile.kana_sei);
+    count += applyToSelector(explicitSelectors.kana_na, profile.kana_na);
+
+    count += applyToSelector(explicitSelectors.birthY, birth.Y);
+    count += applyToSelector(explicitSelectors.birthM, birth.m);
+    count += applyToSelector(explicitSelectors.birthD, birth.d);
+
+    const currentAddressLine = `${current.city || ''}${current.street || ''}`.trim();
+    const vacationAddressLine = `${vacation.city || ''}${vacation.street || ''}`.trim();
+
+    count += fillPostalSegments(current.postal, explicitSelectors.currentPostal);
+    count += applyToSelector(explicitSelectors.currentPref, current.pref);
+    count += applyToSelector(explicitSelectors.currentAddress, currentAddressLine);
+    count += applyToSelector(explicitSelectors.currentBuilding, current.building);
+
+    count += fillPostalSegments(vacation.postal, explicitSelectors.vacationPostal);
+    count += applyToSelector(explicitSelectors.vacationPref, vacation.pref);
+    count += applyToSelector(explicitSelectors.vacationAddress, vacationAddressLine);
+    count += applyToSelector(explicitSelectors.vacationBuilding, vacation.building);
+
+    count += fillTelSegments(profile.tel?.home, explicitSelectors.currentTel);
+    count += fillTelSegments(profile.tel?.mobile, explicitSelectors.mobileTel);
+    count += fillTelSegments(vacation.tel, explicitSelectors.vacationTel);
+
+    count += applyToSelector(explicitSelectors.vacationSame, vacation.sameAsCurrent);
+
+    count += fillEmailParts(profile.email?.primary, explicitSelectors.emailPrimary);
+    count += fillEmailParts(profile.email?.primary, explicitSelectors.emailPrimaryConfirm);
+    count += fillEmailParts(profile.email?.secondary, explicitSelectors.emailSecondary);
+    count += fillEmailParts(profile.email?.secondary, explicitSelectors.emailSecondaryConfirm);
+
+    count += applyToSelector(explicitSelectors.memoZemi, school.zemi || profile.school?.zemi);
+    count += applyToSelector(explicitSelectors.memoClub, school.club || profile.school?.club);
+
+    count += applyMappingList(
+      {
+        kanji_sei: textInputSelectors.kanji_sei,
+        kanji_na: textInputSelectors.kanji_na,
+        kana_sei: textInputSelectors.kana_sei,
+        kana_na: textInputSelectors.kana_na,
+        currentAddressLine: textInputSelectors.currentAddressLine,
+        currentBuilding: textInputSelectors.currentBuilding,
+        vacationAddressLine: textInputSelectors.vacationAddressLine,
+        vacationBuilding: textInputSelectors.vacationBuilding,
+        memoZemi: textInputSelectors.memoZemi,
+        memoClub: textInputSelectors.memoClub
+      },
+      {
+        ...profile,
+        currentAddressLine,
+        vacationAddressLine,
+        memoZemi: school.zemi || profile.school?.zemi,
+        memoClub: school.club || profile.school?.club
+      }
+    );
 
     count += applyValueToNode(findFieldByKeywords([['漢字', '姓'], ['氏名', '姓']]), profile.kanji_sei);
     count += applyValueToNode(findFieldByKeywords([['漢字', '名'], ['氏名', '名']]), profile.kanji_na);
