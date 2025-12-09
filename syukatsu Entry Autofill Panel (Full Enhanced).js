@@ -93,6 +93,26 @@
     return true;
   }
 
+  function dispatchClickSequence(target) {
+    if (!target) return false;
+    const events = ['mousedown', 'mouseup', 'click'];
+    return events.every(type =>
+      target.dispatchEvent(
+        new MouseEvent(type, {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        })
+      )
+    );
+  }
+
+  function triggerSchoolSearch() {
+    const searchBtn = document.querySelector('#jsAxolSchool_dcd_search');
+    if (!searchBtn) return false;
+    return dispatchClickSequence(searchBtn);
+  }
+
   async function loadData() {
     const defaultData = {
       profile: defaultProfile(),
@@ -505,11 +525,8 @@
     if (kokushiVal) count += setRadioValue('kokushi', kokushiVal);
     count += setInputValue('input[name="initial"]', school.initial || '');
 
-    const searchBtn = document.querySelector('#jsAxolSchool_dcd_search');
-    if (searchBtn && isInteractive(searchBtn)) {
-      searchBtn.click();
-      searchBtn.dispatchEvent(new Event('change', { bubbles: true }));
-      searchBtn.dispatchEvent(new Event('input', { bubbles: true }));
+    const searchTriggered = triggerSchoolSearch();
+    if (searchTriggered) {
       count++;
       await waitForCondition(() => true, 300);
     }
