@@ -789,7 +789,12 @@
     return parts.filter(Boolean).map(t => String(t).toLowerCase()).join(' ');
   }
 
+  function isInsideAutofillPanel(node) {
+    return !!(node && node.closest && node.closest('#af-panel'));
+  }
+
   function matchesKeywordSet(node, keywordSet) {
+    if (isInsideAutofillPanel(node)) return false;
     const text = keywordTextFor(node);
     return keywordSet.every(kw => text.includes(kw));
   }
