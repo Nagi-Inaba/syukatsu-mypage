@@ -119,15 +119,33 @@
   function dispatchClickSequence(target) {
     if (!target) return false;
     const events = ['mousedown', 'mouseup', 'click'];
-    return events.every(type =>
-      target.dispatchEvent(
-        new MouseEvent(type, {
-          bubbles: true,
-          cancelable: true,
-          view: window
-        })
-      )
-    );
+    let success = false;
+
+    events.forEach(type => {
+      try {
+        const dispatched = target.dispatchEvent(
+          new MouseEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          })
+        );
+        success = success || dispatched;
+      } catch (error) {
+        log('dispatch click error', type, error);
+      }
+    });
+
+    if (typeof target.click === 'function') {
+      try {
+        target.click();
+        success = true;
+      } catch (error) {
+        log('native click error', error);
+      }
+    }
+
+    return success;
   }
 
   function isVisible(node) {
