@@ -1,0 +1,446 @@
+<form method="post" action="/murata2027/applicant/entry/school-search/" name="form1" class="jqtransformdone">
+    <dl>
+                                                        <div class="heading_l2"><span class="h3">お名前</span></div>
+                                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>漢字氏名<br>
+<span style="font-size:9px;">（全角入力のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                         <span class="hosoku clearfix">
+<span class="inputbox_sp inputleft_sp"><label for="text" class="familynamebox" style="cursor: pointer;">姓：</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 120px;"><div class="jqTransformInputInner"><div><input type="text" name="kname1" class="namebox jqtranformdone jqTransformInput" value="" style="width: 136px;"></div></div></div></span>
+<span class="inputbox_sp inputleft_sp"><label for="text" class="familynamebox" style="cursor: pointer;">名 ：</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 120px;"><div class="jqTransformInputInner"><div><input type="text" name="kname2" class="namebox jqtranformdone jqTransformInput" value="" style="width: 136px;"></div></div></div></span>
+</span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>カナ氏名<br>
+<span style="font-size:9px;">（全角カナ入力のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                         <span class="hosoku clearfix">
+<span class="inputbox_sp inputleft_sp"><label for="text" class="familynamebox" style="cursor: pointer;">セイ：</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 120px;"><div class="jqTransformInputInner"><div><input type="text" name="yname1" class="namebox jqtranformdone jqTransformInput" value="" style="width: 136px;"></div></div></div></span>
+<span class="inputbox_sp inputleft_sp"><label for="text" class="familynamebox" style="cursor: pointer;">メイ ：</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 120px;"><div class="jqTransformInputInner"><div><input type="text" name="yname2" class="namebox jqtranformdone jqTransformInput" value="" style="width: 136px;"></div></div></div></span>
+</span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                        <div class="heading_l2"><span class="h3">生年月日・性別</span></div>
+                                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>生年月日                    </dt>
+                                        <dd class="formbox02 ">
+                                         <span class="hosoku clearfix">
+<div class="jqTransformSelectWrapper" style="z-index: 999; width: 82px;"><div><span style="width: 51px;">-▼-</span><a href="#" class="jqTransformSelectOpen"></a></div><ul id="getlist" style="width: 80px; display: none; visibility: visible;"><li><a href="#" index="0" class="selected">-▼-</a></li><li><a href="#" index="1">1973</a></li><li><a href="#" index="2">1974</a></li><li><a href="#" index="3">1975</a></li><li><a href="#" index="4">1976</a></li><li><a href="#" index="5">1977</a></li><li><a href="#" index="6">1978</a></li><li><a href="#" index="7">1979</a></li><li><a href="#" index="8">1980</a></li><li><a href="#" index="9">1981</a></li><li><a href="#" index="10">1982</a></li><li><a href="#" index="11">1983</a></li><li><a href="#" index="12">1984</a></li><li><a href="#" index="13">1985</a></li><li><a href="#" index="14">1986</a></li><li><a href="#" index="15">1987</a></li><li><a href="#" index="16">1988</a></li><li><a href="#" index="17">1989</a></li><li><a href="#" index="18">1990</a></li><li><a href="#" index="19">1991</a></li><li><a href="#" index="20">1992</a></li><li><a href="#" index="21">1993</a></li><li><a href="#" index="22">1994</a></li><li><a href="#" index="23">1995</a></li><li><a href="#" index="24">1996</a></li><li><a href="#" index="25">1997</a></li><li><a href="#" index="26">1998</a></li><li><a href="#" index="27">1999</a></li><li><a href="#" index="28">2000</a></li><li><a href="#" index="29">2001</a></li><li><a href="#" index="30">2002</a></li><li><a href="#" index="31">2003</a></li><li><a href="#" index="32">2004</a></li><li><a href="#" index="33">2005</a></li><li><a href="#" index="34">2006</a></li><li><a href="#" index="35">2007</a></li></ul><select name="ybirth" id="ybirth" class="width80nonepx jqTransformHidden" style="margin-bottom: 0px;">
+    <option value="" label="-▼-" selected="selected">-▼-</option>
+    <option value="1973" label="1973">1973</option>
+    <option value="1974" label="1974">1974</option>
+    <option value="1975" label="1975">1975</option>
+    <option value="1976" label="1976">1976</option>
+    <option value="1977" label="1977">1977</option>
+    <option value="1978" label="1978">1978</option>
+    <option value="1979" label="1979">1979</option>
+    <option value="1980" label="1980">1980</option>
+    <option value="1981" label="1981">1981</option>
+    <option value="1982" label="1982">1982</option>
+    <option value="1983" label="1983">1983</option>
+    <option value="1984" label="1984">1984</option>
+    <option value="1985" label="1985">1985</option>
+    <option value="1986" label="1986">1986</option>
+    <option value="1987" label="1987">1987</option>
+    <option value="1988" label="1988">1988</option>
+    <option value="1989" label="1989">1989</option>
+    <option value="1990" label="1990">1990</option>
+    <option value="1991" label="1991">1991</option>
+    <option value="1992" label="1992">1992</option>
+    <option value="1993" label="1993">1993</option>
+    <option value="1994" label="1994">1994</option>
+    <option value="1995" label="1995">1995</option>
+    <option value="1996" label="1996">1996</option>
+    <option value="1997" label="1997">1997</option>
+    <option value="1998" label="1998">1998</option>
+    <option value="1999" label="1999">1999</option>
+    <option value="2000" label="2000">2000</option>
+    <option value="2001" label="2001">2001</option>
+    <option value="2002" label="2002">2002</option>
+    <option value="2003" label="2003">2003</option>
+    <option value="2004" label="2004">2004</option>
+    <option value="2005" label="2005">2005</option>
+    <option value="2006" label="2006">2006</option>
+    <option value="2007" label="2007">2007</option>
+</select></div><label for="text" class="hyphen" style="cursor: pointer;">年</label><div class="jqTransformSelectWrapper" style="z-index: 998; width: 75px;"><div><span style="width: 44px;">-▼-</span><a href="#" class="jqTransformSelectOpen"></a></div><ul id="getlist" style="width: 73px; display: none; visibility: visible;"><li><a href="#" index="0" class="selected">-▼-</a></li><li><a href="#" index="1">01</a></li><li><a href="#" index="2">02</a></li><li><a href="#" index="3">03</a></li><li><a href="#" index="4">04</a></li><li><a href="#" index="5">05</a></li><li><a href="#" index="6">06</a></li><li><a href="#" index="7">07</a></li><li><a href="#" index="8">08</a></li><li><a href="#" index="9">09</a></li><li><a href="#" index="10">10</a></li><li><a href="#" index="11">11</a></li><li><a href="#" index="12">12</a></li></ul><select name="mbirth" id="mbirth" class="width50nonepx jqTransformHidden" style="">
+    <option value="" label="-▼-" selected="selected">-▼-</option>
+    <option value="01" label="01">01</option>
+    <option value="02" label="02">02</option>
+    <option value="03" label="03">03</option>
+    <option value="04" label="04">04</option>
+    <option value="05" label="05">05</option>
+    <option value="06" label="06">06</option>
+    <option value="07" label="07">07</option>
+    <option value="08" label="08">08</option>
+    <option value="09" label="09">09</option>
+    <option value="10" label="10">10</option>
+    <option value="11" label="11">11</option>
+    <option value="12" label="12">12</option>
+</select></div><label for="text" class="hyphen" style="cursor: pointer;">月</label><div class="jqTransformSelectWrapper" style="z-index: 997; width: 75px;"><div><span style="width: 44px;">-▼-</span><a href="#" class="jqTransformSelectOpen"></a></div><ul id="getlist" style="width: 73px; display: none; visibility: visible;"><li><a href="#" index="0" class="selected">-▼-</a></li><li><a href="#" index="1">01</a></li><li><a href="#" index="2">02</a></li><li><a href="#" index="3">03</a></li><li><a href="#" index="4">04</a></li><li><a href="#" index="5">05</a></li><li><a href="#" index="6">06</a></li><li><a href="#" index="7">07</a></li><li><a href="#" index="8">08</a></li><li><a href="#" index="9">09</a></li><li><a href="#" index="10">10</a></li><li><a href="#" index="11">11</a></li><li><a href="#" index="12">12</a></li><li><a href="#" index="13">13</a></li><li><a href="#" index="14">14</a></li><li><a href="#" index="15">15</a></li><li><a href="#" index="16">16</a></li><li><a href="#" index="17">17</a></li><li><a href="#" index="18">18</a></li><li><a href="#" index="19">19</a></li><li><a href="#" index="20">20</a></li><li><a href="#" index="21">21</a></li><li><a href="#" index="22">22</a></li><li><a href="#" index="23">23</a></li><li><a href="#" index="24">24</a></li><li><a href="#" index="25">25</a></li><li><a href="#" index="26">26</a></li><li><a href="#" index="27">27</a></li><li><a href="#" index="28">28</a></li><li><a href="#" index="29">29</a></li><li><a href="#" index="30">30</a></li><li><a href="#" index="31">31</a></li></ul><select name="dbirth" id="dbirth" class="width50nonepx jqTransformHidden" style="">
+    <option value="" label="-▼-" selected="selected">-▼-</option>
+    <option value="01" label="01">01</option>
+    <option value="02" label="02">02</option>
+    <option value="03" label="03">03</option>
+    <option value="04" label="04">04</option>
+    <option value="05" label="05">05</option>
+    <option value="06" label="06">06</option>
+    <option value="07" label="07">07</option>
+    <option value="08" label="08">08</option>
+    <option value="09" label="09">09</option>
+    <option value="10" label="10">10</option>
+    <option value="11" label="11">11</option>
+    <option value="12" label="12">12</option>
+    <option value="13" label="13">13</option>
+    <option value="14" label="14">14</option>
+    <option value="15" label="15">15</option>
+    <option value="16" label="16">16</option>
+    <option value="17" label="17">17</option>
+    <option value="18" label="18">18</option>
+    <option value="19" label="19">19</option>
+    <option value="20" label="20">20</option>
+    <option value="21" label="21">21</option>
+    <option value="22" label="22">22</option>
+    <option value="23" label="23">23</option>
+    <option value="24" label="24">24</option>
+    <option value="25" label="25">25</option>
+    <option value="26" label="26">26</option>
+    <option value="27" label="27">27</option>
+    <option value="28" label="28">28</option>
+    <option value="29" label="29">29</option>
+    <option value="30" label="30">30</option>
+    <option value="31" label="31">31</option>
+</select></div><label for="text" class="hyphen" style="cursor: pointer;">日</label>
+</span>
+
+                    </dd>
+                </div>
+                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>性別                    </dt>
+                                        <dd class="formbox02 ">
+                                         <ul class="hosoku clearfix">
+<li class="sexcd"><span class="jqTransformRadioWrapper"><a href="#" class="jqTransformRadio jqTransformChecked" rel="sexcd"></a><input type="radio" name="sexcd" value="1" class="jqTransformHidden"></span><label for="text" class="male" style="cursor: pointer;">男</label></li><li class="sexcd"><span class="jqTransformRadioWrapper"><a href="#" class="jqTransformRadio" rel="sexcd"></a><input type="radio" name="sexcd" value="2" class="jqTransformHidden"></span><label for="text" class="female" style="cursor: pointer;">女</label></li><span class="jqsubmitwrap clearfix">
+<input type="button" name="btn1" class="kaijyo jqsubmit oversea submitbtn_sp" value="リセット" onclick="return resetRadio(this.form, 'sexcd', '0')"></span>
+</ul>
+                    </dd>
+                </div>
+                                                                        <div class="heading_l2"><span class="h3">現住所</span></div>
+                                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>郵便番号<br><span style="font-size:9px;">（半角数字７桁のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 111-0000 ）</span><br>
+                                        <span class="hosoku clearfix" id="gyubin">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="gyubin1" class="postnumber jqtranformdone jqTransformInput" maxlength="3" value="" id="gyubin1" style="width: 156px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">-</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="gyubin2" class="postnumber jqtranformdone jqTransformInput" maxlength="4" value="" style="width: 156px;"></div></div></div>
+<span class="jqsubmitwrap clearfix">
+<input type="button" class="jqsubmit submitbtn_sp addressbtn" name="button1" value="郵便番号から住所を検索" language="javascript" onclick="return jsSearchAddress(this.form.gyubin1, this.form.gyubin2, this.form, &quot;gken&quot;, &quot;gadrs1&quot;, &quot;0&quot;, &quot;&quot;);">
+</span>
+</span>
+<span class="hosoku clearfix">
+<span class="jqsubmitwrap clearfix">
+<input type="button" class="jqsubmit submitbtn_sp addressbtn" name="button2" language="javascript" onclick="return jsSearchZip('gyubin1', 'gyubin2', 'gken', 'gadrs1');" value="住所から郵便番号を検索">
+</span>
+</span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                            <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>都道府県                    </dt>
+                                        <dd class="formbox02 gken">
+                                         <span class="hosoku clearfix">
+<div class="jqTransformSelectWrapper" style="z-index: 996; width: 106px;"><div><span style="width: 75px;">大阪府</span><a href="#" class="jqTransformSelectOpen"></a></div><ul id="getlist" style="width: 104px; display: none; visibility: visible;"><li><a href="#" index="0" class="">-▼-</a></li><li><a href="#" index="1">北海道</a></li><li><a href="#" index="2">青森県</a></li><li><a href="#" index="3">岩手県</a></li><li><a href="#" index="4">宮城県</a></li><li><a href="#" index="5">秋田県</a></li><li><a href="#" index="6">山形県</a></li><li><a href="#" index="7">福島県</a></li><li><a href="#" index="8">茨城県</a></li><li><a href="#" index="9">栃木県</a></li><li><a href="#" index="10">群馬県</a></li><li><a href="#" index="11">埼玉県</a></li><li><a href="#" index="12">千葉県</a></li><li><a href="#" index="13">東京都</a></li><li><a href="#" index="14">神奈川県</a></li><li><a href="#" index="15">新潟県</a></li><li><a href="#" index="16">富山県</a></li><li><a href="#" index="17">石川県</a></li><li><a href="#" index="18">福井県</a></li><li><a href="#" index="19">山梨県</a></li><li><a href="#" index="20">長野県</a></li><li><a href="#" index="21">岐阜県</a></li><li><a href="#" index="22">静岡県</a></li><li><a href="#" index="23">愛知県</a></li><li><a href="#" index="24">三重県</a></li><li><a href="#" index="25">滋賀県</a></li><li><a href="#" index="26">京都府</a></li><li><a href="#" index="27" class="selected">大阪府</a></li><li><a href="#" index="28">兵庫県</a></li><li><a href="#" index="29">奈良県</a></li><li><a href="#" index="30">和歌山県</a></li><li><a href="#" index="31">鳥取県</a></li><li><a href="#" index="32">島根県</a></li><li><a href="#" index="33">岡山県</a></li><li><a href="#" index="34">広島県</a></li><li><a href="#" index="35">山口県</a></li><li><a href="#" index="36">徳島県</a></li><li><a href="#" index="37">香川県</a></li><li><a href="#" index="38">愛媛県</a></li><li><a href="#" index="39">高知県</a></li><li><a href="#" index="40">福岡県</a></li><li><a href="#" index="41">佐賀県</a></li><li><a href="#" index="42">長崎県</a></li><li><a href="#" index="43">熊本県</a></li><li><a href="#" index="44">大分県</a></li><li><a href="#" index="45">宮崎県</a></li><li><a href="#" index="46">鹿児島県</a></li><li><a href="#" index="47">沖縄県</a></li></ul><select name="gken" id="gken" class="jqTransformHidden" style="">
+    <option value="" label="-▼-" selected="selected">-▼-</option>
+    <option value="01" label="北海道">北海道</option>
+    <option value="02" label="青森県">青森県</option>
+    <option value="03" label="岩手県">岩手県</option>
+    <option value="04" label="宮城県">宮城県</option>
+    <option value="05" label="秋田県">秋田県</option>
+    <option value="06" label="山形県">山形県</option>
+    <option value="07" label="福島県">福島県</option>
+    <option value="08" label="茨城県">茨城県</option>
+    <option value="09" label="栃木県">栃木県</option>
+    <option value="10" label="群馬県">群馬県</option>
+    <option value="11" label="埼玉県">埼玉県</option>
+    <option value="12" label="千葉県">千葉県</option>
+    <option value="13" label="東京都">東京都</option>
+    <option value="14" label="神奈川県">神奈川県</option>
+    <option value="15" label="新潟県">新潟県</option>
+    <option value="16" label="富山県">富山県</option>
+    <option value="17" label="石川県">石川県</option>
+    <option value="18" label="福井県">福井県</option>
+    <option value="19" label="山梨県">山梨県</option>
+    <option value="20" label="長野県">長野県</option>
+    <option value="21" label="岐阜県">岐阜県</option>
+    <option value="22" label="静岡県">静岡県</option>
+    <option value="23" label="愛知県">愛知県</option>
+    <option value="24" label="三重県">三重県</option>
+    <option value="25" label="滋賀県">滋賀県</option>
+    <option value="26" label="京都府">京都府</option>
+    <option value="27" label="大阪府">大阪府</option>
+    <option value="28" label="兵庫県">兵庫県</option>
+    <option value="29" label="奈良県">奈良県</option>
+    <option value="30" label="和歌山県">和歌山県</option>
+    <option value="31" label="鳥取県">鳥取県</option>
+    <option value="32" label="島根県">島根県</option>
+    <option value="33" label="岡山県">岡山県</option>
+    <option value="34" label="広島県">広島県</option>
+    <option value="35" label="山口県">山口県</option>
+    <option value="36" label="徳島県">徳島県</option>
+    <option value="37" label="香川県">香川県</option>
+    <option value="38" label="愛媛県">愛媛県</option>
+    <option value="39" label="高知県">高知県</option>
+    <option value="40" label="福岡県">福岡県</option>
+    <option value="41" label="佐賀県">佐賀県</option>
+    <option value="42" label="長崎県">長崎県</option>
+    <option value="43" label="熊本県">熊本県</option>
+    <option value="44" label="大分県">大分県</option>
+    <option value="45" label="宮崎県">宮崎県</option>
+    <option value="46" label="鹿児島県">鹿児島県</option>
+    <option value="47" label="沖縄県">沖縄県</option>
+</select></div><span class="jqsubmitwrap clearfix">
+<input type="button" name="changeBtn" value="海外在住の方はこちら" class="jqsubmit submitbtn_sp oversea" onclick="javascript:changePref(1, 0);"></span>
+</span>
+                    </dd>
+                </div>
+                                                                            <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>市区郡・地名・番地<br><span style="font-size:9px;">（全角入力のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 千代田区丸の内１－１－１ ）</span><br>
+                                        <p class="hosoku clearfix"><div class="jqTransformInputWrapper jqTransformSafari" style="width: 485px;"><div class="jqTransformInputInner"><div><input type="text" name="gadrs1" class="addresstextbox jqtranformdone jqTransformInput" value="" style="width: 501px;"></div></div></div></p>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                            <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    アパート・マンション名・番号<br><span style="font-size:9px;">（全角入力のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 日本マンション１０１ ）</span><br>
+                                        <p class="hosoku clearfix"><div class="jqTransformInputWrapper jqTransformSafari" style="width: 485px;"><div class="jqTransformInputInner"><div><input type="text" name="gadrs2" class="addresstextbox jqtranformdone jqTransformInput" value="" style="width: 501px;"></div></div></div></p>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">▲</span>電話番号<br><span style="font-size:9px;">（半角数字のみ）</span>
+                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 03-1111-1111 ）</span><br>
+                                        <span class="hosoku clearfix">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="gtel1" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">-</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="gtel2" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">-</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="gtel3" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div>
+</span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                            <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span style="color:#CC0000;">▲</span>携帯電話番号<br><span style="font-size:9px;">（半角数字のみ）</span>
+                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 090-0000-0000 ）</span><br>
+                                        <span class="hosoku clearfix">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="kttel1" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">-</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="kttel2" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">-</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="kttel3" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div>
+</span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                        <div class="heading_l2"><span class="h3">休暇中の連絡先(緊急連絡先)　<span style="color:#ff0000;">必ず実家住所をご入力ください。</span></span></div>
+                                                                                                            <div class="formbox clearfix"><span class="heading_l2l hosoku clearfix"><span class="jqTransformCheckboxWrapper"><a href="#" class="jqTransformCheckbox"></a><input type="checkbox" name="adch" class="jqTransformHidden" value="1"></span><label for="text" class="leftmart" style="cursor: pointer;">現住所と同じ場合はこちらにチェックしてください<br><span style="font-weight: bold;">※チェックを入れる場合は休暇中住所は入力しないでください。</span></label></span>
+</div>
+                                <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    郵便番号<br><span style="font-size:9px;">（半角数字７桁のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 111-0000 ）</span><br>
+                                        <span class="hosoku clearfix" id="kyubin">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="kyubin1" class="postnumber jqtranformdone jqTransformInput" maxlength="3" value="" id="kyubin1" style="width: 156px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">-</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="kyubin2" class="postnumber jqtranformdone jqTransformInput" maxlength="4" value="" style="width: 156px;"></div></div></div>
+<span class="jqsubmitwrap clearfix">
+<input type="button" class="jqsubmit submitbtn_sp addressbtn" name="button1" value="郵便番号から住所を検索" language="javascript" onclick="return jsSearchAddress(this.form.kyubin1, this.form.kyubin2, this.form, &quot;kken&quot;, &quot;kadrs1&quot;, &quot;0&quot;, &quot;1&quot;);">
+</span>
+</span>
+<span class="hosoku clearfix">
+<span class="jqsubmitwrap clearfix">
+<input type="button" class="jqsubmit submitbtn_sp addressbtn" name="button2" language="javascript" onclick="return jsSearchZip('kyubin1', 'kyubin2', 'kken', 'kadrs1');" value="住所から郵便番号を検索">
+</span>
+</span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                            <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    都道府県                    </dt>
+                                        <dd class="formbox02 kken">
+                                         <span class="hosoku clearfix">
+<div class="jqTransformSelectWrapper" style="z-index: 995; width: 106px;"><div><span style="width: 75px;">-▼-</span><a href="#" class="jqTransformSelectOpen"></a></div><ul id="getlist" style="width: 104px; display: none; visibility: visible;"><li><a href="#" index="0" class="selected">-▼-</a></li><li><a href="#" index="1">北海道</a></li><li><a href="#" index="2">青森県</a></li><li><a href="#" index="3">岩手県</a></li><li><a href="#" index="4">宮城県</a></li><li><a href="#" index="5">秋田県</a></li><li><a href="#" index="6">山形県</a></li><li><a href="#" index="7">福島県</a></li><li><a href="#" index="8">茨城県</a></li><li><a href="#" index="9">栃木県</a></li><li><a href="#" index="10">群馬県</a></li><li><a href="#" index="11">埼玉県</a></li><li><a href="#" index="12">千葉県</a></li><li><a href="#" index="13">東京都</a></li><li><a href="#" index="14">神奈川県</a></li><li><a href="#" index="15">新潟県</a></li><li><a href="#" index="16">富山県</a></li><li><a href="#" index="17">石川県</a></li><li><a href="#" index="18">福井県</a></li><li><a href="#" index="19">山梨県</a></li><li><a href="#" index="20">長野県</a></li><li><a href="#" index="21">岐阜県</a></li><li><a href="#" index="22">静岡県</a></li><li><a href="#" index="23">愛知県</a></li><li><a href="#" index="24">三重県</a></li><li><a href="#" index="25">滋賀県</a></li><li><a href="#" index="26">京都府</a></li><li><a href="#" index="27">大阪府</a></li><li><a href="#" index="28">兵庫県</a></li><li><a href="#" index="29">奈良県</a></li><li><a href="#" index="30">和歌山県</a></li><li><a href="#" index="31">鳥取県</a></li><li><a href="#" index="32">島根県</a></li><li><a href="#" index="33">岡山県</a></li><li><a href="#" index="34">広島県</a></li><li><a href="#" index="35">山口県</a></li><li><a href="#" index="36">徳島県</a></li><li><a href="#" index="37">香川県</a></li><li><a href="#" index="38">愛媛県</a></li><li><a href="#" index="39">高知県</a></li><li><a href="#" index="40">福岡県</a></li><li><a href="#" index="41">佐賀県</a></li><li><a href="#" index="42">長崎県</a></li><li><a href="#" index="43">熊本県</a></li><li><a href="#" index="44">大分県</a></li><li><a href="#" index="45">宮崎県</a></li><li><a href="#" index="46">鹿児島県</a></li><li><a href="#" index="47">沖縄県</a></li></ul><select name="kken" id="kken" class="jqTransformHidden" style="">
+    <option value="" label="-▼-" selected="selected">-▼-</option>
+    <option value="01" label="北海道">北海道</option>
+    <option value="02" label="青森県">青森県</option>
+    <option value="03" label="岩手県">岩手県</option>
+    <option value="04" label="宮城県">宮城県</option>
+    <option value="05" label="秋田県">秋田県</option>
+    <option value="06" label="山形県">山形県</option>
+    <option value="07" label="福島県">福島県</option>
+    <option value="08" label="茨城県">茨城県</option>
+    <option value="09" label="栃木県">栃木県</option>
+    <option value="10" label="群馬県">群馬県</option>
+    <option value="11" label="埼玉県">埼玉県</option>
+    <option value="12" label="千葉県">千葉県</option>
+    <option value="13" label="東京都">東京都</option>
+    <option value="14" label="神奈川県">神奈川県</option>
+    <option value="15" label="新潟県">新潟県</option>
+    <option value="16" label="富山県">富山県</option>
+    <option value="17" label="石川県">石川県</option>
+    <option value="18" label="福井県">福井県</option>
+    <option value="19" label="山梨県">山梨県</option>
+    <option value="20" label="長野県">長野県</option>
+    <option value="21" label="岐阜県">岐阜県</option>
+    <option value="22" label="静岡県">静岡県</option>
+    <option value="23" label="愛知県">愛知県</option>
+    <option value="24" label="三重県">三重県</option>
+    <option value="25" label="滋賀県">滋賀県</option>
+    <option value="26" label="京都府">京都府</option>
+    <option value="27" label="大阪府">大阪府</option>
+    <option value="28" label="兵庫県">兵庫県</option>
+    <option value="29" label="奈良県">奈良県</option>
+    <option value="30" label="和歌山県">和歌山県</option>
+    <option value="31" label="鳥取県">鳥取県</option>
+    <option value="32" label="島根県">島根県</option>
+    <option value="33" label="岡山県">岡山県</option>
+    <option value="34" label="広島県">広島県</option>
+    <option value="35" label="山口県">山口県</option>
+    <option value="36" label="徳島県">徳島県</option>
+    <option value="37" label="香川県">香川県</option>
+    <option value="38" label="愛媛県">愛媛県</option>
+    <option value="39" label="高知県">高知県</option>
+    <option value="40" label="福岡県">福岡県</option>
+    <option value="41" label="佐賀県">佐賀県</option>
+    <option value="42" label="長崎県">長崎県</option>
+    <option value="43" label="熊本県">熊本県</option>
+    <option value="44" label="大分県">大分県</option>
+    <option value="45" label="宮崎県">宮崎県</option>
+    <option value="46" label="鹿児島県">鹿児島県</option>
+    <option value="47" label="沖縄県">沖縄県</option>
+</select></div><span class="jqsubmitwrap clearfix">
+<input type="button" name="changeBtn" value="海外在住の方はこちら" class="jqsubmit submitbtn_sp oversea" onclick="javascript:changePref(1, 1);"></span>
+</span>
+                    </dd>
+                </div>
+                                                                            <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    市区郡・地名・番地<br><span style="font-size:9px;">（全角入力のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 千代田区丸の内１－１－１ ）</span><br>
+                                        <p class="hosoku clearfix"><div class="jqTransformInputWrapper jqTransformSafari" style="width: 485px;"><div class="jqTransformInputInner"><div><input type="text" name="kadrs1" class="addresstextbox jqtranformdone jqTransformInput" value="" style="width: 501px;"></div></div></div></p>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                            <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    アパート・マンション名・番号<br><span style="font-size:9px;">（全角入力のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 日本マンション１０１ ）</span><br>
+                                        <p class="hosoku clearfix"><div class="jqTransformInputWrapper jqTransformSafari" style="width: 485px;"><div class="jqTransformInputInner"><div><input type="text" name="kadrs2" class="addresstextbox jqtranformdone jqTransformInput" value="" style="width: 501px;"></div></div></div></p>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    電話番号<br><span style="font-size:9px;">（半角数字のみ）</span>
+                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 03-1111-1111 ）</span><br>
+                                        <span class="hosoku clearfix">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="ktel1" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">-</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="ktel2" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">-</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 140px;"><div class="jqTransformInputInner"><div><input type="text" name="ktel3" class="telbox jqtranformdone jqTransformInput" value="" style="width: 156px;"></div></div></div>
+</span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                        <div class="heading_l2"><span class="h3">その他</span></div>
+                                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    ゼミ、研究室名<br><span style="font-size:9px;">（全角入力50文字まで）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ 国際経済学ゼミ ）</span><br>
+                                        <span class="hosoku clearfix"><div class="jqTransformInputWrapper jqTransformSafari" style="width: 485px;"><div class="jqTransformInputInner"><div><input type="text" name="bikoa" id="bikoa" value="" class="addresstextbox jqtranformdone jqTransformInput" style="width: 501px;"></div></div></div></span>                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    クラブ、サークル名<br><span style="font-size:9px;">（全角入力50文字まで）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                             <span style="color:#808080;">例 （ テニスサークル ）</span><br>
+                                        <span class="hosoku clearfix"><div class="jqTransformInputWrapper jqTransformSafari" style="width: 485px;"><div class="jqTransformInputInner"><div><input type="text" name="bikob" id="bikob" value="" class="addresstextbox jqtranformdone jqTransformInput" style="width: 501px;"></div></div></div></span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>卒業年月                    </dt>
+                                        <dd class="formbox02 ">
+                                         <span class="hosoku clearfix">
+<div class="jqTransformSelectWrapper" style="z-index: 994; width: 82px;"><div><span style="width: 51px;">2027</span><a href="#" class="jqTransformSelectOpen"></a></div><ul id="getlist" style="width: 80px; display: none; visibility: visible;"><li><a href="#" index="0">-▼-</a></li><li><a href="#" index="1">2016</a></li><li><a href="#" index="2">2017</a></li><li><a href="#" index="3">2018</a></li><li><a href="#" index="4">2019</a></li><li><a href="#" index="5">2020</a></li><li><a href="#" index="6">2021</a></li><li><a href="#" index="7">2022</a></li><li><a href="#" index="8">2023</a></li><li><a href="#" index="9">2024</a></li><li><a href="#" index="10">2025</a></li><li><a href="#" index="11">2026</a></li><li><a href="#" index="12" class="selected">2027</a></li><li><a href="#" index="13">2028</a></li><li><a href="#" index="14">2029</a></li></ul><select name="syear" id="syear" class="width130px jqTransformHidden" style="">
+    <option value="" label="-▼-">-▼-</option>
+    <option value="2016" label="2016">2016</option>
+    <option value="2017" label="2017">2017</option>
+    <option value="2018" label="2018">2018</option>
+    <option value="2019" label="2019">2019</option>
+    <option value="2020" label="2020">2020</option>
+    <option value="2021" label="2021">2021</option>
+    <option value="2022" label="2022">2022</option>
+    <option value="2023" label="2023">2023</option>
+    <option value="2024" label="2024">2024</option>
+    <option value="2025" label="2025">2025</option>
+    <option value="2026" label="2026">2026</option>
+    <option value="2027" label="2027" selected="selected">2027</option>
+    <option value="2028" label="2028">2028</option>
+    <option value="2029" label="2029">2029</option>
+</select></div><label for="text" class="hyphen" style="cursor: pointer;">年</label><div class="jqTransformSelectWrapper" style="z-index: 993; width: 75px;"><div><span style="width: 44px;">03</span><a href="#" class="jqTransformSelectOpen"></a></div><ul id="getlist" style="width: 73px; display: none; visibility: visible;"><li><a href="#" index="0">-▼-</a></li><li><a href="#" index="1">01</a></li><li><a href="#" index="2">02</a></li><li><a href="#" index="3" class="selected">03</a></li><li><a href="#" index="4">04</a></li><li><a href="#" index="5">05</a></li><li><a href="#" index="6">06</a></li><li><a href="#" index="7">07</a></li><li><a href="#" index="8">08</a></li><li><a href="#" index="9">09</a></li><li><a href="#" index="10">10</a></li><li><a href="#" index="11">11</a></li><li><a href="#" index="12">12</a></li></ul><select name="smonth" id="smonth" class="width70px jqTransformHidden" style="">
+    <option value="" label="-▼-">-▼-</option>
+    <option value="01" label="01">01</option>
+    <option value="02" label="02">02</option>
+    <option value="03" label="03" selected="selected">03</option>
+    <option value="04" label="04">04</option>
+    <option value="05" label="05">05</option>
+    <option value="06" label="06">06</option>
+    <option value="07" label="07">07</option>
+    <option value="08" label="08">08</option>
+    <option value="09" label="09">09</option>
+    <option value="10" label="10">10</option>
+    <option value="11" label="11">11</option>
+    <option value="12" label="12">12</option>
+</select></div><label for="text" class="hyphen" style="cursor: pointer;">月</label>
+<div class="jqTransformSelectWrapper" style="z-index: 992; width: 172px;"><div><span style="width: 141px;">卒業（修了）見込み</span><a href="#" class="jqTransformSelectOpen"></a></div><ul id="getlist" style="width: 170px; display: none; visibility: visible;"><li><a href="#" index="0">-▼-</a></li><li><a href="#" index="1" class="selected">卒業（修了）見込み</a></li><li><a href="#" index="2">卒業（修了）</a></li></ul><select name="shikbn" id="shikbn" class="jqTransformHidden" style="">
+    <option value="" label="-▼-">-▼-</option>
+    <option value="0" label="卒業（修了）見込み" selected="selected">卒業（修了）見込み</option>
+    <option value="1" label="卒業（修了）">卒業（修了）</option>
+</select></div></span>
+                    </dd>
+                </div>
+                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    <span class="inportant">◆</span>E-mailアドレス<br>
+<span style="font-size:9px;">（半角入力のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                         <span class="hosoku clearfix">
+<span class="clearfix">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 200px;"><div class="jqTransformInputInner"><div><input type="text" name="account1" class="mailboxaddress jqtranformdone jqTransformInput" value="" style="width: 216px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">＠</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 245px;"><div class="jqTransformInputInner"><div><input type="text" name="domain1" class="mailboxdomain jqtranformdone jqTransformInput" value="" style="width: 261px;"></div></div></div>
+</span><span class="reenter inportant"><span style="color:#808080;"><span style="font-family: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', Osaka, メイリオ, Meiryo, 'ＭＳ Ｐゴシック', sans-serif; line-height: 18px; ">誤入力を防止する為に同様のアドレスを2回入力してください。</span></span></span>
+<span class="clearfix">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 200px;"><div class="jqTransformInputInner"><div><input type="text" name="account2" class="mailboxaddress jqtranformdone jqTransformInput" value="" style="width: 216px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">＠</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 245px;"><div class="jqTransformInputInner"><div><input type="text" name="domain2" class="mailboxdomain jqtranformdone jqTransformInput" value="" style="width: 261px;"></div></div></div>
+</span></span>                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                                                                        <div class="formbox clearfix">
+                    <dt class="formbox01">
+                    携帯アドレス<br>
+<span style="font-size:9px;">（半角入力のみ）</span>                    </dt>
+                                        <dd class="formbox02 ">
+                                         <span class="hosoku clearfix">
+<span class="clearfix">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 200px;"><div class="jqTransformInputInner"><div><input type="text" name="account3" class="mailboxaddress jqtranformdone jqTransformInput" value="" style="width: 216px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">＠</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 245px;"><div class="jqTransformInputInner"><div><input type="text" name="domain3" class="mailboxdomain jqtranformdone jqTransformInput" value="" style="width: 261px;"></div></div></div>
+</span><span class="reenter inportant"><span style="color:#808080;"><span style="font-family: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', Osaka, メイリオ, Meiryo, 'ＭＳ Ｐゴシック', sans-serif; line-height: 18px; ">誤入力を防止する為に同様のアドレスを2回入力してください。</span></span></span>
+<span class="clearfix">
+<div class="jqTransformInputWrapper jqTransformSafari" style="width: 200px;"><div class="jqTransformInputInner"><div><input type="text" name="account4" class="mailboxaddress jqtranformdone jqTransformInput" value="" style="width: 216px;"></div></div></div><label for="text" class="hyphen" style="cursor: pointer;">＠</label><div class="jqTransformInputWrapper jqTransformSafari" style="width: 245px;"><div class="jqTransformInputInner"><div><input type="text" name="domain4" class="mailboxdomain jqtranformdone jqTransformInput" value="" style="width: 261px;"></div></div></div>
+</span></span>
+                    <div class="prohibition_character_area" style="overflow-wrap: break-word; width: 511px;"><span class="prohibition_character_title error" style="display: none;">禁止文字が入力されています。</span><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div><div class="prohibition_character_errdetail"></div></div></dd>
+                </div>
+                                        </dl>
+ <input type="hidden" name="redisplay" value="5823">
+ <input type="hidden" name="add" value="">
+ <input type="hidden" name="del" value="">
+ <input type="hidden" name="scroll" value="">
+  <input type="hidden" name="entrycd" value="HPH" id="entrycd">
+ <input type="hidden" name="pra" value="bhgfcigffc-abje"></form>
