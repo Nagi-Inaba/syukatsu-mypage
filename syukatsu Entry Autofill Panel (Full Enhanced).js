@@ -1007,6 +1007,8 @@
     count += applyValueToNode(findFieldByKeywords([['ゼミ'], ['研究室']]), school.zemi);
     count += applyValueToNode(findFieldByKeywords([['サークル'], ['部活']]), school.club);
 
+    syncAllJqTransformStates();
+
     return count;
   }
 
@@ -1206,6 +1208,16 @@
     if (base.includes('私')) return '3';
     if (base.includes('外')) return '4';
     return '';
+  }
+
+  function syncAllJqTransformStates() {
+    const hiddenRadios = Array.from(document.querySelectorAll('input.jqTransformHidden[type="radio"]'));
+    const hiddenCheckboxes = Array.from(document.querySelectorAll('input.jqTransformHidden[type="checkbox"]'));
+    const hiddenSelects = Array.from(document.querySelectorAll('select.jqTransformHidden'));
+
+    hiddenRadios.forEach(node => syncJqTransformInput(node, node.checked));
+    hiddenCheckboxes.forEach(node => syncJqTransformInput(node, node.checked));
+    hiddenSelects.forEach(select => syncJqTransformSelect(select));
   }
 
   function findByLabel(labelText) {
