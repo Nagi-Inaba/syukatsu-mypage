@@ -1821,6 +1821,8 @@
       const card = document.createElement('div');
       card.className = 'af-school-card';
       card.dataset.schoolId = entry.id || generateSchoolId();
+      card.dataset.zemi = entry.zemi || '';
+      card.dataset.club = entry.club || '';
 
       const typeOptions = SCHOOL_TYPES.map(t => `<option value="${t}" ${t === entry.category ? 'selected' : ''}>${t}</option>`).join('');
       const prefOptions = buildPrefectureOptions(entry.pref || '');
@@ -1856,6 +1858,9 @@
         <div class="af-row">
           <select class="af-input" data-field="toY">${toYearOptions}</select>
           <select class="af-input" data-field="toM">${toMonthOptions}</select>
+        </div>
+        <div class="af-row">
+          <input class="af-input" data-field="club" placeholder="クラブ / サークル / 部活" value="${entry.club || ''}">
         </div>
       `;
 
@@ -1895,7 +1900,7 @@
         from: { Y: getField('[data-field="fromY"]'), m: getField('[data-field="fromM"]') },
         to: { Y: getField('[data-field="toY"]'), m: getField('[data-field="toM"]') },
         zemi: card.dataset.zemi || '',
-        club: card.dataset.club || ''
+        club: getField('[data-field="club"]') || card.dataset.club || ''
       };
     });
   }
