@@ -327,6 +327,9 @@
     if (node.closest('label')) return node.closest('label').textContent.trim();
     const prevText = node.previousElementSibling && node.previousElementSibling.textContent;
     if (prevText) return prevText.trim();
+
+    const dlLabel = node.closest('dd')?.previousElementSibling;
+    if (dlLabel && dlLabel.tagName === 'DT') return dlLabel.textContent.trim();
     const parentLabel = node.parentElement && node.parentElement.querySelector('label');
     if (parentLabel) return parentLabel.textContent.trim();
     return node.placeholder || '';
