@@ -1031,7 +1031,21 @@
   }
 
   function splitTelSegments(value = '') {
-    const digits = String(value || '').replace(/\D/g, '');
+    const raw = String(value || '').trim();
+    if (!raw) return ['', '', ''];
+
+    const hyphenParts = raw.split(/[\-ー－―‐]+/).map(p => p.replace(/\D/g, '')).filter(p => p !== '');
+    if (hyphenParts.length >= 3) {
+      return [hyphenParts[0] || '', hyphenParts[1] || '', hyphenParts.slice(2).join('') || ''];
+    }
+    if (hyphenParts.length === 2) {
+      return [hyphenParts[0] || '', hyphenParts[1] || '', ''];
+    }
+    if (hyphenParts.length === 1 && raw.includes('-')) {
+      return [hyphenParts[0] || '', '', ''];
+    }
+
+    const digits = raw.replace(/\D/g, '');
     if (!digits) return ['', '', ''];
     if (digits.length <= 4) return [digits, '', ''];
     if (digits.length <= 7) return [digits.slice(0, 3), digits.slice(3), ''];
@@ -1218,9 +1232,25 @@
   }
 
   function setSelectValueByText(select, value) {
-    if (!select || !value) return false;
+    if (!select || value === undefined || value === null) return false;
+    const target = String(value).trim();
+    if (!target) return false;
+
+    const targetNumber = Number(target);
+    const hasNumericTarget = !Number.isNaN(targetNumber);
+    const prefectureIndex = PREFECTURES.findIndex(pref => pref === target);
+    const prefectureCode = prefectureIndex >= 0 ? prefectureIndex + 1 : null;
+
     for (const opt of select.options) {
-      if (opt.value === value || opt.textContent.trim() === value) {
+      const optText = (opt.textContent || '').trim();
+      const optValue = opt.value;
+      const optNumber = Number(optValue);
+
+      const matchesExact = optValue === target || optText === target;
+      const matchesNumber = hasNumericTarget && (!Number.isNaN(optNumber) ? optNumber === targetNumber : optValue === String(targetNumber));
+      const matchesPrefectureCode = prefectureCode !== null && (!Number.isNaN(optNumber) ? optNumber === prefectureCode : optValue === String(prefectureCode));
+
+      if (matchesExact || matchesNumber || matchesPrefectureCode) {
         select.value = opt.value;
         setNativeValue(select, select.value);
         return true;
